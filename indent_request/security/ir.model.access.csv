@@ -1,4 +1,6 @@
 id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
 access_indent_request,access.indent.request,model_indent_request,,1,1,1,1
 access_purchase_indent_lines,access.purchase.indent.lines,model_purchase_indent_lines,,1,1,1,1
+access_sales_indent,access.sales.indent,model_sales_indent,,1,1,1,1
+access_sales_indent_lines,access.sales.indent.lines,model_sales_indent_lines,,1,1,1,1
 

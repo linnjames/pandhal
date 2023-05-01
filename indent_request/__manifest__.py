@@ -18,6 +18,7 @@
         'views/stock_picking.xml',
         'views/product_privilege.xml',
         'views/purchase_approval.xml',
+        'views/sales_indent.xml',
     ],
     'demo': [],
     'licenSe': 'LGPL-3',

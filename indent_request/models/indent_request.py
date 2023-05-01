@@ -17,7 +17,7 @@ class IndentRequest(models.Model):
     state = fields.Selection(
         [('draft', "Draft"), ('confirmed', "Confirmed"), ('cancel', "Cancelled"), ('purchase', "Purchase Created")], default='draft', )
 
-    operation_type_id = fields.Many2one('stock.picking.type', string='Operation Type', required=True)
+    # operation_type_id = fields.Many2one('stock.picking.type', string='Operation Type', required=True)
 
     @api.model
     def create(self, vals):
@@ -63,20 +63,48 @@ class IndentRequest(models.Model):
                     })]
                 })
 
+            # company_id = self.env.company
+            # b = self.env['sale.order'].sudo().create({
+            #     'partner_id': self.env.company.partner_id.id,
+            #     'validity_date': self.order_date,
+            #     'company_id': self.vendor_id.id,
+            # })
+            # for vals in self.purchase_line_ids:
+            #     tax = self.env['account.tax'].sudo().search(
+            #         [('name', '=', vals.product_id.taxes_id.name), ('company_id', '=', self.vendor_id.id)])
+            #     print(tax)
+            #     b.write({
+            #         'order_line': [(0, 0, {
+            #             'product_template_id': vals.product_id.id,
+            #             'product_id': vals.product_id.id,
+            #             'product_uom_qty': vals.qty,
+            #             'price_unit': vals.product_id.standard_price,
+            #             'name': vals.product_id.name,
+            #             'tax_id': [(6, 0, tax.ids)],
+            #             'company_id': self.vendor_id.id,
+            #         })]
+            #     })
+
             company_id = self.env.company
-            b = self.env['sale.order'].sudo().create({
-                'partner_id': self.vendor_id.id,
-                'validity_date': self.order_date,
+            b = self.env['sales.indent'].sudo().create({
+                'vendor_id': self.vendor_id.id,
+                'sale_id': self.id,
+                'order_date': self.order_date,
+                'expected_date': self.expected_date,
             })
             for vals in self.purchase_line_ids:
+                tax = self.env['account.tax'].sudo().search(
+                    [('name', '=', vals.product_id.taxes_id.name), ('company_id', '=', self.vendor_id.id)])
+                print(tax)
                 b.write({
-                    'order_line': [(0, 0, {
-                        'product_template_id': vals.product_id.id,
+                    'sales_line_ids': [(0, 0, {
+                        # 'product_template_id': vals.product_id.id,
                         'product_id': vals.product_id.id,
-                        'product_uom_qty': vals.qty,
-                        'price_unit': vals.product_id.standard_price,
-                        'name': vals.product_id.name,
-                        'tax_id': vals.product_id.taxes_id,
+                        'qty': vals.qty,
+                        # 'price_unit': vals.product_id.standard_price,
+                        # 'name': vals.product_id.name,
+                        # 'tax_id': [(6, 0, tax.ids)],
+                        # 'company_id': self.vendor_id.id,
                     })]
                 })
 
