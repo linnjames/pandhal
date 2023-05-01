@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record model="ir.ui.view" id="account_account_set_limits">
+            <field name="name">account.account.set.limits</field>
+            <field name="model">account.account</field>
+            <field name="inherit_id" ref="account.view_account_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='deprecated']" position="after">
+                    <field name="negative_limit" groups="accounts_journals.accounts_negative_cash_blocking"/>
+                    <field name="set_limit" groups="accounts_journals.account_journals_cash_limiting"/>
+                </xpath>
+            </field>
+        </record>
+    </data>
+</odoo>

@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="performance_criteria_tree" model="ir.ui.view">
+        <field name="name">performance.criteria.tree</field>
+        <field name="model">performance.criteria</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="name" decoration-bf="1"/>
+                <field name="department_id"/>
+                <field name="team_lead_id"/>
+                <field name="min_mark"/>
+                <field name="max_mark"/>
+                <field name="state" widget="badge" decoration-success="state == 'approve'"
+                       decoration-info="state == 'draft'"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="performance_criteria_form" model="ir.ui.view">
+        <field name="name">performance.criteria.form</field>
+        <field name="model">performance.criteria</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <button id="button_approve_criteria" name="action_approve_criteria" string="Approve"
+                            class="btn-primary"
+                            states="draft" type="object"/>
+                    <field name="state" widget="statusbar"
+                           statusbar_visible="draft,approve"/>
+                </header>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="name" required="1" attrs="{'readonly': [('state', '=', 'approve')]}"/>
+                            <field name="department_id" options="{'no_create': True}" required="1"
+                                   attrs="{'readonly': [('state', '=', 'approve')]}"/>
+                            <field name="team_lead_id" options="{'no_create': True}" required="1"
+                                   attrs="{'readonly': [('state', '=', 'approve')]}"/>
+                        </group>
+                        <group>
+                            <field name="min_mark" attrs="{'readonly': [('state', '=', 'approve')]}"/>
+                            <field name="max_mark" attrs="{'readonly': [('state', '=', 'approve')]}"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Add Marks">
+                            <field name="case_mark_ids" attrs="{'readonly': [('state', '=', 'approve')]}">
+                                <tree editable="bottom" create="false">
+                                    <field name="case" readonly="1" force_save="1" required="1"/>
+                                    <field name="mark"/>
+                                </tree>
+                            </field>
+                        </page>
+                    </notebook>
+                    <group>
+                        <group class="oe_total_footer oe_right" colspan="2" name="sum_lines">
+                            <h1>
+                                <group>
+                                    <field name="total" string='Total' style='size:40px' readonly="1"/>
+                                </group>
+                            </h1>
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="performance_criteria_action" model="ir.actions.act_window">
+        <field name="name">Performance Criteria</field>
+        <field name="res_model">performance.criteria</field>
+        <field name="view_mode">tree,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">Create Performance Criteria...</p>
+        </field>
+    </record>
+
+    <menuitem id="valuation_root"
+              name="Employee Valuation"
+              parent="hr.menu_hr_root"
+              sequence="99"/>
+
+    <menuitem id="performance_criteria_root"
+              name="Performance Criteria"
+              parent="valuation_root"
+              action="performance_criteria_action"
+              sequence="1"/>
+
+</odoo>

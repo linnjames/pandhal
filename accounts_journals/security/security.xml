@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<odoo>
+    <data>
+        <record id="account_journals_cash_limiting" model="res.groups">
+            <field name="name">Cash Limiting</field>
+        </record>
+
+        <record id="accounts_negative_cash_blocking" model="res.groups">
+            <field name="name">Negative Cash Blocking</field>
+        </record>
+
+    </data>
+</odoo>

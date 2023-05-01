@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="performance_assessment_tree" model="ir.ui.view">
+        <field name="name">performance.assessment.tree</field>
+        <field name="model">performance.assessment</field>
+        <field name="arch" type="xml">
+            <tree create="false" delete="false">
+                <field name="employee_id"/>
+                <field name="department_id"/>
+                <field name="criteria_id"/>
+                <field name="user_id"/>
+                <field name="state" widget="badge" decoration-success="state == 'approve'"
+                       decoration-info="state == 'draft'"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="performance_assessment_form" model="ir.ui.view">
+        <field name="name">performance.assessment.form</field>
+        <field name="model">performance.assessment</field>
+        <field name="arch" type="xml">
+            <form create="false" delete="false">
+                <header>
+                    <button id="button_approve_assessment" name="action_approve_assessment" string="Approve"
+                            class="btn-primary"
+                            type="object" states="draft"/>
+                    <field name="state" widget="statusbar" statusbar_visible="draft,approve"/>
+                </header>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="employee_id" readonly="1"/>
+                            <field name="department_id" readonly="1"/>
+                            <field name="criteria_id" readonly="1"/>
+                            <field name="user_id" readonly="1"/>
+                        </group>
+                        <group>
+                            <field name="max_mark" readonly="1"/>
+                            <field name="min_mark" readonly="1"/>
+                            <field name="valuation_id" readonly="1"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Performance Assessment Lines">
+                            <field name="assess_line_ids" attrs="{'readonly': [('state', '=', 'approve')]}">
+                                <tree editable="bottom" create="false" delete="false">
+                                    <field name="case" readonly="1" required="1"/>
+                                    <field name="case_mark" readonly="1"/>
+                                    <field name="mark"/>
+                                </tree>
+                            </field>
+                        </page>
+                    </notebook>
+                    <group>
+                        <group class="oe_total_footer oe_right" colspan="2" name="sum_lines">
+                            <h1>
+                                <group>
+                                    <field name="total" string='Total' style='size:40px' readonly="1"/>
+                                </group>
+                            </h1>
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="performance_assessment_action" model="ir.actions.act_window">
+        <field name="name">Performance Assessment</field>
+        <field name="res_model">performance.assessment</field>
+        <field name="view_mode">tree,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">Create Performance Assessment...</p>
+        </field>
+    </record>
+
+    <menuitem id="performance_assessment_root"
+              name="Performance Assessment"
+              parent="valuation_root"
+              action="performance_assessment_action"
+              sequence="3"/>
+
+</odoo>

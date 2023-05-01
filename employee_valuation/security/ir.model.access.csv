@@ -1,0 +1,9 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_case_system,access.case.system,model_case_system,,1,1,1,1
+access_performance_criteria,access.performance.criteria,model_performance_criteria,,1,1,1,1
+access_criteria_mark,access.criteria.mark,model_criteria_mark,,1,1,1,1
+access_employee_valuation,access.employee.valuation,model_employee_valuation,,1,1,1,1
+access_employee_valuation_lines,access.employee.valuation.lines,model_employee_valuation_lines,,1,1,1,1
+access_performance_assessment,access.performance.assessment,model_performance_assessment,,1,1,1,1
+access_performance_assessment_lines,access.performance.assessment.lines,model_performance_assessment_lines,,1,1,1,1
+

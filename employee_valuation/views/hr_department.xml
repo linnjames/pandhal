@@ -1,0 +1,22 @@
+<odoo>
+
+    <record id="hr_department_form_inherit_employee_valuation" model="ir.ui.view">
+        <field name="name">hr.department.view</field>
+        <field name="model">hr.department</field>
+        <field name="inherit_id" ref="hr.view_department_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//sheet" position="inside">
+                <notebook>
+                    <page string="Cases">
+                        <field name="criteria_line_ids">
+                            <tree editable="bottom">
+                                <field name="case" required="1"/>
+                            </tree>
+                        </field>
+                    </page>
+                </notebook>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>
