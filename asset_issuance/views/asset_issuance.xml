@@ -2,35 +2,71 @@
 <odoo>
     <data>
 
-        <record model="ir.ui.view" id="asset_issuance_inherit_hr_employee">
-            <field name="name">asset.issuance.inherit.hr.employee</field>
+<!--        <record model="ir.ui.view" id="asset_issuance_inherit_hr_employee">-->
+<!--            <field name="name">asset.issuance.inherit.hr.employee</field>-->
+<!--            <field name="model">hr.employee</field>-->
+<!--            <field name="inherit_id" ref="hr.view_employee_form"/>-->
+<!--            <field name="arch" type="xml">-->
+<!--                <xpath expr="//button[@name='366']" position="after">-->
+<!--                    <button name="%(action_employee_asset_issuance)d" type="action" string="Assets"-->
+<!--                            class="oe_highlight"/>-->
+<!--                </xpath>-->
+
+<!--                <xpath expr="//button[@name='673']" position="after">-->
+<!--                    <button name="button_view_transfer" type="object" string="Assets"-->
+<!--                            class="oe_highlight" icon="fa-truck"/>-->
+<!--                </xpath>-->
+<!--            </field>-->
+<!--        </record>-->
+
+        <record model="ir.ui.view" id="asset_issuance_inherit_hr_employee_new">
+            <field name="name">asset.issuance.inherit.hr.employee.new</field>
             <field name="model">hr.employee</field>
             <field name="inherit_id" ref="hr.view_employee_form"/>
             <field name="arch" type="xml">
-                <xpath expr="//button[@name='326']" position="after">
+                <xpath expr="//header" position="inside">
                     <button name="%(action_employee_asset_issuance)d" type="action" string="Assets"
                             class="oe_highlight"/>
-                </xpath>
-
-                <xpath expr="//button[@name='673']" position="after">
-                    <button name="button_view_transfer" type="object" string="Assets"
-                            class="oe_highlight" icon="fa-truck"
-                    />
                 </xpath>
             </field>
         </record>
 
+        <record model="ir.ui.view" id="asset_issuance_inherit_hr_employee_transfer">
+            <field name="name">asset.issuance.inherit.hr.employee.transfer</field>
+            <field name="model">hr.employee</field>
+            <field name="inherit_id" ref="hr.view_employee_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//div[@name='button_box']" position="inside">
+                    <button name="button_view_transfer" type="object" string="Assets"
+                            class="oe_highlight" icon="fa-truck"/>
+                </xpath>
+            </field>
+        </record>
 
-        <record model="ir.ui.view" id="asset_issuance_wizard_inherit_stock_picking">
-            <field name="name">asset.issuance.wizard.inherit.stock.picking</field>
+        <record model="ir.ui.view" id="asset_issuance_inherit_hr_employee">
+            <field name="name">asset.issuance.inherit.hr.employee</field>
             <field name="model">stock.picking</field>
             <field name="inherit_id" ref="stock.view_picking_form"/>
             <field name="arch" type="xml">
                 <xpath expr="//field[@name='origin']" position="after">
                     <field name="asset_wizard_id"/>
                 </xpath>
+
             </field>
         </record>
+
+
+        <!--        <record model="ir.ui.view" id="asset_issuance_wizard_inherit_stock_picking">-->
+<!--            <field name="name">asset.issuance.wizard.inherit.stock.picking</field>-->
+<!--            <field name="model">stock.picking</field>-->
+<!--            <field name="inherit_id" ref="stock.view_picking_form"/>-->
+<!--            <field name="arch" type="xml">-->
+<!--                <xpath expr="//field[@name='origin']" position="after">-->
+<!--                    <field name="asset_wizard_id"/>-->
+<!--                </xpath>-->
+
+<!--            </field>-->
+<!--        </record>-->
 
     </data>
 </odoo>
