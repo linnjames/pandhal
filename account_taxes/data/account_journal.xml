@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding='UTF-8'?>
+<odoo>
+
+    <data>
+
+        <record id="invoice_tds_journal_id" model="account.journal">
+            <field name="name">TDS</field>
+            <field name="code">TDS</field>
+            <field name="type">general</field>
+<!--            <field name="company_id">()</field>-->
+        </record>
+
+    </data>
+
+</odoo>

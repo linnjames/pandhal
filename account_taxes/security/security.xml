@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<odoo>
+    <data>
+
+        <record id="group_order_taxes" model="res.groups">
+            <field name="name">TCS/TDS Management</field>
+            <field name="category_id" ref="base.module_category_hidden"/>
+        </record>
+
+        <record model="ir.rule" id="record_tds_management_rule">
+            <field name="name">record.tds.management.rule</field>
+            <field name="model_id" ref="model_tds_management"/>
+            <field name="global" eval="True"/>
+            <field name="domain_force">
+                [('company_id', 'in', company_ids)]
+            </field>
+        </record>
+
+        <record model="ir.rule" id="record_tcs_management_rule">
+            <field name="name">record.tcs.management.rule</field>
+            <field name="model_id" ref="model_tcs_management"/>
+            <field name="global" eval="True"/>
+            <field name="domain_force">
+                [('company_id', 'in', company_ids)]
+            </field>
+        </record>
+
+    </data>
+</odoo>

@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record model="ir.ui.view" id="res_partner_inherit11">
+        <field name="name">res.partner.inherit11</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base.view_partner_form"/>
+        <field name="arch" type="xml">
+            <field name="vat" position="after">
+                <field name="pan_no" placeholder="e.g. AAAAA1234A"/>
+            </field>
+            <xpath expr="/form/sheet/notebook/page[@name='sales_purchases']/group[@name='container_row_2']/group[@name='sale']"
+                   position="after">
+                <group string="TCS" groups="account_taxes.group_order_taxes">
+                    <field name="tcs_limit"/>
+                    <field name="applicable_tcs" groups="account_taxes.group_order_taxes"/>
+                    <field name="tcs_section" attrs="{'invisible': [('applicable_tcs', '=', False)]}"
+                           groups="account_taxes.group_order_taxes"/>
+                    <field name="tcs_type" attrs="{'invisible': [('applicable_tcs', '=', False)]}"
+                           groups="account_taxes.group_order_taxes"/>
+                    <field name="tcs_percentage" attrs="{'invisible': [('applicable_tcs', '=', False)]}"
+                           groups="account_taxes.group_order_taxes"/>
+                    <field name="tcs_account" attrs="{'invisible': [('applicable_tcs', '=', False)]}"
+                           groups="account_taxes.group_order_taxes"/>
+                </group>
+            </xpath>
+            <xpath expr="/form/sheet/notebook/page[@name='sales_purchases']/group[@name='container_row_2']/group[@name='sale']"
+                   position="after">
+                <group string="TDS" groups="account_taxes.group_order_taxes">
+                    <field name="tds_limit"/>
+                    <field name="limit_date" force_save="1" invisible="1"/>
+                    <field name="applicable_tds" groups="account_taxes.group_order_taxes"/>
+                    <field name="tds_section" attrs="{'invisible': [('applicable_tds', '=', False)]}"
+                           groups="account_taxes.group_order_taxes"/>
+                    <field name="tds_type" attrs="{'invisible': [('applicable_tds', '=', False)]}"
+                           groups="account_taxes.group_order_taxes"/>
+                    <field name="tds_percentage" attrs="{'invisible': [('applicable_tds', '=', False)]}"
+                           groups="account_taxes.group_order_taxes"/>
+                    <field name="tds_account" attrs="{'invisible': [('applicable_tds', '=', False)]}"
+                           groups="account_taxes.group_order_taxes"/>
+                </group>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

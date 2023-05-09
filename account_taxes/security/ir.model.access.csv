@@ -1,0 +1,8 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_tcs_management,access.tcs.management,model_tcs_management,,1,1,1,1
+access_tds_management,access.tds.management,model_tds_management,,1,1,1,1
+access_warning_wizard,access.warning.wizard,model_warning_wizard,,1,1,1,1
+access_warnings_wizard,access.warnings.wizard,model_warnings_wizard,,1,1,1,1
+access_tds_report,access.tds.report,model_tds_report,,1,1,1,1
+
+

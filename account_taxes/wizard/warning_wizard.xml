@@ -1,0 +1,46 @@
+<?xml version="1.0"?>
+<odoo>
+    <record id="warning_wizard_form" model="ir.ui.view">
+        <field name="name">warning.wizard.form</field>
+        <field name="model">warning.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Warning">
+                <p>The Order has exceeded the TCS limit. So TCS is applicable for this customer.</p>
+                <footer>
+                    <button string="OK" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <record id="warning_wizard_action" model="ir.actions.act_window">
+        <field name="name">warning.wizard.action</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">warning.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="view_id" ref="warning_wizard_form"/>
+        <field name="target">new</field>
+    </record>
+
+    <record id="warnings_wizard_form" model="ir.ui.view">
+        <field name="name">warnings.wizard.form</field>
+        <field name="model">warnings.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Warning">
+                <p>The Order has exceeded the TDS limit. So TDS is applicable for this vendor.</p>
+                <footer>
+                    <button string="OK" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <record id="warnings_wizard_action" model="ir.actions.act_window">
+        <field name="name">warnings.wizard.action</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">warnings.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="view_id" ref="warnings_wizard_form"/>
+        <field name="target">new</field>
+    </record>
+</odoo>

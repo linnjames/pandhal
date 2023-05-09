@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="view_account_config_taxes" model="ir.ui.view">
+            <field name="name">res.config.settings.form.inherit.taxes</field>
+            <field name="model">res.config.settings</field>
+            <field name="inherit_id" ref="account.res_config_settings_view_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//div[@id='analytic']" position="after">
+                    <h2>TCS/TDS</h2>
+                    <div class="row mt16 o_settings_container" id="taxes_task">
+                        <div class="col-xs-12 col-md-6 o_setting_box">
+                            <div class="o_setting_left_pane">
+                                <field name="group_order_taxes"/>
+                            </div>
+                            <div class="o_setting_right_pane">
+                                <label for="group_order_taxes"/>
+                                <div class="text-muted">
+                                    Collect TCS/TDS  from Customer or Vendor.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </xpath>
+            </field>
+        </record>
+    </data>
+</odoo>
