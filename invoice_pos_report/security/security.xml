@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<odoo>
+    <data>
+
+        <record model="ir.rule" id="record_invoice_pos_rule">
+            <field name="name">record.invoice.pos.rule</field>
+            <field name="model_id" ref="model_invoice_pos_report"/>
+            <field name="global" eval="True"/>
+            <field name="domain_force">
+                [('current_user_id', '=', user.id)]
+            </field>
+        </record>
+
+    </data>
+</odoo>

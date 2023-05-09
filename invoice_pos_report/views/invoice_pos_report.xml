@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="invoice_pos_report_tree" model="ir.ui.view">
+        <field name="name">invoice.pos.report.tree</field>
+        <field name="model">invoice.pos.report</field>
+        <field name="arch" type="xml">
+            <tree string="Quick sale">
+                <field name="product_id"/>
+                <field name="company_id"/>
+                <field name="product_category_id"/>
+                <field name="invoice_date"/>
+                <field name="partner_id"/>
+                <field name="typ"/>
+<!--                <field name="region_id"/>-->
+                <field name="quantity"/>
+                <field name="untaxed_amount"/>
+                <field name="taxed_amount"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="invoice_pos_report_form" model="ir.ui.view">
+        <field name="name">invoice.pos.report.form</field>
+        <field name="model">invoice.pos.report</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="product_id"/>
+                            <field name="company_id"/>
+                            <field name="product_category_id"/>
+<!--                            <field name="product_category_type_id"/>-->
+                            <field name="invoice_date"/>
+                            <field name="partner_id"/>
+<!--                            <field name="shelf_life_int"/>-->
+                        </group>
+                        <group>
+                            <field name="typ"/>
+<!--                            <field name="region_id"/>-->
+                            <field name="quantity"/>
+                            <field name="untaxed_amount"/>
+                            <field name="taxed_amount"/>
+                            <field name="current_user_id" invisible="1"/>
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record model="ir.ui.view" id="view_invoice_pos_report_pivot">
+        <field name="name">view_invoice_pos_report_pivot</field>
+        <field name="model">invoice.pos.report</field>
+        <field name="arch" type="xml">
+            <pivot string="Invoice Pos Report" sample="1">
+                <field name="product_id" type="row"/>
+                <field name="taxed_amount" type="measure"/>
+            </pivot>
+        </field>
+    </record>
+
+    <record id="view_invoice_pos_report_graph" model="ir.ui.view">
+        <field name="name">view_invoice_pos_report_graph</field>
+        <field name="model">invoice.pos.report</field>
+        <field name="arch" type="xml">
+            <graph string="Invoice Pos Report">
+                <field name="product_id" type="row"/>
+            </graph>
+        </field>
+    </record>
+
+    <record id="invoice_pos_report_action" model="ir.actions.act_window">
+        <field name="name">Invoice Pos Report</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">invoice.pos.report</field>
+        <field name="view_mode">pivot,tree,graph</field>
+        <field name="view_id" eval="False"/>
+    </record>
+
+    <menuitem id="invoice_pos_root"
+              name="Invoice Pos Report"
+              action="invoice_pos_report_wizard_action"
+              parent="account.menu_finance_reports"
+              sequence="-10"/>
+<!--    <menuitem id="invoice_pos_roots"-->
+<!--              name="Invoice Pos Reports"-->
+<!--              action="invoice_pos_report_action"-->
+<!--              parent="account.menu_finance_reports"-->
+<!--              sequence="-10"/>-->
+
+</odoo>
