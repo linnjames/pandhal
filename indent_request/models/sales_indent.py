@@ -15,6 +15,14 @@ class IndentRequest(models.Model):
     sales_line_ids = fields.One2many('sales.indent.lines','pur_id', string='Sales Line')
     # sale_id = fields.Char('ID')
     sale_id = fields.Many2one('indent.request', string='ID')
+    company_id = fields.Many2one('res.company', string='company', readonly=True,
+                                 default=lambda self: self.env.company.id)
+
+    def action_confirmed(self):
+        self.state = 'confirmed'
+
+    def action_cancel(self):
+        self.state = 'cancel'
 
     def action_open_transfer(self):
         return {

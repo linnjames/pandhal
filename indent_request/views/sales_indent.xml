@@ -7,7 +7,7 @@
             <tree string="Indent Request">
 <!--                <field name="reference"/>-->
                 <field name="vendor_id"/>
-                <field name="order_date"/>
+<!--                <field name="order_date"/>-->
                 <field name="expected_date"/>
             </tree>
         </field>
@@ -20,10 +20,10 @@
         <field name="arch" type="xml">
             <form>
                 <header>
-<!--                    <button name="action_confirmed" id="button_confirmed" string="Confirm Order" class="btn-primary"-->
-<!--                            type="object" states="draft"/>-->
-<!--                    <button name="action_cancel" id="button_cancel" string="Cancel" class="btn-primary"-->
-<!--                            type="object" states="draft"/>-->
+                    <button name="action_confirmed" id="button_confirmed" string="Confirm Order" class="btn-primary"
+                            type="object" states="draft"/>
+                    <button name="action_cancel" id="button_cancel" string="Cancel" class="btn-primary"
+                            type="object" states="confirmed"/>
 <!--                    <button name="action_create_purchase" id="button_create_purchase" string="Create Purchase"-->
 <!--                            class="btn-primary"-->
 <!--                            type="object" states="confirmed"/>-->
@@ -50,8 +50,9 @@
 <!--                            <field name="operation_type_id"/>-->
                         </group>
                         <group>
-                            <field name="order_date"/>
+<!--                            <field name="order_date"/>-->
                             <field name="expected_date"/>
+                             <field name="company_id"/>
                         </group>
                     </group>
                     <notebook>
@@ -79,13 +80,13 @@
     </record>
 
     <menuitem id="sales_indent_request_menu_root"
-              name="Indent"
+              name="Sale Indent"
               parent="sale.sale_menu_root"
               sequence="10"
     />
 
     <menuitem id="sales_indent_request_sub_menu_root"
-              name="Sales Indent"
+              name="Indent From Shop"
               parent="sales_indent_request_menu_root"
               action="sales_indent_request_action"
               sequence="5"

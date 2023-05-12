@@ -16,4 +16,13 @@
         <field name="name">Transfers</field>
     </record>
 
+    <record model="ir.rule" id="record_sale_indent_rule">
+        <field name="name">record_sale_indent_rule</field>
+        <field name="model_id" ref="model_sales_indent"/>
+        <field name="global" eval="True"/>
+        <field name="domain_force">
+            [('company_id', 'in', company_ids)]
+        </field>
+    </record>
+
 </odoo>

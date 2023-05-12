@@ -8,6 +8,7 @@
             <field name="arch" type="xml">
                 <field name="origin" position="after">
                     <field name="transfer_id"/>
+
                 </field>
 
                 <xpath expr="//button[@name='button_validate'][2]" position="attributes">
