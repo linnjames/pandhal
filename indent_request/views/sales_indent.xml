@@ -4,10 +4,10 @@
         <field name="name">sales.indent.request.tree</field>
         <field name="model">sales.indent</field>
         <field name="arch" type="xml">
-            <tree string="Indent Request">
-<!--                <field name="reference"/>-->
+            <tree string="Sales Indent ">
+                <!--                <field name="reference"/>-->
                 <field name="vendor_id"/>
-<!--                <field name="order_date"/>-->
+                <!--                <field name="order_date"/>-->
                 <field name="expected_date"/>
             </tree>
         </field>

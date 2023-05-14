@@ -4,7 +4,7 @@
         <field name="name">indent.request.tree</field>
         <field name="model">indent.request</field>
         <field name="arch" type="xml">
-            <tree string="Indent Request">
+            <tree string="Purchase Indent ">
                 <field name="reference"/>
                  <field name="vendor_id"/>
 <!--                <field name="order_date"/>-->
@@ -64,7 +64,7 @@
 
 
     <record id="indent_request_action" model="ir.actions.act_window">
-        <field name="name">Indent Request</field>
+        <field name="name">Purchase Indent</field>
         <field name="type">ir.actions.act_window</field>
         <field name="res_model">indent.request</field>
         <field name="view_mode">tree,form</field>

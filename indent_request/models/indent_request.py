@@ -9,7 +9,7 @@ class IndentRequest(models.Model):
     reference = fields.Char(string='Order Reference', required=True, copy=False, readonly=True,
                             default=lambda self: _('New'))
     # vendor_id = fields.Many2one('res.partner', string='Vendor')
-    vendor_id = fields.Many2one('res.company', string='Store')
+    vendor_id = fields.Many2one('res.partner', string='Store')
     currency_id = fields.Many2one('res.currency', string='Currency')
     # order_date = fields.Datetime(string='Order Deadline', default=fields.Date.today)
     expected_date = fields.Datetime(string='Expected Date')
@@ -19,6 +19,13 @@ class IndentRequest(models.Model):
         default='draft', )
 
     # operation_type_id = fields.Many2one('stock.picking.type', string='Operation Type', required=True)
+
+    # @api.model
+    # def create(self, vals):
+    #     if vals.get('reference', _('New')) == _('New'):
+    #         vals['reference'] = self.env['ir.sequence'].next_by_code('indent.sequence') or _('New')
+    #     res = super(IndentRequest, self).create(vals)
+    #     return res
 
     @api.model
     def create(self, vals):
