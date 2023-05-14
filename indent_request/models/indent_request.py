@@ -52,9 +52,11 @@ class IndentRequest(models.Model):
             if any(line.qty == False for line in vals.purchase_line_ids):
                 raise ValidationError('Please provide required quantity.')
             print("////////////////////////")
-            operation = self.vendor_id.operation_type_out
+            operation = self.sudo().vendor_id.operation_type_out
             op = self.vendor_id
             self.state = 'confirmed'
+            print(operation.name)
+            print(operation.sudo().company_id.name)
             a = self.env['stock.picking'].sudo().create({
                 'partner_id': self.vendor_id.partner_id.id,
                 'picking_type_id': operation.id,
@@ -77,7 +79,7 @@ class IndentRequest(models.Model):
                     })]
                 })
 
-            b = self.env['stock.picking'].create({
+            b = self.env['stock.picking'].sudo().create({
                 'partner_id': self.env.company.partner_id.id,
                 'picking_type_id': self.env.company.operation_type_in.id,
                 'location_id': self.env.company.operation_type_in.default_location_src_id.id,
