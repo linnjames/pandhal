@@ -9,7 +9,7 @@ class IndentRequest(models.Model):
     reference = fields.Char(string='Order Reference', required=True, copy=False, readonly=True,
                             default=lambda self: _('New'))
     # vendor_id = fields.Many2one('res.partner', string='Vendor')
-    vendor_id = fields.Many2one('res.partner', string='Store')
+    vendor_id = fields.Many2one('res.company', string='Store')
     currency_id = fields.Many2one('res.currency', string='Currency')
     # order_date = fields.Datetime(string='Order Deadline', default=fields.Date.today)
     expected_date = fields.Datetime(string='Expected Date')
@@ -42,6 +42,9 @@ class IndentRequest(models.Model):
             print('qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq')
             if vals.vendor_id.partner_id == self.env.company.partner_id:
                 raise ValidationError('Partner cannot be the same as company.')
+
+            # if vals.vendor_id.name == self.env.company.partner_id:
+            #     raise ValidationError('Partner cannot be the same as company.')
 
             if vals.expected_date == False:
                 raise ValidationError('Please provide required date.')
