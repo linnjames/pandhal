@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <record id="pos_price_restriction" model="ir.ui.view">
+        <field name="name">pos.price.restriction</field>
+        <field name="model">res.config.settings</field>
+        <field name="inherit_id" ref="base.res_config_settings_view_form"/>
+        <field name="arch" type="xml">
+<!--            <xpath expr="//button[@name='print_quotation']" position="after">-->
+<!--                <button name="button_purchase_approval" states="draft" type="object" string="Approve"-->
+<!--                        class="oe_highlight"/>-->
+<!--            </xpath>-->
+
+<!--            <xpath expr="//button[@name='button_purchase_approval'][1]" position="attributes">-->
+<!--                <attribute name="groups">indent_request.purchase_multi_level_approval</attribute>-->
+<!--            </xpath>-->
+
+            <xpath expr="//field[@name='pos_restrict_price_control']" position="attributes">
+                <attribute name="groups">indent_request.price_restriction</attribute>
+            </xpath>
+
+<!--             <xpath expr="//field[@name='pos_restrict_price_control'][2]" position="attributes">-->
+<!--                <attribute name="groups">indent_request.price_restriction</attribute>-->
+<!--            </xpath>-->
+
+
+<!--            <xpath expr="//button[@name='button_confirm'][1]" position="attributes">-->
+<!--                <attribute name="groups">indent_request.purchase_multi_level_approval_confirm</attribute>-->
+<!--            </xpath>-->
+        </field>
+    </record>
+</odoo>

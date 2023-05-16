@@ -10,17 +10,17 @@
                         class="oe_highlight"/>
             </xpath>
 
-            <xpath expr="//button[@name='button_purchase_approval'][1]" position="attributes">
+            <xpath expr="//button[@name='button_purchase_approval'][1]" position="attributes" >
                 <attribute name="groups">indent_request.purchase_multi_level_approval</attribute>
             </xpath>
 
-            <xpath expr="//button[@name='button_confirm'][2]" position="attributes">
-                <attribute name="groups">indent_request.purchase_multi_level_approval_confirm</attribute>
-            </xpath>
+<!--            <xpath expr="//button[@name='button_confirm'][2]" position="attributes" states="approve">-->
+<!--                <attribute name="groups">indent_request.purchase_multi_level_approval_confirm</attribute>-->
+<!--            </xpath>-->
 
-            <xpath expr="//button[@name='button_confirm'][1]" position="attributes">
-                <attribute name="groups">indent_request.purchase_multi_level_approval_confirm</attribute>
-            </xpath>
+<!--            <xpath expr="//button[@name='button_confirm'][1]" position="attributes" states="approve">-->
+<!--                <attribute name="groups">indent_request.purchase_multi_level_approval_confirm</attribute>-->
+<!--            </xpath>-->
         </field>
     </record>
 </odoo>

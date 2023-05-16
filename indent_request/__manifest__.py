@@ -8,7 +8,7 @@
     'sequence': 10,
     'description': """Indent Request""",
     'website': 'https://www.catalisterp.com/',
-    'depends': ['base', 'sale', 'sale_management', 'account', 'purchase', 'stock'],
+    'depends': ['base', 'sale', 'sale_management', 'account', 'purchase', 'stock', 'point_of_sale'],
     'data': [
         'security/ir.model.access.csv',
         'security/security.xml',
@@ -19,6 +19,7 @@
         'views/product_privilege.xml',
         'views/purchase_approval.xml',
         'views/sales_indent.xml',
+        # 'views/pos_price_restriction.xml',
     ],
     'demo': [],
     'licenSe': 'LGPL-3',

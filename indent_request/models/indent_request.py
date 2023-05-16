@@ -10,13 +10,18 @@ class IndentRequest(models.Model):
                             default=lambda self: _('New'))
     # vendor_id = fields.Many2one('res.partner', string='Vendor')
     vendor_id = fields.Many2one('res.company', string='Store')
+    uom_id = fields.Many2one('uom.uom', string='Unit of Measure')
+    indent_type = fields.Selection([('bakery', 'Bakery'), ('store', 'Store')])
+    # vendor_id = fields.Many2one('res.company', string='Store', domain="[('company_id.company_type', '=', company)]")
+
     currency_id = fields.Many2one('res.currency', string='Currency')
     # order_date = fields.Datetime(string='Order Deadline', default=fields.Date.today)
     expected_date = fields.Datetime(string='Expected Date')
     purchase_line_ids = fields.One2many('purchase.indent.lines', 'pur_id', string='Purchase Lines')
     state = fields.Selection(
-        [('draft', "Draft"), ('confirmed', "Confirmed"), ('cancel', "Cancelled"), ('purchase', "Purchase Created")],
+        [('draft', "Draft"), ('confirmed', "Confirmed"), ('cancel', "Cancelled")],
         default='draft', )
+
 
     # operation_type_id = fields.Many2one('stock.picking.type', string='Operation Type', required=True)
 
@@ -27,12 +32,25 @@ class IndentRequest(models.Model):
     #     res = super(IndentRequest, self).create(vals)
     #     return res
 
+    # @api.onchange('vendor_id', 'company_type')
+    # def onchange_company_type(self):
+    #     self.vendor_id = (self.company_type == 'company')
+
     @api.model
     def create(self, vals):
         if vals.get('reference', _('New')) == _('New'):
             vals['reference'] = self.env['ir.sequence'].next_by_code('indent.sequence') or _('New')
         res = super(IndentRequest, self).create(vals)
         return res
+
+    def action_open_purchase_transfer(self):
+        return {
+            'name': _('Transfer'),
+            'type': 'ir.actions.act_window',
+            'res_model': 'stock.picking',
+            'view_mode': 'tree,form',
+            'domain': [('transfer_id', '=', self.id)],
+        }
 
     def action_cancel(self):
         self.state = 'cancel'
@@ -81,10 +99,11 @@ class IndentRequest(models.Model):
 
             b = self.env['stock.picking'].sudo().create({
                 'partner_id': self.env.company.partner_id.id,
-                'picking_type_id': self.env.company.operation_type_in.id,
-                'location_id': self.env.company.operation_type_in.default_location_src_id.id,
-                'location_dest_id': self.env.company.operation_type_in.default_location_dest_id.id,
-                'company_id': self.env.company.id
+                'picking_type_id': self.env.company.sudo().operation_type_in.id,
+                'location_id': self.env.company.sudo().operation_type_in.default_location_src_id.id,
+                'location_dest_id': self.env.company.sudo().operation_type_in.default_location_dest_id.id,
+                'company_id': self.env.company.id,
+                'transfer_id': self.id,
             })
             for vals in self.purchase_line_ids:
                 b.write({
@@ -164,32 +183,30 @@ class IndentRequest(models.Model):
                         # 'product_template_id': vals.product_id.id,
                         'product_id': vals.product_id.id,
                         'qty': vals.qty,
-                        # 'price_unit': vals.product_id.standard_price,
-                        # 'name': vals.product_id.name,
-                        # 'tax_id': [(6, 0, tax.ids)],
-                        # 'company_id': self.vendor_id.id,
+                        'uom_id': vals.uom_id,
+
                     })]
                 })
 
-    def action_create_purchase(self):
-        if not self.purchase_line_ids.filtered(lambda l: l.item_select):
-            raise UserError("Please select at least one item to create purchase order.")
-        self.state = 'purchase'
-        b = self.env['purchase.order'].sudo().create({
-            'partner_id': self.vendor_id.partner_id.id,
-            'company_id': self.vendor_id.id,
-
-        })
-        for vals in self.purchase_line_ids:
-            b.write({
-                'order_line': [(0, 0, {
-                    'product_id': vals.product_id.id,
-                    # 'product_uom_qty': vals.qty,
-                    'product_qty': vals.qty,
-                    'price_unit': vals.product_id.standard_price,
-                    'taxes_id': vals.product_id.taxes_id,
-                })]
-            })
+    # def action_create_purchase(self):
+    #     if not self.purchase_line_ids.filtered(lambda l: l.item_select):
+    #         raise UserError("Please select at least one item to create purchase order.")
+    #     self.state = 'purchase'
+    #     b = self.env['purchase.order'].sudo().create({
+    #         'partner_id': self.vendor_id.partner_id.id,
+    #         'company_id': self.vendor_id.id,
+    #
+    #     })
+    #     for vals in self.purchase_line_ids:
+    #         b.write({
+    #             'order_line': [(0, 0, {
+    #                 'product_id': vals.product_id.id,
+    #                 # 'product_uom_qty': vals.qty,
+    #                 'product_qty': vals.qty,
+    #                 'price_unit': vals.product_id.standard_price,
+    #                 'taxes_id': vals.product_id.taxes_id,
+    #             })]
+    #         })
 
 
 class PurchaseIndentLines(models.Model):
@@ -200,6 +217,13 @@ class PurchaseIndentLines(models.Model):
     qty = fields.Float(string='Quantity')
     transfer_id = fields.Many2one('indent.request', string='ID')
     item_select = fields.Boolean(string='Select Item')
+    uom_id = fields.Many2one('uom.uom', string='Unit of Measure')
+
+    @api.onchange('product_id')
+    def onchange_course_name(self):
+        if self.product_id:
+            if self.product_id.uom_id:
+                self.uom_id = self.product_id.uom_id
 
 
 class ResCompany(models.Model):

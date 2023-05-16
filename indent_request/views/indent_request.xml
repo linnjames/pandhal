@@ -6,8 +6,8 @@
         <field name="arch" type="xml">
             <tree string="Purchase Indent ">
                 <field name="reference"/>
-                 <field name="vendor_id"/>
-<!--                <field name="order_date"/>-->
+                <field name="vendor_id"/>
+                <!--                <field name="order_date"/>-->
                 <field name="expected_date"/>
             </tree>
         </field>
@@ -24,13 +24,21 @@
                             type="object" states="draft"/>
                     <button name="action_cancel" id="button_cancel" string="Cancel" class="btn-primary"
                             type="object" states="draft"/>
-                    <button name="action_create_purchase" id="button_create_purchase" string="Create Purchase"
-                            class="btn-primary"
+<!--                    <button name="action_create_purchase" id="button_create_purchase" string="Create Purchase"-->
+<!--                            class="btn-primary"-->
                             type="object" states="confirmed"/>
                     <field name="state" widget="statusbar" clickable="1"
                            statusbar_visible="draft,confirmed"/>
                 </header>
                 <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="action_open_purchase_transfer" type="object" class="oe_stat_button"
+                                icon="fa-truck">
+                            <div class="o_stat_info">
+                                <span class="o_stat_text">Transfer</span>
+                            </div>
+                        </button>
+                    </div>
                     <div class="oe_tittle">
                         <h1>
                             <field name="reference" readonly="1"/>
@@ -39,10 +47,10 @@
                     <group>
                         <group>
                             <field name="vendor_id" required="1"/>
-<!--                            <field name="operation_type_id"/>-->
+                            <field name="indent_type"/>
                         </group>
                         <group>
-<!--                            <field name="order_date"/>-->
+                            <!--                            <field name="order_date"/>-->
                             <field name="expected_date"/>
                         </group>
                     </group>
@@ -50,8 +58,9 @@
                         <page string="Purchase" name="purchase_lines">
                             <field name="purchase_line_ids">
                                 <tree editable="bottom">
-                                    <field name="item_select"/>
+<!--                                    <field name="item_select"/>-->
                                     <field name="product_id"/>
+                                    <field name="uom_id"/>
                                     <field name="qty"/>
                                 </tree>
                             </field>

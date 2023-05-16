@@ -16,6 +16,10 @@
         <field name="name">Transfers</field>
     </record>
 
+    <record id="price_restriction" model="res.groups">
+        <field name="name">POS Price</field>
+    </record>
+
     <record model="ir.rule" id="record_sale_indent_rule">
         <field name="name">record_sale_indent_rule</field>
         <field name="model_id" ref="model_sales_indent"/>
