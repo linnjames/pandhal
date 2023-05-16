@@ -183,7 +183,7 @@ class IndentRequest(models.Model):
                         # 'product_template_id': vals.product_id.id,
                         'product_id': vals.product_id.id,
                         'qty': vals.qty,
-                        'uom_id': vals.uom_id,
+                        'uom_id': vals.uom_id.id,
 
                     })]
                 })
