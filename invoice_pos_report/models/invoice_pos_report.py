@@ -12,7 +12,7 @@ class InvoicePosReport(models.Model):
     # product_category_type_id = fields.Many2one('product.category.type', string='Category Type')
     invoice_date = fields.Date(string='Invoice Date')
     partner_id = fields.Many2one('res.partner', string='Partner')
-    typ = fields.Selection([('franchise', 'Franchise'), ('own', 'Own')], string="Type")
+    # typ = fields.Selection([('franchise', 'Franchise'), ('own', 'Own')], string="Type")
     # region_id = fields.Many2one('region.master', string='Region')
     quantity = fields.Float(string='Quantity')
     untaxed_amount = fields.Float(string='Untaxed Amount')

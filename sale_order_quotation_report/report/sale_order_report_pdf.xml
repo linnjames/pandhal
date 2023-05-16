@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <data>
+
+        <record id="paperformat_euro_lowmargin_sale_report_qweb" model="report.paperformat">
+            <field name="name">European A7</field>
+            <field name="default" eval="True"/>
+            <field name="format">custom</field>
+            <field name="page_height">5000</field>
+            <field name="page_width">79</field>
+            <!--            <field name="page_width">100</field>-->
+            <field name="orientation">Portrait</field>
+            <field name="margin_top">0</field>
+            <field name="margin_bottom">0</field>
+            <field name="margin_left">0</field>
+            <field name="margin_right">0</field>
+            <field name="header_line" eval="False"/>
+            <field name="dpi">65</field>
+            <!--            <field name="dpi">57</field>-->
+        </record>
+
+        <record id="sale_order_quotation_print" model="ir.actions.report">
+            <field name="name">Sale Quotation (POS) Print</field>
+            <field name="model">sale.order</field>
+            <field name="report_type">qweb-pdf</field>
+            <field name="report_name">sale_order_quotation_report.sale_order_quotation</field>
+            <field name="report_file">sale_order_quotation_report.sale_order_quotation</field>
+            <field name="paperformat_id" ref="sale_order_quotation_report.paperformat_euro_lowmargin_sale_report_qweb"/>
+            <field name="binding_model_id" ref="sale.model_sale_order"/>
+            <field name="binding_view_types">form</field>
+            <field name="binding_type">report</field>
+        </record>
+    </data>
+</odoo>

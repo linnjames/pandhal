@@ -40,13 +40,37 @@ class AccountMoveReport(models.Model):
     is_export = fields.Boolean(string="Is Export?")
     exp_bill_no = fields.Char(string="Shipping Bill No:")
     exp_bill_date = fields.Date(string="Shipping Bill Date")
-    convert_inr = fields.Float(string="INR Conversion", compute='compute_convert_inr')
-    guest_name = fields.Char(string="Guest Name:")
-    reversal_account_id = fields.Many2one('account.move', string='Invoice Reference No')
+    convert_inr = fields.Float(string="INR Conversion", compute='compute_convert_inr', store=True)
+    terms_and_con = fields.Char(string="Terms and Condition")
 
-    @api.depends('currency_id')
+    supplier_bill_ref = fields.Char(string="Supplier Bill Reference")
+    supplier_bill_date = fields.Date(string="Supplier Bill Date")
+
+    sales_amount_in_words = fields.Char(string='Amount In Words', compute='_compute_total_sales_amount_in_words')
+
+    show_fssai = fields.Boolean(string="FSSAI", default=True)
+
+    def action_reverse(self):
+        res = super(AccountMoveReport, self).action_reverse()
+        self.supplier_bill_ref = self.ref
+        self.supplier_bill_date = self.invoice_date
+        return res
+
+    @api.depends('currency_id', 'invoice_date')
     def compute_convert_inr(self):
-        self.convert_inr = 1 / self.currency_id.rate
+        for sel in self:
+            if sel.invoice_date:
+                rate = self.env['res.currency.rate'].search(
+                    [('name', '<=', sel.invoice_date), ('currency_id', '=', sel.currency_id.id)], limit=1,
+                    order='name desc')
+                if rate:
+                    sel.convert_inr = 1 / rate.rate
+                elif not rate:
+                    sel.convert_inr = 1 / sel.currency_id.rate
+                else:
+                    sel.convert_inr = 1
+            else:
+                sel.convert_inr = 1 / sel.currency_id.rate
 
     def einv_compute(self):
         res = super(AccountMoveReport, self).einv_compute()
@@ -56,7 +80,7 @@ class AccountMoveReport(models.Model):
             box_size=20,
             border=8,
         )
-        # qr.add_data(self.einv_qr_code)
+        qr.add_data(self.einv_qr_code)
         qr.make(fit=True)
         img = qr.make_image()
         temp = BytesIO()
@@ -65,13 +89,84 @@ class AccountMoveReport(models.Model):
         self.prnt_qr_code = qr_image
         return res
 
-    @api.depends('amount_total', 'currency_id')
+    def einv_qr_generate(self):
+        if self.einv_qr_code:
+            qr = qrcode.QRCode(
+                version=1,
+                error_correction=qrcode.constants.ERROR_CORRECT_L,
+                box_size=20,
+                border=8,
+            )
+            qr.add_data(self.einv_qr_code)
+            qr.make(fit=True)
+            img = qr.make_image()
+            temp = BytesIO()
+            img.save(temp, format="PNG")
+            qr_image = base64.b64encode(temp.getvalue())
+            self.prnt_qr_code = qr_image
+
+    @api.depends('amount_untaxed', 'currency_id')
     def _compute_total_amount_in_words(self):
+        INR = self.env['res.currency'].search([('name', '=', 'INR')])
         for move in self:
-            if move.amount_total:
-                move.amount_in_words = move.currency_id.amount_to_text(move.amount_total)
+            # if move.amount_total:
+            #     total = move.amount_total * move.convert_inr
+            #     move.amount_in_words = INR.amount_to_text(total)
+            # else:
+            #     move.amount_in_words = False
+            sgst = 0
+            cgst = 0
+            igst = 0
+            for i in self.invoice_line_ids:
+                sgst += round(i.sgst_perc + 10 ** (-2 * 2), 2)
+                cgst += round(i.cgst_perc + 10 ** (-2 * 2), 2)
+                igst += round(i.igst_perc + 10 ** (-2 * 2), 2)
+            # sgst = sum(self.invoice_line_ids.mapped('sgst_perc'))
+            # cgst = sum(self.invoice_line_ids.mapped('cgst_perc'))
+            # igst = sum(self.invoice_line_ids.mapped('igst_perc'))
+            dis = move.total_global_discount * move.convert_inr
+            if move.amount_untaxed:
+                total = (
+                                move.amount_untaxed * move.convert_inr + sgst * move.convert_inr + cgst * move.convert_inr + igst * move.convert_inr) - dis
+                move.amount_in_words = INR.amount_to_text(total)
             else:
                 move.amount_in_words = False
+
+    @api.depends('amount_untaxed', 'currency_id')
+    def _compute_total_sales_amount_in_words(self):
+        INR = self.env['res.currency'].search([('name', '=', 'INR')])
+        for move in self:
+            sub_total = 0
+            sgst = 0
+            cgst = 0
+            igst = 0
+            for i in self.invoice_line_ids:
+                sub_total += i.price_subtotal
+                sgst += i.sgst_perc
+                cgst += i.cgst_perc
+                igst += i.igst_perc
+            # sgst = sum(self.invoice_line_ids.mapped('sgst_perc'))
+            # cgst = sum(self.invoice_line_ids.mapped('cgst_perc'))
+            # igst = sum(self.invoice_line_ids.mapped('igst_perc'))
+            dis = move.total_global_discount
+            if move.amount_untaxed:
+                total = round((((sub_total + sgst + cgst + igst) - dis) * move.convert_inr) + 10 ** (-2 * 2), 2)
+                move.sales_amount_in_words = INR.amount_to_text(total)
+            else:
+                move.sales_amount_in_words = False
+
+    # @api.depends('amount_total')
+    # def _compute_total_amount_in_words(self):
+    #     amount_words = self.currency_id.id
+    #     value = self.env['res.currency'].search([('id', '=', amount_words)])
+    #     for move in self:
+    #         if move.amount_total:
+    #             if move.convert_inr > 0:
+    #                 move.amount_in_words = value.amount_to_text(move.amount_total * move.convert_inr)
+    #             else:
+    #                 move.amount_in_words = value.amount_to_text(move.amount_total)
+    #         else:
+    #             move.amount_in_words = False
 
     @api.depends('invoice_line_ids.discount_amount')
     def _compute_discount_total(self):
@@ -80,119 +175,157 @@ class AccountMoveReport(models.Model):
             sum += i.discount_amount
         self.discount_total = sum
 
-    # @api.onchange('ship_state')
-    # def _onchange_ship_state(self):
-    #     for rec in self:
-    #         if rec.ship_state:
-    #             rec.ship_st_code = rec.ship_state
+    def action_post(self):
+        res = super(AccountMoveReport, self).action_post()
+        for i in self.invoice_line_ids:
+            i.convert_inr_amount = i.move_id.convert_inr * i.price_subtotal
+        return res
 
-    @api.onchange('reversal_account_id')
-    def _onchange_reversal_account_id(self):
-        if self.reversal_account_id:
-            if not self.partner_id:
-                self.partner_id = self.reversal_account_id.partner_id
-            if not self.partner_shipping_id:
-                self.partner_shipping_id = self.reversal_account_id.partner_shipping_id
-            # if not self.l10n_in_gst_treatment:
-            #     self.l10n_in_gst_treatment = self.reversal_account_id.l10n_in_gst_treatment
-        else:
-            self.partner_id = False
-            self.partner_shipping_id = False
-            # self.l10n_in_gst_treatment = False
-
-    @api.onchange('partner_id')
-    def _onchange_customer(self):
-        if self.partner_id:
-            self.env.cr.execute(("""SELECT am.id 
-                                    FROM account_move as am
-                                    where am.state = 'posted' and am.partner_id = %s
-                                         """)
-                                % self.partner_id.id)
-            account = self.env.cr.dictfetchall()
-            move_list = []
-            for move in account:
-                move_list.append(move['id'])
-            return {'domain': {'reversal_account_id': [('id', 'in', tuple(move_list))]}}
-
-    def action_add_product(self):
-        if self.reversal_account_id:
-            product_list = []
-            for inv in self.reversal_account_id.invoice_line_ids:
-                if inv.product_id:
-                    product_list.append(inv.product_id.id)
-            view = self.env.ref('sales_invoice_print.add_product_wizard_form_view')
-            return {
-                'name': 'Add Product',
-                'type': 'ir.actions.act_window',
-                'view_mode': 'form',
-                'res_model': 'add.product.wizard',
-                'views': [(view.id, 'form')],
-                'view_id': view.id,
-                'target': 'new',
-                'context': {
-                    'default_productids': product_list,
-                    'default_move_id': self.id,
-                }
-            }
-
-
-            # def fields_view_get(self, view_id=None, view_type='list', toolbar=False, submenu=False):
-    #     res = super().fields_view_get(view_id=view_id, view_type=view_type, toolbar=toolbar, submenu=submenu)
-    #     if toolbar:
-    #         for action in res['toolbar'].get('action'):
-    #             if action.get('xml_id'):
-    #                 if action['xml_id'] == 'account.action_validate_account_move':
-    #                     res['toolbar']['action'].remove(action)
+    # def action_post(self):
+    #     res = super(AccountMoveReport, self).action_post()
+    #     for i in self.invoice_line_ids:
+    #         if len(i.tax_ids) > 1:
+    #             raise ValidationError(_('Single Tax value should be given'))
+    #
+    #     for inv in self.invoice_line_ids:
+    #         if inv.tax_ids.tax_group_id.name == 'IGST' and inv.tax_ids.amount:
+    #             inv.igst_perc = (inv.price_subtotal * inv.tax_ids.amount) / 100
+    #             inv.igst_amount = inv.tax_ids.amount
+    #             inv.sgst_perc = 0.00
+    #             inv.cgst_perc = 0.00
+    #             inv.sgst_amount = 0.00
+    #             inv.cgst_amount = 0.00
+    #             tax = inv.tax_ids.compute_all(inv.price_unit, product=inv.product_id,
+    #                                           partner=inv.env.user.partner_id)
+    #             print(tax)
+    #             print(tax['taxes'][0]['amount'])
+    #             print(inv.price_unit, '////')
+    #             print(tax['taxes'][0]['amount'] * inv.quantity)
+    #             print(inv.move_id.convert_inr)
+    #             print(tax['taxes'][0]['amount'] * inv.quantity * inv.move_id.convert_inr)
+    #             print(inv.tax_ids.amount, "ghsdjturytdftuyjtkfhgh")
+    #             print(inv.igst_amount, "ghsdjturytdftuyjtkfhgh")
+    #
+    #         elif inv.tax_ids.amount:
+    #             inv.cgst_perc = (inv.price_subtotal * (inv.tax_ids.amount / 2)) / 100
+    #             inv.sgst_perc = (inv.price_subtotal * (inv.tax_ids.amount / 2)) / 100
+    #             inv.sgst_amount = inv.tax_ids.amount / 2
+    #             inv.cgst_amount = inv.tax_ids.amount / 2
+    #             inv.igst_perc = 0.00
+    #             inv.igst_amount = 0.00
+    #
+    #             ### old V
+    #             # account = self.env['account.move.line'].search(
+    #             #     [('move_id', '=', inv.move_id.id), ('id', '!=', inv.id),
+    #             #      ('product_id', '=', inv.product_id.id)])
+    #             # for k in account:
+    #             #     for j in inv.tax_ids.children_tax_ids:
+    #             #         if k.tax_line_id.id == j.id:
+    #             #             # if self.move_type == 'out_invoice':
+    #             #             #     inv.sgst_perc = k.credit if k.credit else k.debit
+    #             #             #     inv.cgst_perc = k.credit if k.credit else k.debit
+    #             #             #     inv.sgst_amount = j.amount
+    #             #             #     inv.cgst_amount = j.amount
+    #             #             #     inv.igst_perc = 0.00
+    #             #             #     inv.igst_amount = 0.00
+    #             #             # if self.move_type == 'out_refund':
+    #             #             #     inv.sgst_perc = k.debit if k.credit else k.debit
+    #             #             #     inv.cgst_perc = k.debit if k.credit else k.debit
+    #             #             #     inv.sgst_amount = j.amount
+    #             #             #     inv.cgst_amount = j.amount
+    #             #             #     inv.igst_perc = 0.00
+    #             #             #     inv.igst_amount = 0.00
+    #             #             # else:
+    #             #             inv.sgst_perc = k.credit if k.credit else k.debit
+    #             #             inv.cgst_perc = k.credit if k.credit else k.debit
+    #             #             inv.sgst_amount = j.amount
+    #             #             inv.cgst_amount = j.amount
+    #             #             inv.igst_perc = 0.00
+    #             #             inv.igst_amount = 0.00
+    #
+    #         # for d in self.line_ids:
+    #         #     for w in self.invoice_line_ids:
+    #         #         print(w.price_total)
+    #         #         if d.product_id.id == w.product_id.id:
+    #         #             if d.tax_line_id:
+    #         #                 if d.tax_line_id.id == w.tax_ids.id:
+    #         #                     # w.igst_perc = w.price_total - w.price_subtotal
+    #         #                     # w.igst_perc = d.credit if d.credit else d.debit
+    #         #                     w.igst_perc = (w.price_subtotal * w.tax_ids.amount)/100
+    #         #                     w.igst_amount = w.tax_ids.amount
+    #         #                     w.sgst_perc = 0.00
+    #         #                     w.cgst_perc = 0.00
+    #         #                     w.sgst_amount = 0.00
+    #         #                     w.cgst_amount = 0.00
+    #         ##old ^
+    #         tax = self.invoice_line_ids.mapped('tax_ids')
+    #         lst = []
+    #         for t in tax:
+    #             line = self.invoice_line_ids.filtered(lambda line: line.tax_ids == t)
+    #             sgst = sum(line.mapped('sgst_perc'))
+    #             cgst = sum(line.mapped('cgst_perc'))
+    #             igst = sum(line.mapped('igst_perc'))
+    #             non_tax_tot = sum(line.mapped('price_unit'))
+    #             tax_tot = sum(line.mapped('price_subtotal'))
     #     return res
+
+    # def button_draft(self):
+    #     res = super(AccountMoveReport, self).button_draft()
+    #     for w in self.invoice_line_ids:
+    #         w.igst_perc = 0.00
+    #         w.igst_amount = 0.00
+    #         w.sgst_perc = 0.00
+    #         w.cgst_perc = 0.00
+    #         w.sgst_amount = 0.00
+    #         w.cgst_amount = 0.00
+    #     return res
+
+    @api.onchange('ship_state')
+    def _onchange_ship_state(self):
+        for rec in self:
+            if rec.ship_state:
+                rec.ship_st_code = rec.ship_state
 
 
 class AccountMoveReportLine(models.Model):
     _inherit = 'account.move.line'
 
-    discount_amount = fields.Float(string='Discount Amount', compute='_compute_line_discount_amount')
-    sgst_perc = fields.Monetary(string='SGST', copy=False, store=True, compute='_compute_tax_computation')
-    cgst_perc = fields.Monetary(string='CGST', copy=False, store=True, compute='_compute_tax_computation')
-    igst_perc = fields.Monetary(string='IGST', copy=False, store=True, compute='_compute_tax_computation')
-    cess = fields.Monetary(string='Cess', copy=False, store=True, compute='_compute_tax_computation')
-    sgst_amount = fields.Monetary(string='sgst Rate', copy=False, store=True, compute='_compute_tax_computation')
-    cgst_amount = fields.Monetary(string='cgst Rate', copy=False, store=True, compute='_compute_tax_computation')
-    igst_amount = fields.Monetary(string='igst Rate', copy=False, store=True, compute='_compute_tax_computation')
-    cess_amount = fields.Monetary(string='cess Rate', copy=False, store=True, compute='_compute_tax_computation')
+    discount_amount = fields.Float(string='Discount Amount')
+    sgst_perc = fields.Float(string='SGST', compute='_compute_line_tax_values', store=True, copy=False)
+    cgst_perc = fields.Float(string='CGST', compute='_compute_line_tax_values', store=True, copy=False)
+    igst_perc = fields.Float(string='IGST', compute='_compute_line_tax_values', store=True, copy=False)
+    cess = fields.Float(string='CESS', compute='_compute_line_tax_values', store=True, copy=False)
 
-    @api.depends('tax_ids', 'product_id', 'price_subtotal')
-    def _compute_tax_computation(self):
+    sgst_amount = fields.Float(string='sgst amount', compute='_compute_line_tax_values', store=True, copy=False)
+    cgst_amount = fields.Float(string='cgst amount', compute='_compute_line_tax_values', store=True, copy=False)
+    igst_amount = fields.Float(string='igst amount', compute='_compute_line_tax_values', store=True, copy=False)
+    cess_amount = fields.Float(string='cess amount', compute='_compute_line_tax_values', store=True, copy=False)
+    convert_inr_amount = fields.Float(string='Convert Amount', store=True)
+
+    @api.depends('tax_ids', 'product_id')
+    def _compute_line_tax_values(self):
         for i in self:
-            if i.move_id.move_type == 'out_invoice':
-                if i.tax_ids:
-                    if len(i.tax_ids) == 1:
-                        if i.tax_ids.amount != 0:
-                            print('5')
-                            res = i.tax_ids._origin.compute_all(i.price_subtotal, product=i.product_id,
-                                                                partner=i.partner_id)
-                            for tax in res['taxes']:
-                                if tax['amount'] > 0:
-                                    amount_tax = self.env['account.tax'].search([('id', '=', tax['id'])])
-                                    if 'CESS' in tax['name'].upper():
-                                        i.cess = tax['amount']
-                                        i.cess_amount = amount_tax.amount
-                                    if 'SGST' in tax['name'].upper():
-                                        i.sgst_perc = tax['amount']
-                                        i.sgst_amount = amount_tax.amount
-                                    if 'CGST' in tax['name'].upper():
-                                        i.cgst_perc = tax['amount']
-                                        i.cgst_amount = amount_tax.amount
-                                    if 'IGST' in tax['name'].upper():
-                                        i.igst_perc = tax['amount']
-                                        i.igst_amount = amount_tax.amount
-                        else:
-                            i.cess = False
-                            i.cess_amount = False
-                            i.sgst_perc = False
-                            i.sgst_amount = False
-                            i.cgst_perc = False
-                            i.cgst_amount = False
-                            i.igst_perc = False
-                            i.igst_amount = False
+            # if i.move_id.move_type == 'out_invoice':
+            if i.tax_ids:
+                if len(i.tax_ids) == 1:
+                    if i.tax_ids.amount != 0:
+                        res = i.tax_ids._origin.compute_all(i.price_subtotal, product=i.product_id,
+                                                            partner=i.partner_id)
+                        for tax in res['taxes']:
+                            if tax['amount'] > 0:
+                                amount_tax = self.env['account.tax'].search([('id', '=', tax['id'])])
+                                if 'CESS' in tax['name'].upper():
+                                    i.cess = tax['amount']
+                                    i.cess_amount = amount_tax.amount
+                                if 'SGST' in tax['name'].upper():
+                                    i.sgst_perc = tax['amount']
+                                    i.sgst_amount = amount_tax.amount
+                                if 'CGST' in tax['name'].upper():
+                                    i.cgst_perc = tax['amount']
+                                    i.cgst_amount = amount_tax.amount
+                                if 'IGST' in tax['name'].upper():
+                                    i.igst_perc = tax['amount']
+                                    i.igst_amount = amount_tax.amount
                     else:
                         i.cess = False
                         i.cess_amount = False
@@ -220,30 +353,42 @@ class AccountMoveReportLine(models.Model):
                 i.cgst_amount = False
                 i.igst_perc = False
                 i.igst_amount = False
+        # else:
+        #     i.cess = False
+        #     i.cess_amount = False
+        #     i.sgst_perc = False
+        #     i.sgst_amount = False
+        #     i.cgst_perc = False
+        #     i.cgst_amount = False
+        #     i.igst_perc = False
+        #     i.igst_amount = False
 
-    # @api.onchange('discount', 'price_unit', 'quantity')
-    # def onchange_discount_amount(self):
-    #     if self.discount:
-    #         disc = (self.discount * (self.price_unit * self.quantity)) / 100
-    #         self.discount_amount = disc
+    # @api.depends('price_subtotal', 'tax_ids')
+    # def _compute_line_tax_values(self):
+    #     for i in self:
+    #         if len(i.tax_ids) == 1:
+    #             print("hii")
+    #             if i.tax_ids.tax_group_id.name == 'SGST':
+    #                 i.sgst_perc = (i.price_subtotal * i.tax_ids.amount) / 100
+    #                 i.sgst_amount = i.tax_ids.amount
+    #
+    #             if i.tax_ids.tax_group_id.name == 'CGST':
+    #                 i.cgst_perc = (i.price_subtotal * i.tax_ids.amount) / 100
+    #                 i.cgst_amount = i.tax_ids.amount
+    #
+    #             if i.tax_ids.tax_group_id.name == 'IGST':
+    #                 i.igst_perc = (i.price_subtotal * i.tax_ids.amount) / 100
+    #                 i.igst_amount = i.tax_ids.amount
+    #
+    #             if i.tax_ids.tax_group_id.name == 'Cess':
+    #                 i.cess_perc = (i.price_subtotal * i.tax_ids.amount) / 100
+    #                 i.cess_amount = i.tax_ids.amount
 
-    @api.depends('discount', 'price_unit', 'quantity')
-    def _compute_line_discount_amount(self):
-        for d in self:
-            if d.discount:
-                disc = (d.discount * (d.price_unit * d.quantity)) / 100
-                d.discount_amount = disc
-            else:
-                d.discount_amount = False
-
-    @api.onchange('move_id.reversal_account_id', 'product_id')
-    def _onchange_invoice_ref(self):
-        if self.move_id.reversal_account_id:
-            product_list = []
-            for inv in self.move_id.reversal_account_id.invoice_line_ids:
-                if inv.product_id:
-                    product_list.append(inv.product_id.id)
-            return {'domain': {'product_id': [('id', 'in', tuple(product_list))]}}
+    @api.onchange('discount', 'price_unit', 'quantity')
+    def onchange_discount_amount(self):
+        if self.discount:
+            disc = (self.discount * (self.price_unit * self.quantity)) / 100
+            self.discount_amount = disc
 
 
 class ResPartnerInherit(models.Model):
@@ -257,7 +402,6 @@ class ResPartnerInherit(models.Model):
     code_qr = fields.Binary(string='UPI')
     swift_code = fields.Char(string='Swift Code')
     currency_remitted = fields.Many2one('res.currency', string='Currency to be remitted')
-    cin_no = fields.Char(string='CIN Number')
 
 
 class SaleOrderConfirm(models.Model):
@@ -270,153 +414,22 @@ class SaleOrderConfirm(models.Model):
                 raise ValidationError(_('Single Tax value should be given'))
         return res
 
-    def _prepare_invoice(self):
-        res = super(SaleOrderConfirm, self)._prepare_invoice()
-        if self.ship_partner_id.state_id.name == 'Jammu & Kashmir':
-            res['ship_state'] = '01'
-            res['ship_st_code'] = '01'
-        if self.ship_partner_id.state_id.name == 'Himachal Pradesh':
-            res['ship_state'] = '02'
-            res['ship_st_code'] = '02'
-        if self.ship_partner_id.state_id.name == 'Punjab':
-            res['ship_state'] = '03'
-            res['ship_st_code'] = '03'
-        if self.ship_partner_id.state_id.name == 'Chandigarh':
-            res['ship_state'] = '04'
-            res['ship_st_code'] = '04'
-        if self.ship_partner_id.state_id.name == 'Uttranchal':
-            res['ship_state'] = '05'
-            res['ship_st_code'] = '05'
-        if self.ship_partner_id.state_id.name == 'Haryana':
-            res['ship_state'] = '06'
-            res['ship_st_code'] = '06'
-        if self.ship_partner_id.state_id.name == 'Delhi':
-            res['ship_state'] = '07'
-            res['ship_st_code'] = '07'
-        if self.ship_partner_id.state_id.name == 'Rajasthan':
-            res['ship_state'] = '08'
-            res['ship_st_code'] = '08'
-        if self.ship_partner_id.state_id.name == 'Uttar Pradesh':
-            res['ship_state'] = '09'
-            res['ship_st_code'] = '09'
-        if self.ship_partner_id.state_id.name == 'Bihar':
-            res['ship_state'] = '10'
-            res['ship_st_code'] = '10'
-        if self.ship_partner_id.state_id.name == 'Sikkim':
-            res['ship_state'] = '11'
-            res['ship_st_code'] = '11'
-        if self.ship_partner_id.state_id.name == 'Arunachal Pradesh':
-            res['ship_state'] = '12'
-            res['ship_st_code'] = '12'
-        if self.ship_partner_id.state_id.name == 'Nagaland':
-            res['ship_state'] = '13'
-            res['ship_st_code'] = '13'
-        if self.ship_partner_id.state_id.name == 'Manipur':
-            res['ship_state'] = '14'
-            res['ship_st_code'] = '14'
-        if self.ship_partner_id.state_id.name == 'Mizoram':
-            res['ship_state'] = '15'
-            res['ship_st_code'] = '15'
-        if self.ship_partner_id.state_id.name == 'Tripura':
-            res['ship_state'] = '16'
-            res['ship_st_code'] = '16'
-        if self.ship_partner_id.state_id.name == 'Meghalaya':
-            res['ship_state'] = '17'
-            res['ship_st_code'] = '17'
-        if self.ship_partner_id.state_id.name == 'Assam':
-            res['ship_state'] = '18'
-            res['ship_st_code'] = '18'
-        if self.ship_partner_id.state_id.name == 'West Bengal':
-            res['ship_state'] = '19'
-            res['ship_st_code'] = '19'
-        if self.ship_partner_id.state_id.name == 'Jharkhand':
-            res['ship_state'] = '20'
-            res['ship_st_code'] = '20'
-        if self.ship_partner_id.state_id.name == 'Orissa':
-            res['ship_state'] = '21'
-            res['ship_st_code'] = '21'
-        if self.ship_partner_id.state_id.name == 'Chhattisgarh':
-            res['ship_state'] = '22'
-            res['ship_st_code'] = '22'
-        if self.ship_partner_id.state_id.name == 'Madhya Pradesh':
-            res['ship_state'] = '23'
-            res['ship_st_code'] = '23'
-        if self.ship_partner_id.state_id.name == 'Gujarat':
-            res['ship_state'] = '24'
-            res['ship_st_code'] = '24'
-        if self.ship_partner_id.state_id.name == 'Daman & Diu':
-            res['ship_state'] = '25'
-            res['ship_st_code'] = '25'
-        if self.ship_partner_id.state_id.name == 'Dadra & Nagar Haveli':
-            res['ship_state'] = '26'
-            res['ship_st_code'] = '26'
-        if self.ship_partner_id.state_id.name == 'Maharashtra':
-            res['ship_state'] = '27'
-            res['ship_st_code'] = '27'
-        if self.ship_partner_id.state_id.name == 'Karnataka':
-            res['ship_state'] = '29'
-            res['ship_st_code'] = '29'
-        if self.ship_partner_id.state_id.name == 'Goa':
-            res['ship_state'] = '30'
-            res['ship_st_code'] = '30'
-        if self.ship_partner_id.state_id.name == 'Lakshadweep':
-            res['ship_state'] = '31'
-            res['ship_st_code'] = '31'
-        if self.ship_partner_id.state_id.name == 'Kerala':
-            res['ship_state'] = '32'
-            res['ship_st_code'] = '32'
-        if self.ship_partner_id.state_id.name == 'Tamil Nadu':
-            res['ship_state'] = '33'
-            res['ship_st_code'] = '33'
-        if self.ship_partner_id.state_id.name == 'Pondicherry':
-            res['ship_state'] = '34'
-            res['ship_st_code'] = '34'
-        if self.ship_partner_id.state_id.name == 'Andaman & Nicobar Islands':
-            res['ship_state'] = '35'
-            res['ship_st_code'] = '35'
-        if self.ship_partner_id.state_id.name == 'Telangana':
-            res['ship_state'] = '36'
-            res['ship_st_code'] = '36'
-        if self.ship_partner_id.state_id.name == 'Andhra Pradesh':
-            res['ship_state'] = '37'
-            res['ship_st_code'] = '37'
-        if self.ship_partner_id.state_id.name == 'Ladakh':
-            res['ship_state'] = '38'
-            res['ship_st_code'] = '38'
-        if self.ship_partner_id.state_id.name == 'Other Territory':
-            res['ship_state'] = '97'
-            res['ship_st_code'] = '97'
-        if self.ship_partner_id.state_id.name == 'Other Country':
-            res['ship_state'] = '96'
-            res['ship_st_code'] = '96'
-
-        res['is_ship_diff_address'] = self.is_ship_to
-        res['ship_legal_name'] = self.ship_partner_id.name
-        res['ship_add1'] = self.ship_partner_id.street
-        res['ship_add2'] = self.ship_partner_id.street2
-        res['ship_loc'] = self.ship_partner_id.city
-        res['ship_pin'] = self.ship_partner_id.zip
-        res['ship_state'] = self.ship_partner_id.state_id.id
-        account_id = self.env['account.move'].sudo().search([('invoice_origin', '=', res['invoice_origin'])])
-        return res
-
-
-class ProductQR(models.Model):
-    _inherit = "account.move"
-    qr_code = fields.Binary("QR Code", attachment=True, store=True)
-
-    @api.onchange('default_code')
-    def generate_qr_code(self):
-        qr = qrcode.QRCode(
-            version=1,
-            error_correction=qrcode.constants.ERROR_CORRECT_L,
-            box_size=10,
-            border=4,
-        )
-        qr.add_data(self.default_code)
-        qr.make(fit=True)
-        img = qr.make_image()
-        temp = BytesIO()
-        img.save(temp, format="PNG")
-        qr_image = base64.b64encode(temp.getvalue())
-        self.qr_code = qr_image
+# class ProductQR(models.Model):
+#     _inherit = "account.move"
+#     qr_code = fields.Binary("QR Code", attachment=True, store=True)
+#
+#     @api.onchange('default_code')
+#     def generate_qr_code(self):
+#         qr = qrcode.QRCode(
+#             version=1,
+#             error_correction=qrcode.constants.ERROR_CORRECT_L,
+#             box_size=10,
+#             border=4,
+#         )
+#         qr.add_data(self.default_code)
+#         qr.make(fit=True)
+#         img = qr.make_image()
+#         temp = BytesIO()
+#         img.save(temp, format="PNG")
+#         qr_image = base64.b64encode(temp.getvalue())
+#         self.qr_code = qr_image
