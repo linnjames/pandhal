@@ -18,7 +18,7 @@
         'reports/export_local_invoice_temp.xml',
         'views/account_move.xml',
         # 'views/product_category.xml',
-        'views/res_partner.xml',
+        # 'views/res_partner.xml',
         'wizard/update_usd_to_inr_wizard_view.xml'
     ],
     'demo': [],
