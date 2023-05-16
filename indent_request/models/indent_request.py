@@ -246,3 +246,20 @@ class PurchaseState(models.Model):
 
     def button_purchase_approval(self):
         self.state = 'approve'
+
+    def button_confirm(self):
+        res = super(PurchaseState, self).button_confirm()
+        for order in self:
+            if order.state in ['approve']:
+
+                order.order_line._validate_analytic_distribution()
+                order._add_supplier_to_product()
+                # Deal with double validation process
+                if order._approval_allowed():
+                    order.button_approve()
+                else:
+                    order.write({'state': 'to approve'})
+                if order.partner_id not in order.message_partner_ids:
+                    order.message_subscribe([order.partner_id.id])
+            order.state = 'purchase'
+        return res
