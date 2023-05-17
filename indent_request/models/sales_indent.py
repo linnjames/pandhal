@@ -1,11 +1,16 @@
 from odoo import models, fields, api, _
 
 
-class IndentRequest(models.Model):
+class SalesIndent(models.Model):
     _name = 'sales.indent'
+    _rec_name = 'reference'
+
 
     # vendor_id = fields.Many2one('res.partner', string='Vendor')
+    # vendor_id = fields.Many2one('res.partner', string='Partner')
     vendor_id = fields.Many2one('res.company', string='Partner')
+    reference = fields.Char(string='Order Reference', required=True, copy=False, readonly=True,
+                            default=lambda self: _('New'))
 
     currency_id = fields.Many2one('res.currency', string='Currency')
     order_date = fields.Datetime(string='Order Deadline', default=fields.Date.today)
@@ -14,11 +19,29 @@ class IndentRequest(models.Model):
     state = fields.Selection(
         [('draft', "Draft"), ('confirmed', "Confirmed"), ('cancel', "Cancelled")], default='draft',)
     sales_line_ids = fields.One2many('sales.indent.lines','pur_id', string='Sales Line')
-    indent_type = fields.Selection([('bakery', 'Bakery'), ('store', 'Store')])
+    indent_type = fields.Selection([('bakery', 'Bakery'),
+                                    ('store', 'Store')], required=True)
     # sale_id = fields.Char('ID')
     sale_id = fields.Many2one('indent.request', string='ID')
     company_id = fields.Many2one('res.company', string='company', readonly=True,
                                  default=lambda self: self.env.company.id)
+
+    # @api.onchange('vendor_id')
+    # def onchange_vendor(self):
+    #     partner = self.env['res.company'].sudo().search([])
+    #     part_list = []
+    #     print(part_list)
+    #     for i in partner:
+    #         part_list.append(i.partner_id.id)
+    #     domain = [('id', 'in', part_list)]
+    #     return {"domain": {'vendor_id': domain}}
+
+    @api.model
+    def create(self, vals):
+        if vals.get('reference', _('New')) == _('New'):
+            vals['reference'] = self.env['ir.sequence'].next_by_code('sales.indent') or _('New')
+        res = super(SalesIndent, self).create(vals)
+        return res
 
     def action_confirmed(self):
         self.state = 'confirmed'

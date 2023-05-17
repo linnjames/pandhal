@@ -8,12 +8,13 @@ class IndentRequest(models.Model):
 
     reference = fields.Char(string='Order Reference', required=True, copy=False, readonly=True,
                             default=lambda self: _('New'))
-    # vendor_id = fields.Many2one('res.partner', string='Vendor')
-    vendor_id = fields.Many2one('res.company', string='Store')
-    uom_id = fields.Many2one('uom.uom', string='Unit of Measure')
-    indent_type = fields.Selection([('bakery', 'Bakery'), ('store', 'Store')])
-    # vendor_id = fields.Many2one('res.company', string='Store', domain="[('company_id.company_type', '=', company)]")
+    # vendor_id = fields.Many2one('res.partner', string='Partner')
+    vendor_id = fields.Many2one('res.company', string='Partner')
+    # vendor_id = fields.Many2one('res.partner', string='Company', domain="[('company_type', '=', 'company_id')]")
 
+    uom_id = fields.Many2one('uom.uom', string='Unit of Measure')
+    indent_type = fields.Selection([('bakery', 'Bakery'),
+                                    ('store', 'Store')], required=True)
     currency_id = fields.Many2one('res.currency', string='Currency')
     # order_date = fields.Datetime(string='Order Deadline', default=fields.Date.today)
     expected_date = fields.Datetime(string='Expected Date')
@@ -21,20 +22,19 @@ class IndentRequest(models.Model):
     state = fields.Selection(
         [('draft', "Draft"), ('confirmed', "Confirmed"), ('cancel', "Cancelled")],
         default='draft', )
+    company_id = fields.Many2one('res.company', string='company', readonly=True,
+                                 default=lambda self: self.env.company.id)
 
 
-    # operation_type_id = fields.Many2one('stock.picking.type', string='Operation Type', required=True)
-
-    # @api.model
-    # def create(self, vals):
-    #     if vals.get('reference', _('New')) == _('New'):
-    #         vals['reference'] = self.env['ir.sequence'].next_by_code('indent.sequence') or _('New')
-    #     res = super(IndentRequest, self).create(vals)
-    #     return res
-
-    # @api.onchange('vendor_id', 'company_type')
-    # def onchange_company_type(self):
-    #     self.vendor_id = (self.company_type == 'company')
+    # @api.onchange('vendor_id')
+    # def onchange_vendor(self):
+    #     partner = self.env['res.company'].sudo().search([])
+    #     part_list = []
+    #     print(part_list)
+    #     for i in partner:
+    #         part_list.append(i.partner_id.id)
+    #     domain = [('id', 'in', part_list)]
+    #     return {"domain": {'vendor_id': domain}}
 
     @api.model
     def create(self, vals):
@@ -59,6 +59,7 @@ class IndentRequest(models.Model):
         for vals in self:
             print('qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq')
             if vals.vendor_id.partner_id == self.env.company.partner_id:
+            # if vals.vendor_id.name == self.env.company.partner_id:
                 raise ValidationError('Partner cannot be the same as company.')
 
             # if vals.vendor_id.name == self.env.company.partner_id:
@@ -98,7 +99,8 @@ class IndentRequest(models.Model):
                 })
 
             b = self.env['stock.picking'].sudo().create({
-                'partner_id': self.env.company.partner_id.id,
+                # 'partner_id': self.env.company.partner_id.id,
+                'partner_id': self.vendor_id.id,
                 'picking_type_id': self.env.company.sudo().operation_type_in.id,
                 'location_id': self.env.company.sudo().operation_type_in.default_location_src_id.id,
                 'location_dest_id': self.env.company.sudo().operation_type_in.default_location_dest_id.id,
@@ -168,8 +170,10 @@ class IndentRequest(models.Model):
 
             # company_id = self.env.company
             c = self.env['sales.indent'].sudo().create({
-                'vendor_id': self.vendor_id.id,
+                # 'vendor_id': self.vendor_id.id,
+                'vendor_id': self.company_id.id,
                 'sale_id': self.id,
+                'indent_type': self.indent_type,
                 # 'order_date': self.order_date,
                 'expected_date': self.expected_date,
                 'company_id': self.vendor_id.id,

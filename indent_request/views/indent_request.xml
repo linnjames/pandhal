@@ -7,7 +7,7 @@
             <tree string="Purchase Indent ">
                 <field name="reference"/>
                 <field name="vendor_id"/>
-                <!--                <field name="order_date"/>-->
+                <field name="indent_type"/>
                 <field name="expected_date"/>
             </tree>
         </field>
@@ -23,7 +23,7 @@
                     <button name="action_confirmed" id="button_confirmed" string="Confirm Order" class="btn-primary"
                             type="object" states="draft"/>
                     <button name="action_cancel" id="button_cancel" string="Cancel" class="btn-primary"
-                            type="object" states="draft"/>
+                            type="object" states="draft,confirmed"/>
 <!--                    <button name="action_create_purchase" id="button_create_purchase" string="Create Purchase"-->
 <!--                            class="btn-primary"-->
                             type="object" states="confirmed"/>
@@ -33,7 +33,7 @@
                 <sheet>
                     <div class="oe_button_box" name="button_box">
                         <button name="action_open_purchase_transfer" type="object" class="oe_stat_button"
-                                icon="fa-truck">
+                                icon="fa-truck" states="confirmed">
                             <div class="o_stat_info">
                                 <span class="o_stat_text">Transfer</span>
                             </div>
@@ -50,8 +50,9 @@
                             <field name="indent_type"/>
                         </group>
                         <group>
-                            <!--                            <field name="order_date"/>-->
+                            <!--                            <field name="company_id"/>-->
                             <field name="expected_date"/>
+                            <field name="company_id"/>
                         </group>
                     </group>
                     <notebook>
