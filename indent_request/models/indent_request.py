@@ -21,20 +21,23 @@ class IndentRequest(models.Model):
     purchase_line_ids = fields.One2many('purchase.indent.lines', 'pur_id', string='Purchase Lines')
     state = fields.Selection(
         [('draft', "Draft"), ('confirmed', "Confirmed"), ('cancel', "Cancelled")],
-        default='draft', )
+        default='draft')
     company_id = fields.Many2one('res.company', string='company', readonly=True,
                                  default=lambda self: self.env.company.id)
 
+    delivery_status = fields.Selection([('draft', 'Draft'),
+                                        ('done', 'Done'),
+                                        ('cancel', 'Cancelled'),
+                                        ('waiting', "Waiting Another Operation"),
+                                        ('assigned', "Ready"),
+                                        ('confirmed', "Waiting"),
+                                        ], required=True, compute='_compute_delivery_state')
 
-    # @api.onchange('vendor_id')
-    # def onchange_vendor(self):
-    #     partner = self.env['res.company'].sudo().search([])
-    #     part_list = []
-    #     print(part_list)
-    #     for i in partner:
-    #         part_list.append(i.partner_id.id)
-    #     domain = [('id', 'in', part_list)]
-    #     return {"domain": {'vendor_id': domain}}
+    @api.depends('reference')
+    def _compute_delivery_state(self):
+        for record in self:
+            x = self.env['stock.picking'].sudo().search([('transfer_id', '=', record.reference)], limit=1).state
+            record.delivery_status = x
 
     @api.model
     def create(self, vals):
@@ -53,7 +56,15 @@ class IndentRequest(models.Model):
         }
 
     def action_cancel(self):
+        print('yyyyyyyyyyyyyyyyyyyyyyyyyyy')
         self.state = 'cancel'
+        a = self.env['stock.picking'].search([('transfer_id', '=', self.reference)], limit=1)
+        print(a)
+        if a.state == 'draft':
+            a.state = 'cancel'
+        else:
+            raise ValidationError("Transfer In Progress")
+
 
     def action_confirmed(self):
         for vals in self:

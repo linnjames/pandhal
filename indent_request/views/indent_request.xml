@@ -9,6 +9,15 @@
                 <field name="vendor_id"/>
                 <field name="indent_type"/>
                 <field name="expected_date"/>
+                <field name="state" widget="badge" decoration-success="state == 'posted'"
+                       decoration-info="state == 'draft'"/>
+                <field name="delivery_status" widget="badge"
+                       decoration-danger="state=='cancel'"
+                       decoration-info="state== 'assigned'"
+                       decoration-muted="state == 'draft'"
+                       decoration-primary="state == 'assigned'"
+                       decoration-success="state == 'done'"
+                       decoration-warning="state not in ('draft','cancel','done','assigned')"/>
             </tree>
         </field>
     </record>
@@ -33,7 +42,7 @@
                 <sheet>
                     <div class="oe_button_box" name="button_box">
                         <button name="action_open_purchase_transfer" type="object" class="oe_stat_button"
-                                icon="fa-truck" states="confirmed">
+                                icon="fa-truck" states="confirmed,cancel">
                             <div class="o_stat_info">
                                 <span class="o_stat_text">Transfer</span>
                             </div>

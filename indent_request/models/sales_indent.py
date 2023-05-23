@@ -1,4 +1,5 @@
 from odoo import models, fields, api, _
+from odoo.exceptions import ValidationError
 
 
 class SalesIndent(models.Model):
@@ -22,19 +23,25 @@ class SalesIndent(models.Model):
     indent_type = fields.Selection([('bakery', 'Bakery'),
                                     ('store', 'Store')], required=True)
     # sale_id = fields.Char('ID')
-    sale_id = fields.Many2one('indent.request', string='ID')
+    # sale_id = fields.Many2one('indent.request', string='ID')
+    sale_id = fields.Integer(string='ID')
     company_id = fields.Many2one('res.company', string='company', readonly=True,
                                  default=lambda self: self.env.company.id)
+    delivery_status = fields.Selection([('draft', 'Draft'),
+                                              ('done', 'Done'),
+                                              ('cancel', 'Cancelled'),
+                                              ('waiting', "Waiting Another Operation"),
+                                              ('assigned', "Ready"),
+                                              ('confirmed', "Waiting"),
+                                              ], required=True, compute='_compute_delivery_state_sales')
 
-    # @api.onchange('vendor_id')
-    # def onchange_vendor(self):
-    #     partner = self.env['res.company'].sudo().search([])
-    #     part_list = []
-    #     print(part_list)
-    #     for i in partner:
-    #         part_list.append(i.partner_id.id)
-    #     domain = [('id', 'in', part_list)]
-    #     return {"domain": {'vendor_id': domain}}
+    @api.depends('sale_id')
+    def _compute_delivery_state_sales(self):
+        for record in self:
+            x = self.env['stock.picking'].sudo().search([('transfer_id', '=', record.sale_id)], limit=1).state
+            print(x)
+            record.delivery_status = x
+
 
     @api.model
     def create(self, vals):
@@ -46,8 +53,22 @@ class SalesIndent(models.Model):
     def action_confirmed(self):
         self.state = 'confirmed'
 
+    # def action_cancel(self):
+    #     self.state = 'cancel'
+
     def action_cancel(self):
+        print('wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww')
         self.state = 'cancel'
+        a = self.env['stock.picking'].search([('transfer_id', '=', self.sale_id)], limit=1)
+        print(a)
+        if a.state == 'draft':
+            a.state = 'cancel'
+        else:
+            raise ValidationError("Transfer In Progress")
+
+
+
+
 
     def action_open_transfer(self):
         return {
@@ -55,7 +76,8 @@ class SalesIndent(models.Model):
             'type': 'ir.actions.act_window',
             'res_model': 'stock.picking',
             'view_mode': 'tree,form',
-            'domain': [('transfer_id', '=', self.sale_id.id)],
+            # 'domain': [('transfer_id', '=', self.sale_id.id)],
+            'domain': [('transfer_id', '=', self.sale_id)],
         }
 
 

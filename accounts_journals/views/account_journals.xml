@@ -8,7 +8,10 @@
             <field name="arch" type="xml">
                 <xpath expr="//field[@name='deprecated']" position="after">
                     <field name="negative_limit" groups="accounts_journals.accounts_negative_cash_blocking"/>
-                    <field name="set_limit" groups="accounts_journals.account_journals_cash_limiting"/>
+                    <field name="limit" string="Set Limit" groups="accounts_journals.account_journals_cash_limiting"/>
+                    <field name="set_limit" string="Limit Price"
+                           groups="accounts_journals.account_journals_cash_limiting"
+                           attrs="{'invisible': [('limit', '!=', True)]}"/>
                 </xpath>
             </field>
         </record>
