@@ -1,5 +1,5 @@
 from odoo import models, fields, api, _
-from odoo.exceptions import ValidationError
+from odoo.exceptions import ValidationError, UserError
 
 
 class SalesIndent(models.Model):
@@ -8,8 +8,8 @@ class SalesIndent(models.Model):
 
 
     # vendor_id = fields.Many2one('res.partner', string='Vendor')
-    # vendor_id = fields.Many2one('res.partner', string='Partner')
-    vendor_id = fields.Many2one('res.company', string='Partner')
+    vendor_id = fields.Many2one('res.partner', string='Partner')
+    # vendor_id = fields.Many2one('res.company', string='Partner')
     reference = fields.Char(string='Order Reference', required=True, copy=False, readonly=True,
                             default=lambda self: _('New'))
 
@@ -50,8 +50,26 @@ class SalesIndent(models.Model):
         res = super(SalesIndent, self).create(vals)
         return res
 
+    # def action_confirmed(self):
+    #     self.state = 'confirmed'
+
     def action_confirmed(self):
-        self.state = 'confirmed'
+        # self.state = 'confirmed'
+        comp = self.env['res.company'].sudo().search([('partner_id', '=', self.vendor_id.id)])
+        d = self.env['indent.request'].sudo().create({
+            'vendor_id': self.company_id.partner_id.id,
+            'indent_type': self.indent_type,
+            'expected_date': self.expected_date,
+            'company_id': comp.id,
+        })
+        for vals in self.sales_line_ids:
+            d.write({
+                'purchase_line_ids': [(0, 0, {
+                    'product_id': vals.product_id.id,
+                    'uom_id': vals.uom_id.id,
+                    'qty': vals.qty,
+                })]
+            })
 
     # def action_cancel(self):
     #     self.state = 'cancel'
@@ -66,9 +84,8 @@ class SalesIndent(models.Model):
         else:
             raise ValidationError("Transfer In Progress")
 
-
-
-
+    # def action_open_transfer(self):
+    #     pass
 
     def action_open_transfer(self):
         return {
@@ -99,15 +116,62 @@ class SalesIndentLines(models.Model):
             if self.product_id.uom_id:
                 self.uom_id = self.product_id.uom_id
 
-    # order_lines = [product_id]  # a list of order lines, each containing product information
-    #
-    # # create a set of unique product IDs
-    # products = set(line['product'] for line in order_lines)
-    #
-    # # check for duplicates
-    # for line in order_lines:
-    #     if line['product'] in products:
-    #         raise ValueError('Duplicate product found. Please remove one of the duplicates.')
-    #     else:
-    #         products.add(line['product'])
 
+class SalesOrder(models.Model):
+    _inherit = 'sale.order'
+
+    indent_type = fields.Selection([('customer order', 'Customer Order'),
+                                    ('bakery', 'Bakery'),
+                                    ('store', 'Store')], required=True, default='customer order')
+
+    state = fields.Selection(selection_add=[('indent_created', 'Indent Created')])
+
+
+
+    def action_create_purchase_indent(self):
+        if not self.order_line.filtered(lambda l: l.select_item):
+            raise UserError("Please select at least one item.")
+
+        self.state = "indent_created"
+
+        b = self.env['indent.request'].sudo().create({
+            'vendor_id': self.partner_id.id,
+            'indent_type': self.indent_type,
+            'expected_date': self.date_order,
+            'sale_purchase_id': self.id,
+            # 'picking_type_id': self.env.company.sudo().operation_type_in.id,
+            # 'location_id': self.env.company.sudo().operation_type_in.default_location_src_id.id,
+            # 'location_dest_id': self.env.company.sudo().operation_type_in.default_location_dest_id.id,
+            'company_id': self.env.company.id,
+
+        })
+        for vals in self.order_line.filtered(lambda l: l.select_item):
+            b.write({
+                'purchase_line_ids': [(0, 0, {
+                    'product_id': vals.product_id.id,
+                    'qty': vals.product_uom_qty,
+                    'uom_id': vals.product_uom.id,
+                    'message': vals.message,
+                    # 'description_picking': vals.product_id.id,
+                    # 'name': vals.product_id.name,
+                    # 'company_id': self.env.company.id,
+                    # 'location_id': self.env.company.sudo().operation_type_in.default_location_src_id.id,
+                    # 'location_dest_id': self.env.company.sudo().operation_type_in.default_location_dest_id.id,
+                })]
+            })
+
+    def action_view_purchase_indent(self):
+        return {
+            'name': _('Indent'),
+            'type': 'ir.actions.act_window',
+            'res_model': 'indent.request',
+            'view_mode': 'tree,form',
+            'domain': [('sale_purchase_id', '=', self.id)],
+        }
+
+
+class SalesOrderLine(models.Model):
+    _inherit = 'sale.order.line'
+
+    message = fields.Char(string='Message')
+    select_item = fields.Boolean(string='Select Items')

@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+
+    <record id="view_stock_transfer_form_inherit" model="ir.ui.view">
+        <field name="name">Stock Transfer Demand</field>
+        <field name="model">stock.picking</field>
+        <field name="inherit_id" ref="stock.view_picking_form"/>
+        <field name="arch" type="xml">
+            <field name="origin" position="after">
+                <field name="demand_no" attrs="{'readonly': [('state', 'in', ('done', 'cancel'))]}"/>
+            </field>
+        </field>
+    </record>
+
+    <record id="production_planning_tree" model="ir.ui.view">
+        <field name="name">Production Planning Tree</field>
+        <field name="model">production.planning</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="reference"/>
+                <field name="planning_date"/>
+<!--                <field name="kitchen_ids" widget="many2many_tags"/>-->
+<!--                <field name="trip_ids" options="{'no_create': True}" widget="many2many_tags"/>-->
+                <field name="item_category_id"/>
+                <field name="state" widget="badge" decoration-info="state == 'draft'"
+                       decoration-danger="state == 'reject'"
+                       decoration-warning="state == 'approve'"
+                       decoration-success="state == 'done'"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="production_planning_form" model="ir.ui.view">
+        <field name="name">Production Planning</field>
+        <field name="model">production.planning</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <button name="action_line_value" string="GET Products" class="btn-primary" states="draft, approval"
+                            type="object"/>
+                    <button name="action_waiting_approval" string="Submit" class="btn-primary" states="draft"
+                            type="object"/>
+                    <button name="action_approve" string="Approve" class="btn-primary" states="approval" type="object"
+                            groups="production_planning.group_production_approve"/>
+                    <button name="action_reject" string="Reject" class="btn-danger" states="approval" type="object"/>
+                    <button name="action_confirm" string="Confirm" class="btn-primary" states="approve" type="object"/>
+                    <field name="state" widget="statusbar" statusbar_visible="draft,approval,approve,reject,done"/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="reference" readonly="1"/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="planning_date"
+                                   attrs="{'readonly' :[('state','not in', ('draft', 'approval'))]}"/>
+                            <field name="item_category_id"
+                                   attrs="{'readonly' :[('state','not in', ('draft', 'approval'))]}"/>
+<!--                            <field name="kitchen_ids" options="{'no_create': True, 'no_open': True}"-->
+<!--                                   widget="many2many_tags"-->
+<!--                                   attrs="{'readonly' :[('state','not in', ('draft', 'approval'))]}"/>-->
+                        </group>
+                        <group>
+<!--                            <field name="trip_ids" options="{'no_create': True}" widget="many2many_tags"-->
+<!--                                   attrs="{'readonly' :[('state','not in', ('draft', 'approval'))]}"/>-->
+                            <field name="reason"
+                                   attrs="{'invisible': [('state', 'not in', ('approval', 'reject'))],'readonly' :[('state','=', 'reject')]}"/>
+                            <field name="company_id" invisible="1"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Production Lines" name="production_planning_lines">
+                            <group>
+                                <field name="tick" attrs="{'readonly' :[('state','in', ('done', 'reject'))]}"/>
+                            </group>
+                            <field name="production_lines_ids"
+                                   attrs="{'readonly' :[('state','in', ('done', 'reject'))]}">
+                                <tree editable="bottom">
+                                    <field name="item_list_id" options="{'no_create': True, 'no_open': True}" required="1"/>
+                                    <field name="production_uom_id" options="{'no_create': True, 'no_open': True}"
+                                           force_save="1"/>
+                                    <field name="product_kitchen_id" options="{'no_create': True, 'no_open': True}"
+                                           force_save="1"/>
+                                    <field name="trip_1" readonly="1"/>
+                                    <field name="trip_2" readonly="1"/>
+                                    <field name="trip_3" readonly="1"/>
+                                    <field name="trip_4" readonly="1"/>
+                                    <field name="order_quantity" required="1"/>
+                                    <field name="on_quantity" required="1" readonly="1" force_save="1"/>
+                                    <field name="planed_quantity" force_save="1"/>
+                                    <field name="varience"/>
+                                    <field name="actual_plan_qty"/>
+                                </tree>
+                            </field>
+                        </page>
+                        <page string="Production Sale Lines" name="production_planning_sale_lines" invisible="1">
+                            <field name="production_sale_lines_ids">
+                                <tree editable="bottom">
+                                    <field name="pro_sale_line_id" readonly="1"/>
+                                </tree>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="production_planning_action" model="ir.actions.act_window">
+        <field name="name">Production Planning</field>
+        <field name="res_model">production.planning</field>
+        <field name="view_mode">tree,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Create a new production planning action!
+            </p>
+        </field>
+    </record>
+
+    <menuitem id="production_planning_root"
+              name="Production Planning"
+              sequence="10"
+              web_icon="production_planning,static/description/icon.png"
+              groups="production_planning.group_production_planning"/>
+
+    <menuitem id="planning"
+              name="Planning"
+              parent="production_planning_root"
+              action="production_planning_action"
+              sequence="3"/>
+</odoo>

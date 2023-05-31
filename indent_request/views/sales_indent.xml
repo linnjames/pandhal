@@ -82,6 +82,7 @@
     </record>
 
 
+
     <record id="sales_indent_request_action" model="ir.actions.act_window">
         <field name="name">Sales Indent</field>
         <field name="type">ir.actions.act_window</field>

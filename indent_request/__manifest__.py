@@ -19,6 +19,7 @@
         'views/product_privilege.xml',
         'views/purchase_approval.xml',
         'views/sales_indent.xml',
+        'views/salesorder_indent.xml',
         # 'views/pos_price_restriction.xml',
     ],
     'demo': [],

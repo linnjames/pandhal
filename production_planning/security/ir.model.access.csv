@@ -1,0 +1,4 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_production_planning,access.production.planning,model_production_planning,,1,1,1,1
+access_production_planning_lines,access.production.planning.lines,model_production_planning_lines,,1,1,1,1
+access_production_order_lines,access.production.order.lines,model_production_order_lines,,1,1,1,1
