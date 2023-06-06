@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo>
+  <record id="support_center_view_pivot" model="ir.ui.view">
+    <field name="name">Support Center Pivot View</field>
+    <field name="model">support.center</field>
+    <field name="arch" type="xml">
+      <pivot string="Support Center Pivot View">
+        <field name="state" type="col"/>
+        <field name="attended_user_id" type="row"/>
+        <field name="priority" type="row"/>
+      </pivot>
+    </field>
+  </record>
+  <record id="action_support_center_pivot_report" model="ir.actions.act_window">
+    <field name="name">Tickets</field>
+    <field name="res_model">support.center</field>
+    <field name="type">ir.actions.act_window</field>
+    <field name="view_mode">pivot,graph</field>
+  </record>
+
+  <menuitem id="menu_support_center_report"
+            name="Reports"
+            parent="menu_support_main"
+            groups="support_group_manager"/>
+  <menuitem id="menu_support_center_pivot_report"
+            name="Tickets"
+            parent="menu_support_center_report"
+            action="action_support_center_pivot_report"
+            sequence="10"
+            groups="support_group_manager"/>
+</odoo>

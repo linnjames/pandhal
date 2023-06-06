@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="seq_indent_request" model="ir.sequence">
+            <field name="name">Indent Sequence</field>
+            <field name="code">indent.sequence</field>
+            <field name="prefix">PI</field>
+            <field name="padding">5</field>
+            <field name="company_id" eval="False"/>
+        </record>
+
+
+        <record id="seq_sale_indent" model="ir.sequence">
+            <field name="name">Sale Indent</field>
+            <field name="code">sales.indent</field>
+            <field name="prefix">SI</field>
+            <field name="padding">5</field>
+            <field name="company_id" eval="False"/>
+        </record>
+    </data>
+</odoo>

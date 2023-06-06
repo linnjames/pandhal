@@ -1,0 +1,8 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_multi_scrap,access.multi.scrap,model_multi_scrap,,1,1,1,1
+access_multi_scrap_line,access.multi.scrap.line,model_multi_scrap_line,,1,1,1,1
+access_multi_scrap_wizard,access.multi.scrap.wizard,model_multi_scrap_wizard,,1,1,1,1
+
+
+
+

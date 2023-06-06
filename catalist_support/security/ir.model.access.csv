@@ -1,0 +1,8 @@
+"id","name","model_id:id","group_id:id","perm_read","perm_write","perm_create","perm_unlink"
+"support_center_portal_id","access_support_center","model_support_center","base.group_portal",1,1,1,0
+"support_center_user_id","access_support_center","model_support_center","support_group_user",1,1,1,0
+"support_center_manager_id","access_support_center","model_support_center","support_group_manager",1,1,1,1
+"support_product_line_manager_id","access_support_product_line","model_support_product_line","support_group_user",1,1,1,1
+"case_type_user_id","access_case_type_user","model_case_type","support_group_user",1,0,0,0
+"case_type_id","access_case_type","model_case_type","support_group_manager",1,1,1,1
+"ticket_reschedule_wizard_id","access_ticket_reschedule_wizard","model_ticket_reschedule_wizard","support_group_user",1,1,1,1

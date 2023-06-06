@@ -1,0 +1,192 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+  <data noupdate="0">
+    <record id="support_ticket_initiated_template" model="mail.template">
+      <field name="name">Support: Ticket Initiated</field>
+      <field name="model_id" ref="catalist_support.model_support_center"/>
+      <field name="subject">Catalist Support Ticket Registered (${object.sl_no})</field>
+      <field name="email_from">support@catalistindia.in</field>
+      <field name="body_html" type="html">
+<div style="margin: 0px; padding: 0px;">
+    <p style="margin: 0px; padding: 0px; font-size: 13px;">
+        Dear
+        % if object.customer_contact_id.parent_id:
+            ${object.customer_contact_id.name} (${object.customer_contact_id.parent_id.name}),
+        % else:
+            ${object.customer_contact_id.name},
+        % endif
+        <br /><br />
+        <p>Thank you for contacting Catalist IT Support. The following case is registered and is on processing.</p>
+        <br></br>
+        <p>Ticket Number : ${object.sl_no}</p>
+        <br></br>
+         <p>Ticket Title : ${object.name}</p>
+        <br></br>
+        <p>Case Registered On : ${object.date_received.date()} </p>
+        <br></br>
+        <p>Client Contact : ${object.customer_contact_id.name} </p>
+        <br></br>
+         <p>Client : ${object.customer_id.name} </p>
+        <br></br>
+         <p>Expected Delivery Date : ${object.date_scheduled.date()}</p>
+        <br></br>
+        <p>Support Engineer : ${object.assigned_user_id.name}</p>
+        <br></br>
+        <p>
+       <strong> Remarks :</strong> We may need assistance from the Product Vendor for some cases.
+            In that case we may need to change the delivery date and will update the same with you.
+        </p>
+        <br></br>
+        <p>
+           If you are not receiving the solution or postpone acknowledgement within the above mentioned time
+            please mail to us in support@catalistindia.in
+        </p>
+        <br></br>
+
+            Thanks &amp; Regards,
+        <br/>Catalist Support Team
+    </p>
+</div>
+      </field>
+      <field name="lang">${object.customer_contact_id.lang}</field>
+    </record>
+
+      <record id="support_ticket_reschedule_template" model="mail.template">
+      <field name="name">Support: Ticket Rescheduled</field>
+      <field name="model_id" ref="catalist_support.model_support_center"/>
+      <field name="subject">Kind Attn - Required more time for Solution delivery for the Ticket : ${object.sl_no}</field>
+      <field name="email_from">support@catalistindia.in</field>
+      <field name="body_html" type="html">
+<div style="margin: 0px; padding: 0px;">
+    <p style="margin: 0px; padding: 0px; font-size: 13px;">
+        Dear
+        % if object.customer_contact_id.parent_id:
+            ${object.customer_contact_id.name} (${object.customer_contact_id.parent_id.name}),
+        % else:
+            ${object.customer_contact_id.name},
+        % endif
+        <br></br>
+         <p>The following case required more time to provide solution. The delay was unexpected and we are working on it.
+             New expected delivery date is shown below.</p>
+        <br></br>
+        <p>Ticket Number : ${object.sl_no}</p>
+        <br></br>
+         <p>Ticket Title : ${object.name}</p>
+        <br></br>
+        <p>Case Registered On : ${object.date_received.date()} </p>
+        <br></br>
+        <p>Client Contact : ${object.customer_contact_id.name} </p>
+        <br></br>
+         <p>Client : ${object.customer_id.name} </p>
+        <br></br>
+         <p>Committed Delivery date : ${object.date_scheduled.date()}</p>
+        <br></br>
+         <p>New Delivery date : ${object.date_rescheduled.date()}</p>
+        <br></br>
+        <p>Support Engineer : ${object.assigned_user_id.name}</p>
+        <br></br>
+        <p>
+       <strong> Remarks :</strong> Sorry for the inconvenience, for more please contact 7736293665 or mail to us in support@catalistindia.in
+        </p>
+        <br></br>
+
+       Thanks &amp; Regards,
+       <br/>Catalist Support Team
+    </p>
+</div>
+      </field>
+      <field name="lang">${object.customer_contact_id.lang}</field>
+    </record>
+
+
+    <record id="support_ticket_delivered_template" model="mail.template">
+      <field name="name">Support: Ticket Delivered</field>
+      <field name="model_id" ref="catalist_support.model_support_center"/>
+      <field name="subject"> Catalist Support Ticket Solution Delivered (${object.sl_no})</field>
+      <field name="email_from">support@catalistindia.in</field>
+      <field name="body_html" type="html">
+<div style="margin: 0px; padding: 0px;">
+    <p style="margin: 0px; padding: 0px; font-size: 13px;">
+        Dear
+        % if object.customer_contact_id.parent_id:
+            ${object.customer_contact_id.name} (${object.customer_contact_id.parent_id.name}),
+        % else:
+            ${object.customer_contact_id.name},
+        % endif
+        <br></br>
+        <p>Thank you for contacting Catalist IT Support. The solution for the following case is completed and delivered.</p>
+        <br></br>
+        <p>Ticket Number : ${object.sl_no}</p>
+        <br></br>
+         <p>Ticket Title : ${object.name}</p>
+        <br></br>
+        <p>Case Registered On : ${object.date_received.date()} </p>
+        <br></br>
+        <p>Client Contact : ${object.customer_contact_id.name} </p>
+        <br></br>
+         <p>Client : ${object.customer_id.name} </p>
+        <br></br>
+         <p>Date Of Delivery : ${object.date_delivered.date()}</p>
+        <br></br>
+        <p>Support Engineer : ${object.assigned_user_id.name}</p>
+        <br></br>
+        <p>
+       <strong> Remarks :</strong>Please check the solution provided for the case.
+            If there is any change or clarification needed on the case
+            please contact 7736293665 or mail to support@catalistindia.
+            in within 48 hours from now.
+            If there is no response we will consider the case as approved and accepted.</p>
+        <br></br>
+            Thanks &amp; Regards,
+       <br/>Catalist Support Team
+    </p>
+</div>
+      </field>
+      <field name="lang">${object.customer_contact_id.lang}</field>
+    </record>
+
+
+    <record id="support_ticket_closed_template" model="mail.template">
+      <field name="name">Support: Ticket Closed</field>
+      <field name="model_id" ref="catalist_support.model_support_center"/>
+      <field name="subject"> Catalist Support Ticket Closed (${object.sl_no})</field>
+      <field name="email_from">support@catalistindia.in</field>
+      <field name="body_html" type="html">
+<div style="margin: 0px; padding: 0px;">
+    <p style="margin: 0px; padding: 0px; font-size: 13px;">
+        Dear
+        % if object.customer_contact_id.parent_id:
+            ${object.customer_contact_id.name} (${object.customer_contact_id.parent_id.name}),
+        % else:
+            ${object.customer_contact_id.name},
+        % endif
+        <br /><br />
+         <p>Thank you for contacting Catalist Support. The following case is closed.</p>
+        <br></br>
+        <p>Ticket Number : ${object.sl_no}</p>
+        <br></br>
+         <p>Ticket Title : ${object.name}</p>
+        <br></br>
+        <p>Case Registered On : ${object.date_received.date()} </p>
+        <br></br>
+        <p>Client Contact : ${object.customer_contact_id.name} </p>
+        <br></br>
+         <p>Client : ${object.customer_id.name} </p>
+        <br></br>
+         <p>Date Of Delivery : ${object.date_delivered.date()}</p>
+        <br></br>
+        <p>Support Engineer : ${object.assigned_user_id.name}</p>
+        <br></br>
+        <p>
+       <strong> Remarks :</strong>If you have not received the solution within the mentioned time
+            please contact 7736293665 or mail to us in support@catalistindia.in</p>
+        <br></br>
+            Thanks &amp; Regards,
+       <br/>Catalist Support Team
+    </p>
+</div>
+      </field>
+      <field name="lang">${object.customer_contact_id.lang}</field>
+    </record>
+  </data>
+</odoo>

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+  <data noupdate="1">
+    <record id="support_center_sequence" model="ir.sequence">
+      <field name="name">Support Center Sequence</field>
+      <field name="code">support.center</field>
+      <field name="prefix">Ticket/</field>
+      <field name="padding">5</field>
+      <field name="company_id" eval="False"/>
+    </record>
+
+    <record id="customer_register_sequence" model="ir.sequence">
+      <field name="name">Customer Register Sequence</field>
+      <field name="code">res.partner</field>
+      <field name="prefix">DC</field>
+      <field name="padding">5</field>
+      <field name="company_id" eval="False"/>
+    </record>
+  </data>
+</odoo>

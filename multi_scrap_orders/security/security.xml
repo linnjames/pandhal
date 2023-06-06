@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="group_multi_scrap" model="res.groups">
+            <field name="name">Manage Multiple Stock Scrap Orders</field>
+        </record>
+    </data>
+
+     <data>
+        <record id="group_approve_scrap" model="res.groups">
+            <field name="name">Approve Multi Scrap Validation</field>
+        </record>
+    </data>
+
+    <data>
+        <record id="group_single_scrap" model="res.groups">
+            <field name="name">Approve Single Scrap Validation</field>
+        </record>
+    </data>
+
+     <data>
+        <record id="group_receive_scrap" model="res.groups">
+            <field name="name">Confirm Received Product</field>
+        </record>
+    </data>
+
+</odoo>

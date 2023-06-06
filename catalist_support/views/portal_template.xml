@@ -1,0 +1,201 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+  <template id="portal_template">
+    <t t-call="website.layout">
+      <form action="/ticket/new/submit" method="post">
+        <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+        <br/>
+        <div class="form-group row" style="padding: 20px;text-align:left;">
+          <label class="col-md-4 col-form-label"
+                 for="alt"
+                 title="Your Company Name">
+            Company
+          </label>
+          <div class="col-md-8">
+            <span t-esc="request.env.user.partner_id.parent_id.name"/>
+          </div>
+        </div>
+        <div class="form-group row" style="padding: 20px;text-align:left;">
+          <label class="col-md-4 col-form-label"
+                 for="alt"
+                 title="Issue Title">
+            Issue
+          </label>
+          <div class="col-md-8">
+            <input class="form-control" name="name" id="name" required="required" type="text"/>
+          </div>
+        </div>
+        <div class="form-group row" style="padding: 20px;text-align:left;">
+          <label class="col-md-4 col-form-label"
+                 for="alt"
+                 title="Short Details of the issue">
+            Issue Details
+          </label>
+          <div class="col-md-8">
+            <textarea class="form-control" name="issue_description" id="issue_description" required="required" type="text"/>
+          </div>
+        </div>
+        <div style="padding: 20px;text-align:left;">
+          <button type="submit" class="btn btn-danger">Submit</button>
+        </div>
+      </form>
+    </t>
+  </template>
+
+  <template id="portal_my_home_ticket" name="Show Tickets" customize_show="True" inherit_id="portal.portal_my_home" priority="20">
+    <xpath expr="//div[hasclass('o_portal_docs')]" position="inside">
+      <t t-call="portal.portal_docs_entry">
+        <t t-set="title">Open Tickets</t>
+        <t t-set="url" t-value="'/my/tickets/open'"/>
+        <t t-set="placeholder_count" t-value="'current_ticket_count'"/>
+      </t>
+      <t t-call="portal.portal_docs_entry">
+        <t t-set="title">Ticket History</t>
+        <t t-set="url" t-value="'/my/tickets'"/>
+        <t t-set="placeholder_count" t-value="'ticket_count'"/>
+      </t>
+    </xpath>
+  </template>
+
+  <template id="portal_my_open_tickets" name="My Tickets">
+    <t t-call="portal.portal_layout">
+      <t t-set="breadcrumbs_searchbar" t-value="True"/>
+
+      <t t-call="portal.portal_searchbar">
+        <t t-set="title">Tickets</t>
+      </t>
+      <t t-if="not ticket_ids">
+        <p>There are currently no tickets for your account.</p>
+      </t>
+      <t t-if="ticket_ids" t-call="portal.portal_table">
+        <thead>
+          <tr class="active">
+            <th>Ticket #</th>
+            <th class="text-right">Description</th>
+            <th class="text-right">Case Registered On</th>
+            <th class="text-right">Expected Delivery</th>
+            <th class="text-right">State</th>
+          </tr>
+        </thead>
+        <t t-foreach="ticket_ids" t-as="ticket_id">
+          <tr>
+            <td><a t-att-href="'/my/tickets/%s' % ticket_id.id"><t t-esc="ticket_id.sl_no"/></a></td>
+            <td class="text-right"><span t-field="ticket_id.name"/></td>
+            <td class="text-right"><span t-field="ticket_id.date_received"/></td>
+            <td class="text-right"><span t-field="ticket_id.date_scheduled"/></td>
+            <td class="text-right"><span t-field="ticket_id.state"/></td>
+          </tr>
+        </t>
+      </t>
+      <br/>
+      <div class="btn-group mr-1 mb-1">
+        <t t-if="new_ticket_available">
+          <a class="btn btn-secondary btn-block" href="/ticket/new" title="New Ticket"> New Ticket</a>
+        </t>
+      </div>
+    </t>
+  </template>
+
+  <template id="portal_my_tickets" name="My Tickets">
+    <t t-call="portal.portal_layout">
+      <t t-set="breadcrumbs_searchbar" t-value="True"/>
+
+      <t t-call="portal.portal_searchbar">
+        <t t-set="title">Tickets</t>
+      </t>
+      <t t-if="not ticket_ids">
+        <p>There are currently no tickets for your account.</p>
+      </t>
+      <t t-if="ticket_ids" t-call="portal.portal_table">
+        <thead>
+          <tr class="active">
+            <th>Ticket #</th>
+            <th class="text-right">Description</th>
+            <th class="text-right">Case Registered On</th>
+            <th class="text-right">Delivered On</th>
+            <th class="text-right">State</th>
+          </tr>
+        </thead>
+        <t t-foreach="ticket_ids" t-as="ticket_id">
+          <tr>
+            <td><a t-att-href="'/my/tickets/%s' % ticket_id.id"><t t-esc="ticket_id.sl_no"/></a></td>
+            <td class="text-right"><span t-field="ticket_id.name"/></td>
+            <td class="text-right"><span t-field="ticket_id.date_received"/></td>
+            <td class="text-right"><span t-field="ticket_id.date_delivered"/></td>
+            <td class="text-right"><span t-field="ticket_id.state"/></td>
+          </tr>
+        </t>
+      </t>
+      <br/>
+      <div class="btn-group mr-1 mb-1">
+        <t t-if="new_ticket_available">
+          <a class="btn btn-secondary btn-block" href="/ticket/new" title="New Ticket"> New Ticket</a>
+        </t>
+      </div>
+    </t>
+  </template>
+  <template id="portal_ticket_details" name="Portal Ticket Details Template" inherit_id="portal.portal_sidebar" primary="True">
+    <xpath expr="//div[hasclass('o_portal_sidebar')]" position="inside">
+      <div t-attf-class="card #{'pb-5' if report_type == 'html' else ''}" id="portal_sale_content">
+        <div id="introduction" t-attf-class="pb-2 pt-3 #{'card-header bg-white' if report_type == 'html' else ''}">
+          <h2 class="my-0">
+            <t t-esc="ticket_id.sl_no"/> -
+            <em t-esc="ticket_id.name"/>
+          </h2>
+        </div>
+
+        <div class="row" id="ticket_date">
+          <div class="mb-3 col-4">
+            <strong>Case Registered On:</strong>
+            <span t-field="ticket_id.date_received" t-options='{"widget": "date"}'/>
+          </div>
+          <div class="mb-3 col-4">
+            <t t-if="ticket_id.date_delivered">
+              <strong>Delivery Date:</strong>
+              <span t-field="ticket_id.date_delivered" t-options='{"widget": "date"}'/>
+            </t>
+            <t t-else="">
+              <strong>Expected Delivery:</strong>
+              <span t-field="ticket_id.date_scheduled" t-options='{"widget": "date"}'/>
+            </t>
+          </div>
+          <div class="mb-3 col-4">
+            <t t-if="ticket_id.date_completed">
+              <strong>Closed On:</strong>
+              <span t-field="ticket_id.date_delivered" t-options='{"widget": "date"}'/>
+            </t>
+          </div>
+        </div>
+
+        <div class="row" id="assigned_users">
+          <div class="mb-3 col-4">
+            <strong>Attended By:</strong>
+            <span t-field="ticket_id.attended_user_id"/>
+          </div>
+          <div class="mb-3 col-4">
+            <strong>Priority:</strong>
+            <span t-field="ticket_id.priority"/>
+          </div>
+          <div class="mb-3 col-4">
+            <strong>Current State:</strong>
+            <span t-field="ticket_id.state"/>
+          </div>
+        </div>
+        <br/>
+        <h3>Issue Description and Solution</h3>
+
+        <div class="row" id="issue_description">
+          <div class="mb-3 col-6">
+            <strong>Issue Description:</strong><br/>
+            <span t-field="ticket_id.issue_description"/>
+          </div>
+          <div class="mb-3 col-6">
+            <strong>Solution Delivered:</strong><br/>
+            <span t-field="ticket_id.solution_description"/>
+          </div>
+        </div>
+
+      </div>
+    </xpath>
+  </template>
+</odoo>

@@ -1,0 +1,14 @@
+<odoo>
+    <data>
+        <record id="multi_scrap_report_xlsx" model="ir.actions.report">
+            <field name="name">Multi Scrap Report xlsx</field>
+            <field name="model">multi.scrap.wizard</field>
+            <field name="report_type">xlsx</field>
+            <field name="report_name">multi_scrap_orders.multi_scrap_report_xlsx</field>
+            <field name="report_file">multi_scrap_orders.multi_scrap_report_xlsx</field>
+            <field name="print_report_name">'Multi Scrap Report'</field>
+            <field name="binding_model_id" ref="model_multi_scrap_wizard"/>
+            <field name="binding_type">report</field>
+        </record>
+    </data>
+</odoo>

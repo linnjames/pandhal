@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_report_multi_form" model="ir.ui.view">
+        <field name="name">multi.scrap.report.wizard.form</field>
+        <field name="model">multi.scrap.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Print Multi Scrap">
+                <group>
+                    <field name="date"/>
+                </group>
+                <footer>
+                    <button name="action_scrap_report" string="Print" type="object" class="btn-primary"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <record id="multi_scrap_report_action" model="ir.actions.act_window">
+        <field name="name">Multi Scrap Report</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">multi.scrap.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+
+    <menuitem id="scrap_report"
+              name="Multi Scrap Report"
+              action="multi_scrap_report_action"
+              parent="stock.menu_warehouse_report"
+              sequence="5"/>
+
+</odoo>
