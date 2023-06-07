@@ -136,11 +136,14 @@ class SalesOrder(models.Model):
             raise UserError("Please select at least one item.")
 
         self.state = "indent_created"
-
+        company = self.env['res.company'].search([('partner_id', '=', 'Kuruvinakunnel Enterprises')])
+        print(company)
         b = self.env['indent.request'].sudo().create({
-            'vendor_id': self.partner_id.id,
+            # 'vendor_id': self.partner_id.id,
+            'vendor_id': company.id,
             'indent_type': self.indent_type,
-            'expected_date': self.date_order,
+            # 'expected_date': self.date_order,
+            'expected_date': self.validity_date,
             'sale_purchase_id': self.id,
             # 'picking_type_id': self.env.company.sudo().operation_type_in.id,
             # 'location_id': self.env.company.sudo().operation_type_in.default_location_src_id.id,
@@ -177,4 +180,4 @@ class SalesOrderLine(models.Model):
     _inherit = 'sale.order.line'
 
     message = fields.Char(string='Message')
-    select_item = fields.Boolean(string='Select Items')
+    select_item = fields.Boolean(string='Select Items', default=True)

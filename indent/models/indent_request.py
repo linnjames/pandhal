@@ -281,10 +281,10 @@ class PurchaseIndentLines(models.Model):
     message = fields.Char(string="Message")
 
 
-    @api.onchange('product_id')
-    def onchange_product_id(self):
-        if self.product_id.image_1920:
-            self.img = self.product_id.image_1920
+    # @api.onchange('product_id')
+    # def onchange_product_id(self):
+    #     if self.product_id.image_1920:
+    #         self.img = self.product_id.image_1920
 
 
     @api.onchange('product_id')
