@@ -27,7 +27,7 @@ class SalesIndent(models.Model):
                                     ('customer order', 'Customer Order')], required=True)
     # sale_id = fields.Char('ID')
     # sale_id = fields.Many2one('indent.request', string='ID')
-    sale_id = fields.Integer(string='Purchase indent number')
+    sale_id = fields.Integer(string='purchase indent number')
     company_id = fields.Many2one('res.company', string='company', readonly=True,
                                  default=lambda self: self.env.company.id)
     delivery_status = fields.Selection([('draft', 'Draft'),

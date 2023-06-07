@@ -11,13 +11,13 @@
 
                 </field>
 
-<!--                <xpath expr="//button[@name='button_validate'][2]" position="attributes">-->
-<!--                    <attribute name="groups">indent_request.transfer_validate</attribute>-->
-<!--                </xpath>-->
+                <xpath expr="//button[@name='button_validate'][2]" position="attributes">
+                    <attribute name="groups">indent_request.transfer_validate</attribute>
+                </xpath>
 
-<!--                <xpath expr="//button[@name='button_validate'][1]" position="attributes">-->
-<!--                    <attribute name="groups">indent_request.transfer_validate</attribute>-->
-<!--                </xpath>-->
+                <xpath expr="//button[@name='button_validate'][1]" position="attributes">
+                    <attribute name="groups">indent_request.transfer_validate</attribute>
+                </xpath>
 
                 <xpath expr="//page[@name='extra']" position="attributes">
                     <attribute name="invisible">1</attribute>

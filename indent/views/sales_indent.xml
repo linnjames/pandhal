@@ -55,8 +55,8 @@
                     <group>
                         <group>
                             <field name="vendor_id" required="1"/>
+<!--                            <field name="indent_type" required="1"/>-->
                             <field name="indent_type" required="1" attrs="{'readonly':[('state', 'in', 'confirmed')]}"/>
-                            <field name="sale_id" required="1" attrs="{'readonly':[('state', 'in', 'confirmed')]}"/>
                             <!--                            <field name="operation_type_id"/>-->
                         </group>
                         <group>

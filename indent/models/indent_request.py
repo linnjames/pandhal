@@ -35,6 +35,7 @@ class IndentRequest(models.Model):
                                         ], required=True, compute='_compute_delivery_state')
     sale_purchase_id = fields.Many2one('sale.order', string='ID')
     sale_indent_purchase_id = fields.Many2one('sales.indent', string='sale indent purchase id')
+    attachment = fields.Binary(string="Attachment")
 
     @api.depends('reference')
     def _compute_delivery_state(self):
@@ -277,9 +278,6 @@ class PurchaseIndentLines(models.Model):
     transfer_id = fields.Many2one('indent.request', string='ID')
     item_select = fields.Boolean(string='Select Item')
     uom_id = fields.Many2one('uom.uom', string='Unit of Measure')
-    # image = fields.Image(
-    #     string="Image", max_width=64, max_height=64)
-    img = fields.Binary(string="Image", readonly=True)
     message = fields.Char(string="Message")
 
 
@@ -335,3 +333,17 @@ class PurchaseState(models.Model):
                     order.message_subscribe([order.partner_id.id])
             order.state = 'purchase'
         return res
+
+
+class PurchaseQuantity(models.Model):
+    _inherit = 'purchase.order.line'
+
+    available_qty = fields.Float(string='Quantity On Hand')
+
+    @api.onchange('product_id')
+    def _onchange_product_id_warning(self):
+        for line in self:
+            if line.product_id:
+                line.available_qty = line.product_id.qty_available
+            else:
+                line.available_qty = 0.0
