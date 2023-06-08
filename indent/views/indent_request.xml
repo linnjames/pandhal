@@ -8,6 +8,7 @@
                 <field name="reference"/>
                 <field name="vendor_id"/>
                 <field name="indent_type"/>
+                <field name="activity_ids" widget="list_activity" optional="show"/>
                 <field name="expected_date"/>
                 <field name="state" widget="badge" decoration-success="state == 'posted'"
                        decoration-info="state == 'draft'"/>
@@ -100,6 +101,32 @@
 <!--            </xpath>-->
 <!--        </field>-->
 <!--    </record>-->
+
+<!--    <record id="action_confirmed_server_purchase" model="ir.actions.server">-->
+<!--        <field name="name">Confirmed</field>-->
+<!--        <field name="model_id" ref="model_indent_request"/>-->
+<!--        <field name="binding_model_id" ref="model_indent_request"/>-->
+<!--        <field name="binding_view_types">list</field>-->
+<!--        <field name="state">code</field>-->
+<!--        <field name="code">-->
+<!--            &lt;!&ndash;            if records: re = records.action_confirmed()&ndash;&gt;-->
+<!--            if rec and rec.state == 'draft':-->
+<!--            a = rec.action_confirmed()-->
+<!--        </field>-->
+<!--    </record>-->
+
+
+    <record id="action_cancelled_server_purchase" model="ir.actions.server">
+        <field name="name">Cancelled</field>
+        <field name="model_id" ref="model_indent_request"/>
+        <field name="binding_model_id" ref="model_indent_request"/>
+        <field name="binding_view_types">list</field>
+        <field name="state">code</field>
+        <field name="code">
+            if rec and rec.state == 'draft':
+            b = rec.action_cancel()
+        </field>
+    </record>
 
 
     <record id="indent_request_action" model="ir.actions.act_window">

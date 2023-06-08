@@ -8,6 +8,7 @@
                 <field name="reference"/>
                 <field name="vendor_id"/>
                 <field name="indent_type"/>
+                <field name="activity_ids" widget="list_activity" optional="show"/>
                 <field name="expected_date"/>
                 <field name="state" widget="badge" decoration-success="state == 'posted'"
                        decoration-info="state == 'draft'"/>
@@ -57,7 +58,8 @@
                             <field name="vendor_id" required="1"/>
 <!--                            <field name="indent_type" required="1"/>-->
                             <field name="indent_type" required="1" attrs="{'readonly':[('state', 'in', 'confirmed')]}"/>
-                            <!--                            <field name="operation_type_id"/>-->
+                            <field name="sale_id"/>
+                            <field name="attachment"/>
                         </group>
                         <group>
                             <!--                            <field name="order_date"/>-->
@@ -83,6 +85,32 @@
                     <field name="message_ids"/>
                 </div>
             </form>
+        </field>
+    </record>
+
+    <record id="action_confirmed_server" model="ir.actions.server">
+        <field name="name">Confirmed</field>
+        <field name="model_id" ref="model_sales_indent"/>
+        <field name="binding_model_id" ref="model_sales_indent"/>
+        <field name="binding_view_types">list</field>
+        <field name="state">code</field>
+        <field name="code">
+            if records: re = records.action_confirmed()
+<!--            if records and records.state == 'draft':-->
+<!--            re = records.action_confirmed()-->
+        </field>
+    </record>
+
+
+    <record id="action_cancelled_server" model="ir.actions.server">
+        <field name="name">Cancelled</field>
+        <field name="model_id" ref="model_sales_indent"/>
+        <field name="binding_model_id" ref="model_sales_indent"/>
+        <field name="binding_view_types">list</field>
+        <field name="state">code</field>
+        <field name="code">
+            if records and records.state == 'draft':
+            r = records.action_cancel()
         </field>
     </record>
 

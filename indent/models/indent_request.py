@@ -33,6 +33,7 @@ class IndentRequest(models.Model):
                                         ('assigned', "Ready"),
                                         ('confirmed', "Waiting"),
                                         ], required=True, compute='_compute_delivery_state')
+
     sale_purchase_id = fields.Many2one('sale.order', string='ID')
     sale_indent_purchase_id = fields.Many2one('sales.indent', string='sale indent purchase id')
     attachment = fields.Binary(string="Attachment")
@@ -79,8 +80,8 @@ class IndentRequest(models.Model):
         if self.expected_date == False:
             raise ValidationError('Please provide required date.')
 
-        if self.purchase_line_ids.qty == False:
-            raise ValidationError('Please provide required quantity.')
+        # if self.purchase_line_ids.qty == False:
+        #     raise ValidationError('Please provide required quantity.')
 
         operation = partner.operation_type_out
         print('wwwwwwwwwwwwwwww')
@@ -89,6 +90,7 @@ class IndentRequest(models.Model):
         self.state = 'confirmed'
         print(operation.name)
         print(operation.sudo().company_id.name)
+
         a = self.env['stock.picking'].sudo().create({
             'partner_id': partner.partner_id.id,
             'picking_type_id': operation.id,
@@ -96,6 +98,10 @@ class IndentRequest(models.Model):
             'location_dest_id': op.sudo().operation_type_out.default_location_dest_id.id,
             'company_id': self.vendor_id.id,
             'transfer_id': self.id,
+            'scheduled_date': False,
+            'date_done': False,
+            # 'attachment': self.attachment,
+
             # 'origin': self.id,
         })
         for vals in self.purchase_line_ids:
@@ -109,6 +115,8 @@ class IndentRequest(models.Model):
                     'location_dest_id': op.sudo().operation_type_out.default_location_dest_id.id,
                 })]
             })
+        a.scheduled_date = self.expected_date
+        a.date_done = self.expected_date
 
         b = self.env['stock.picking'].sudo().create({
             # 'partner_id': self.env.company.partner_id.id,
@@ -118,6 +126,8 @@ class IndentRequest(models.Model):
             'location_dest_id': self.env.company.sudo().operation_type_in.default_location_dest_id.id,
             'company_id': self.env.company.id,
             'transfer_id': self.id,
+            'scheduled_date': False,
+            'date_done': False,
         })
         for vals in self.purchase_line_ids:
             b.write({
@@ -131,6 +141,8 @@ class IndentRequest(models.Model):
                     'location_dest_id': self.env.company.sudo().operation_type_in.default_location_dest_id.id,
                 })]
             })
+        b.scheduled_date = self.expected_date
+        b.date_done = self.expected_date
         #
         comp = self.env['res.company'].sudo().search([('partner_id', '=', self.vendor_id.id)])
         c = self.env['sales.indent'].sudo().create({
@@ -141,6 +153,7 @@ class IndentRequest(models.Model):
             # 'order_date': self.order_date,
             'expected_date': self.expected_date,
             'company_id': comp.id,
+            'attachment': self.attachment,
             # 'company_id': self.vendor_id.id,
         })
         for vals in self.purchase_line_ids:

@@ -4,7 +4,7 @@ from odoo.exceptions import ValidationError, UserError
 
 class SalesIndent(models.Model):
     _name = 'sales.indent'
-    _inherit = ["mail.thread", "mail.activity.mixin"]
+    _inherit = ['portal.mixin', 'mail.thread', 'mail.activity.mixin', 'utm.mixin']
     _rec_name = 'reference'
     _order = 'create_date desc'
 
@@ -27,7 +27,7 @@ class SalesIndent(models.Model):
                                     ('customer order', 'Customer Order')], required=True)
     # sale_id = fields.Char('ID')
     # sale_id = fields.Many2one('indent.request', string='ID')
-    sale_id = fields.Integer(string='purchase indent number')
+    sale_id = fields.Integer(string='Purchase Indent Number')
     company_id = fields.Many2one('res.company', string='company', readonly=True,
                                  default=lambda self: self.env.company.id)
     delivery_status = fields.Selection([('draft', 'Draft'),
@@ -37,6 +37,8 @@ class SalesIndent(models.Model):
                                               ('assigned', "Ready"),
                                               ('confirmed', "Waiting"),
                                               ], required=True, compute='_compute_delivery_state_sales')
+
+    attachment = fields.Binary(string="Attachment")
 
     @api.depends('sale_id')
     def _compute_delivery_state_sales(self):
@@ -58,21 +60,21 @@ class SalesIndent(models.Model):
 
     def action_confirmed(self):
         self.state = 'confirmed'
-        comp = self.env['res.company'].sudo().search([('partner_id', '=', self.vendor_id.id)])
-        d = self.env['indent.request'].sudo().create({
-            'vendor_id': self.company_id.partner_id.id,
-            'indent_type': self.indent_type,
-            'expected_date': self.expected_date,
-            'company_id': comp.id,
-        })
-        for vals in self.sales_line_ids:
-            d.write({
-                'purchase_line_ids': [(0, 0, {
-                    'product_id': vals.product_id.id,
-                    'uom_id': vals.uom_id.id,
-                    'qty': vals.qty,
-                })]
-            })
+        # comp = self.env['res.company'].sudo().search([('partner_id', '=', self.vendor_id.id)])
+        # d = self.env['indent.request'].sudo().create({
+        #     'vendor_id': self.company_id.partner_id.id,
+        #     'indent_type': self.indent_type,
+        #     'expected_date': self.expected_date,
+        #     'company_id': comp.id,
+        # })
+        # for vals in self.sales_line_ids:
+        #     d.write({
+        #         'purchase_line_ids': [(0, 0, {
+        #             'product_id': vals.product_id.id,
+        #             'uom_id': vals.uom_id.id,
+        #             'qty': vals.qty,
+        #         })]
+        #     })
 
     # def action_cancel(self):
     #     self.state = 'cancel'
@@ -128,6 +130,7 @@ class SalesOrder(models.Model):
                                     ('store', 'Store')], required=True, default='customer order')
 
     state = fields.Selection(selection_add=[('indent_created', 'Indent Created')])
+    attachment = fields.Binary(string="Attachment")
 
 
 
@@ -149,6 +152,7 @@ class SalesOrder(models.Model):
             # 'location_id': self.env.company.sudo().operation_type_in.default_location_src_id.id,
             # 'location_dest_id': self.env.company.sudo().operation_type_in.default_location_dest_id.id,
             'company_id': self.env.company.id,
+            'attachment': self.attachment,
 
         })
         for vals in self.order_line.filtered(lambda l: l.select_item):
@@ -165,6 +169,7 @@ class SalesOrder(models.Model):
                     # 'location_dest_id': self.env.company.sudo().operation_type_in.default_location_dest_id.id,
                 })]
             })
+            # b.action_confirmed()
 
     def action_view_purchase_indent(self):
         return {

@@ -13,6 +13,11 @@
             <xpath expr="//field[@name='date_order']" position="after">
                 <field name="indent_type"/>
             </xpath>
+
+            <xpath expr="//field[@name='partner_shipping_id']" position="after">
+                <field name="attachment"/>
+            </xpath>
+
         </field>
     </record>
 
