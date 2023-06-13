@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<odoo>
+    <record id="automated_inventory_valuation_tree" model="ir.ui.view">
+        <field name="name">automated.inventory.valuation.tree</field>
+        <field name="model">automated.inventory.valuation</field>
+        <field name="arch" type="xml">
+            <tree string='Automated Inventory Valuation'>
+                <field name="reference" readonly="1"/>
+                <field name="costing_method"/>
+                <field name="stock_valuation_account_id"/>
+                 <field name="stock_journal_id"/>
+                <field name="stock_output_account_id"/>
+
+
+
+            </tree>
+
+        </field>
+    </record>
+
+    <record id="automated_inventory_valuation_form" model="ir.ui.view">
+        <field name="name">automated.inventory.valuation.form</field>
+        <field name="model">automated.inventory.valuation</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                   <div class="oe_title">
+                        <h1>
+                            <field name="reference" readonly="1"/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="costing_method"/>
+                            <field name="stock_valuation_account_id"/>
+                            <field name="stock_journal_id"/>
+
+                        </group>
+                        <group>
+                            <field name="stock_input_account_id"/>
+                            <field name="stock_output_account_id"/>
+                            <field name="company_id" invisible="1"/>
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="automated_inventory_valuation_action" model="ir.actions.act_window">
+        <field name="name">Automated Inventory Valuation</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">automated.inventory.valuation</field>
+        <field name="view_mode">tree,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Create Automated Inventory Valuation
+            </p>
+        </field>
+    </record>
+
+    <menuitem id="automated_inventory_valuation"
+              name="Automated Inventory Valuation"
+              parent="stock.menu_stock_general_settings"
+              action="automated_inventory_valuation_action"
+              sequence="10"
+    />
+<!--     <menuitem id="sub_employee_engagement" -->
+<!--               name="Meeting Minutes" -->
+<!--               parent="project_task_meeting_minutes" -->
+<!--               action="project_task_meeting_minutes_action" -->
+<!--               sequence="10" -->
+<!--     /> -->
+</odoo>

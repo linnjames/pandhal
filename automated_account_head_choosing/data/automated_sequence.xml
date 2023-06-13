@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+  <data>
+    <record id="automated_inventory_valuation_sequence" model="ir.sequence">
+      <field name="name">Automated Inventory Valuation</field>
+      <field name="code">automated.inventory.valuation</field>
+      <field name="prefix">AIV</field>
+      <field name="padding">5</field>
+      <field name="company_id" eval="False"/>
+    </record>
+  </data>
+</odoo>

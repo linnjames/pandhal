@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+     <record model="ir.rule" id="record_automated_account_head_choosing_rule">
+            <field name="name">record_automated_account_head_choosing_group</field>
+            <field name="model_id" ref="model_automated_inventory_valuation"/>
+            <field name="global" eval="True"/>
+            <field name="domain_force">
+                [('company_id', 'in', company_ids)]
+            </field>
+        </record>
+</odoo>

@@ -1,0 +1,4 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_product_template,access.product.template,model_product_template,,1,1,1,1
+access_multi_sales_price_wizard,multi.sales.price.wizard,model_multi_sales_price_wizard,,1,1,1,1
+

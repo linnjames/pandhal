@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+        <record id="multi_sales_price_wizard_view" model="ir.ui.view">
+            <field name="name">multi.sales.price.wizard.form</field>
+            <field name="model">multi.sales.price.wizard</field>
+            <field name="arch" type="xml">
+                <form string="Multi Sales Price From MRP">
+                    <group>
+                        <field name="product_tmpl_ids" widget="many2many_tags" class="oe_inline" required="1"
+                               options="{'no_create': True}" readonly="1"/>
+                    </group>
+                    <footer>
+                        <button name="multi_price" id="multi_price" string="Confirm" type="object"
+                            class="btn-primary"/>
+                        <button string="Cancel" class="btn-secondary" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+        <record id="multi_sales_price_wizard_view_action" model="ir.actions.act_window">
+            <field name="name">Multi Sales Price From MRP</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">multi.sales.price.wizard</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+            <field name="binding_model_id" ref="product.model_product_template" />
+            <field name="binding_view_types">list</field>
+        </record>
+
+</odoo>
