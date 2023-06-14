@@ -96,7 +96,7 @@ class IndentRequest(models.Model):
             'picking_type_id': operation.id,
             'location_id': op.sudo().operation_type_out.default_location_src_id.id,
             'location_dest_id': op.sudo().operation_type_out.default_location_dest_id.id,
-            'company_id': self.vendor_id.id,
+            'company_id': partner.id,
             'transfer_id': self.id,
             'scheduled_date': False,
             'date_done': False,
@@ -110,7 +110,7 @@ class IndentRequest(models.Model):
                     'product_id': vals.product_id.id,
                     'product_uom_qty': vals.qty,
                     'name': vals.product_id.name,
-                    'company_id': self.vendor_id.id,
+                    'company_id': partner.id,
                     'location_id': op.sudo().operation_type_out.default_location_src_id.id,
                     'location_dest_id': op.sudo().operation_type_out.default_location_dest_id.id,
                 })]
