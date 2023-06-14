@@ -144,8 +144,8 @@ class SalesOrder(models.Model):
         company = self.env['res.company'].search([('partner_id', '=', 'Kuruvinakunnel Enterprises')])
         print(company)
         b = self.env['indent.request'].sudo().create({
-            # 'vendor_id': self.partner_id.id,
-            'vendor_id': company.id,
+            'vendor_id': self.company_id.parent_id.id,
+            #'vendor_id': company.id,
             'indent_type': self.indent_type,
             # 'expected_date': self.date_order,
             'expected_date': self.validity_date,
