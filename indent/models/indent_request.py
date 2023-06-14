@@ -166,6 +166,7 @@ class IndentRequest(models.Model):
                     'product_id': vals.product_id.id,
                     'qty': vals.qty,
                     'uom_id': vals.uom_id.id,
+                    'message': vals.message,
 
                 })]
             })
