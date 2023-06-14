@@ -134,18 +134,16 @@ class SalesOrder(models.Model):
     state = fields.Selection(selection_add=[('indent_created', 'Indent Created')])
     attachment = fields.Binary(string="Attachment")
 
-
-
     def action_create_purchase_indent(self):
         if not self.order_line.filtered(lambda l: l.select_item):
             raise UserError("Please select at least one item.")
 
         self.state = "indent_created"
-         company = self.env['res.company'].sudo().browse(self.company_id.id)
+        company = self.env['res.company'].sudo().browse(self.company_id.id)
         print(company)
         b = self.env['indent.request'].sudo().create({
             'vendor_id': company.parent_id.partner_id.id,
-            #'vendor_id': company.id,
+            # 'vendor_id': company.id,
             'indent_type': self.indent_type,
             # 'expected_date': self.date_order,
             'expected_date': self.validity_date,
