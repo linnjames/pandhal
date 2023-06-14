@@ -7,6 +7,8 @@ class ProductTemplate(models.Model):
 
     mrp = fields.Float(string='MRP')
 
+    product_category_type_id = fields.Many2one('product.category.type', string="Product Category Type")
+
     def action_mrp(self):
         # for mrp in self:
         qq = []
@@ -53,3 +55,14 @@ class ProductTemplate(models.Model):
     @api.onchange('taxes_id')
     def compute_taxes_id(self):
         self.list_price = False
+
+
+class SaleOrderLineInherit(models.Model):
+    _inherit = 'sale.order.line'
+
+    mrp = fields.Float(string='MRP')
+
+    @api.onchange('product_id')
+    def onchange_product_id(self):
+        if self.product_id:
+            self.mrp = self.product_id.mrp

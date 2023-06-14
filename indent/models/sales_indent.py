@@ -27,7 +27,8 @@ class SalesIndent(models.Model):
                                     ('customer order', 'Customer Order')], required=True)
     # sale_id = fields.Char('ID')
     # sale_id = fields.Many2one('indent.request', string='ID')
-    sale_id = fields.Integer(string='Purchase Indent Number')
+     sale_id = fields.Integer(string='Purchase Indent Number')
+    #sale_id = fields.Char(string='Purchase Indent Number')
     company_id = fields.Many2one('res.company', string='company', readonly=True,
                                  default=lambda self: self.env.company.id)
     delivery_status = fields.Selection([('draft', 'Draft'),
@@ -113,6 +114,7 @@ class SalesIndentLines(models.Model):
     uom_id = fields.Many2one('uom.uom', string='Unit of Measure')
     # transfer_id = fields.Many2one('indent.request', string='ID')
     item_select = fields.Boolean(string='Select Item')
+    message = fields.Char(string="Message")
 
 
     @api.onchange('product_id')
