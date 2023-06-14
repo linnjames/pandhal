@@ -141,10 +141,10 @@ class SalesOrder(models.Model):
             raise UserError("Please select at least one item.")
 
         self.state = "indent_created"
-        company = self.env['res.company'].search([('partner_id', '=', 'Kuruvinakunnel Enterprises')])
+         company = self.env['res.company'].sudo().browse(self.company_id.id)
         print(company)
         b = self.env['indent.request'].sudo().create({
-            'vendor_id': self.company_id.parent_id.id,
+            'vendor_id': company.parent_id.partner_id.id,
             #'vendor_id': company.id,
             'indent_type': self.indent_type,
             # 'expected_date': self.date_order,
