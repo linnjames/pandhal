@@ -12,9 +12,9 @@
         <field name="name">Purchase Confirm</field>
     </record>
 
-<!--    <record id="transfer_validate" model="res.groups">-->
-<!--        <field name="name">Transfers</field>-->
-<!--    </record>-->
+    <record id="transfer_validate" model="res.groups">
+        <field name="name">Transfers</field>
+    </record>
 
     <record id="price_restriction" model="res.groups">
         <field name="name">POS Price</field>

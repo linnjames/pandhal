@@ -58,6 +58,7 @@
                         <group>
                             <field name="vendor_id" required="1"/>
                             <field name="indent_type" attrs="{'readonly':[('state', 'in', 'confirmed')]}"/>
+                            <field name="reference_id"/>
                             <field name="attachment"/>
                         </group>
                         <group>

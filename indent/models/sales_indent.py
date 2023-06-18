@@ -27,8 +27,8 @@ class SalesIndent(models.Model):
                                     ('customer order', 'Customer Order')], required=True)
     # sale_id = fields.Char('ID')
     # sale_id = fields.Many2one('indent.request', string='ID')
-    sale_id = fields.Integer(string='Purchase Indent Number')
-    # sale_id = fields.Char(string='Purchase Indent Number')
+    # sale_id = fields.Integer(string='Purchase Indent Number')
+    sale_id = fields.Char(string='Purchase Indent Number', readonly=True)
     company_id = fields.Many2one('res.company', string='company', readonly=True,
                                  default=lambda self: self.env.company.id)
     delivery_status = fields.Selection([('draft', 'Draft'),
@@ -61,24 +61,17 @@ class SalesIndent(models.Model):
 
     def action_confirmed(self):
         self.state = 'confirmed'
-        # comp = self.env['res.company'].sudo().search([('partner_id', '=', self.vendor_id.id)])
-        # d = self.env['indent.request'].sudo().create({
-        #     'vendor_id': self.company_id.partner_id.id,
-        #     'indent_type': self.indent_type,
-        #     'expected_date': self.expected_date,
-        #     'company_id': comp.id,
-        # })
-        # for vals in self.sales_line_ids:
-        #     d.write({
-        #         'purchase_line_ids': [(0, 0, {
-        #             'product_id': vals.product_id.id,
-        #             'uom_id': vals.uom_id.id,
-        #             'qty': vals.qty,
-        #         })]
-        #     })
+        comp = self.env['res.company'].sudo().search([('partner_id', '=', self.vendor_id.id)])
+        d = self.env['indent.request'].sudo().create({
+            'vendor_id': self.company_id.partner_id.id,
+            # 'sale_id': self.reference,
+            'indent_type': self.indent_type,
+            'reference_id': self.reference,
+            'expected_date': self.expected_date,
+            'company_id': comp.id,
+            'attachment': self.attachment,
+        })
 
-    # def action_cancel(self):
-    #     self.state = 'cancel'
 
     def action_cancel(self):
         print('wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww')

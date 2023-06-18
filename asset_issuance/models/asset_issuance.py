@@ -1,10 +1,16 @@
-
-from odoo import api, fields, models, _
-
+from odoo import models, fields, api, _
 
 
 class HrEmployee(models.Model):
     _inherit = "hr.employee"
+
+    asset_ids = fields.One2many('asset.transfer', 'default_employee_id', string='Assets')
+    asset_count = fields.Integer(string='Asset Count', compute='_compute_asset_count')
+
+    @api.depends('asset_ids')
+    def _compute_asset_count(self):
+        for employee in self:
+            employee.asset_count = len(employee.asset_ids)
 
     def button_asset_issuance(self):
         pass
@@ -19,10 +25,7 @@ class HrEmployee(models.Model):
         }
 
 
-
-
 class HrEmployee(models.Model):
     _inherit = "stock.picking"
 
     asset_wizard_id = fields.Integer(string='id')
-

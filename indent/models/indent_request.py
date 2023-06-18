@@ -37,6 +37,7 @@ class IndentRequest(models.Model):
     sale_purchase_id = fields.Many2one('sale.order', string='ID')
     sale_indent_purchase_id = fields.Many2one('sales.indent', string='sale indent purchase id')
     attachment = fields.Binary(string="Attachment")
+    reference_id = fields.Char(string='Sale Indent Number')
 
     @api.depends('reference')
     def _compute_delivery_state(self):
@@ -148,7 +149,7 @@ class IndentRequest(models.Model):
         c = self.env['sales.indent'].sudo().create({
             # 'vendor_id': self.vendor_id.id,
             'vendor_id': self.company_id.partner_id.id,
-            'sale_id': self.id,
+            'sale_id': self.reference,
             'indent_type': self.indent_type,
             # 'order_date': self.order_date,
             'expected_date': self.expected_date,
@@ -156,6 +157,7 @@ class IndentRequest(models.Model):
             'attachment': self.attachment,
             # 'company_id': self.vendor_id.id,
         })
+        print('sale_id')
         for vals in self.purchase_line_ids:
             tax = self.env['account.tax'].sudo().search(
                 [('name', '=', vals.product_id.taxes_id.name), ('company_id', '=', self.vendor_id.id)])
@@ -331,22 +333,22 @@ class PurchaseState(models.Model):
     def button_purchase_approval(self):
         self.state = 'approve'
 
-    def button_confirm(self):
-        res = super(PurchaseState, self).button_confirm()
-        for order in self:
-            if order.state in ['approve']:
-
-                order.order_line._validate_analytic_distribution()
-                order._add_supplier_to_product()
-                # Deal with double validation process
-                if order._approval_allowed():
-                    order.button_approve()
-                else:
-                    order.write({'state': 'to approve'})
-                if order.partner_id not in order.message_partner_ids:
-                    order.message_subscribe([order.partner_id.id])
-            order.state = 'purchase'
-        return res
+    # def button_confirm(self):
+    #     res = super(PurchaseState, self).button_confirm()
+    #     for order in self:
+    #         if order.state in ['approve']:
+    #
+    #             order.order_line._validate_analytic_distribution()
+    #             order._add_supplier_to_product()
+    #             # Deal with double validation process
+    #             if order._approval_allowed():
+    #                 order.button_approve()
+    #             else:
+    #                 order.write({'state': 'to approve'})
+    #             if order.partner_id not in order.message_partner_ids:
+    #                 order.message_subscribe([order.partner_id.id])
+    #         order.state = 'purchase'
+    #     return res
 
 
 class PurchaseQuantity(models.Model):
