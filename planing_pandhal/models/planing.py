@@ -180,7 +180,7 @@ class PlanPlaning(models.Model):
                 INNER JOIN mrp_bom_line mbl ON bom.id = mbl.bom_id
                 LEFT JOIN product_product pn ON mbl.product_id = Pn.id
                 LEFT JOIN product_template ptb ON mbl.product_tmpl_id = ptb.id
-                LEFT JOIN uom_uom uom ON mbl.product_qty = uom.id
+                LEFT JOIN uom_uom uom ON mbl.product_uom_id = uom.id
                 %s
                 GROUP BY mbl.product_id, ptb.categ_id,uom.id
             """% (transfer_cdtn)
