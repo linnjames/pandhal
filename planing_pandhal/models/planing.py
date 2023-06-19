@@ -32,11 +32,6 @@ class PlanPlaning(models.Model):
 
     def action_line_value(self):
         self.production_lines_ids = False
-        cdtn = '''where so.state = 'sale' and so.is_true = False and si.expected_date BETWEEN '%s' AND '%s'
-
-                        ''' % (
-        self.planning_date.strftime("%Y-%m-%d 00:00:00"), self.planning_date.strftime("%Y-%m-%d 23:59:59"))
-
         filter_cdtn = '''where si.state = 'confirmed' and si.is_true = false and si.expected_date BETWEEN '%s' AND '%s'
 
         ''' % (self.planning_date.strftime("%Y-%m-%d 00:00:00"), self.planning_date.strftime("%Y-%m-%d 23:59:59"))
