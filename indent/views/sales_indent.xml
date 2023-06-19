@@ -65,7 +65,6 @@
                             <!--                            <field name="order_date"/>-->
                             <field name="expected_date"/>
                             <field name="company_id"/>
-                            <field name="is_true"/>
                         </group>
                     </group>
                     <notebook>
