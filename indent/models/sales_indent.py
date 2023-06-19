@@ -16,7 +16,7 @@ class SalesIndent(models.Model):
 
     currency_id = fields.Many2one('res.currency', string='Currency')
     order_date = fields.Datetime(string='Order Deadline', default=fields.Date.today)
-    expected_date = fields.Datetime(string='Expected Date')
+    expected_date = fields.Datetime(string='Expected Date', required=True)
     state = fields.Selection(
         [('draft', "Draft"), ('confirmed', "Confirmed"), ('cancel', "Cancelled")], default='draft',)
     sales_line_ids = fields.One2many('sales.indent.lines','pur_id', string='Sales Line')

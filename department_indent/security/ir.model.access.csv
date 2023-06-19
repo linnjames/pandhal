@@ -1,0 +1,4 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_department_indent_wizard,access.department.indent.wizard,model_department_indent_wizard,,1,1,1,1
+access_department_indent_lines,access.department.indent.lines,model_department_indent_lines,,1,1,1,1
+

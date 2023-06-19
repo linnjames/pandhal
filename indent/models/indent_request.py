@@ -17,7 +17,7 @@ class IndentRequest(models.Model):
                                     ('store', 'Store'),
                                     ('customer order', 'Customer Order')], required=True)
     currency_id = fields.Many2one('res.currency', string='Currency')
-    expected_date = fields.Datetime(string='Expected Date')
+    expected_date = fields.Datetime(string='Expected Date', required=True)
     purchase_line_ids = fields.One2many('purchase.indent.lines', 'pur_id', string='Purchase Lines')
     state = fields.Selection(
         [('draft', "Draft"), ('confirmed', "Confirmed"), ('cancel', "Cancelled")],
