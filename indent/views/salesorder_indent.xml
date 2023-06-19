@@ -38,7 +38,9 @@
             <xpath expr="//field[@name='order_line']/tree/field[@name='name']" position="after">
                 <field name="message"/>
             </xpath>
-
+            <xpath expr="//form/sheet/group/group/field[@name='validity_date']" position="attributes">
+                <attributes name="required">1</attributes>
+            </xpath>
             <xpath expr="//field[@name='order_line']/tree/field[@name='product_id']" position="before">
                 <field name="select_item"/>
             </xpath>
