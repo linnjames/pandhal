@@ -40,6 +40,8 @@ class SalesIndent(models.Model):
                                               ], required=True, compute='_compute_delivery_state_sales')
 
     attachment = fields.Binary(string="Attachment")
+    is_true = fields.Boolean(string='Is True')
+
 
     @api.depends('sale_id')
     def _compute_delivery_state_sales(self):
@@ -126,6 +128,7 @@ class SalesOrder(models.Model):
 
     state = fields.Selection(selection_add=[('indent_created', 'Indent Created')])
     attachment = fields.Binary(string="Attachment")
+    is_true = fields.Boolean(string='Is True')
 
     def action_create_purchase_indent(self):
         if not self.order_line.filtered(lambda l: l.select_item):

@@ -23,6 +23,7 @@
 
             <xpath expr="//field[@name='partner_shipping_id']" position="after">
                 <field name="attachment"/>
+                <field name="is_true"/>
             </xpath>
 
         </field>
