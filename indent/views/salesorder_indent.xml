@@ -14,6 +14,10 @@
                 <field name="indent_type"/>
             </xpath>
 
+<!--            <xpath expr="//form/sheet/group/group/field[@name='validity_date']" position="attributes">-->
+<!--                <attributes name="required">0</attributes>-->
+<!--            </xpath>-->
+
             <xpath expr="//header" position="inside">
                 <button id="create_invoices" name="%(sale.action_view_sale_advance_payment_inv)d"
                         string="Create Invoice"
@@ -23,6 +27,9 @@
 
             <xpath expr="//field[@name='partner_shipping_id']" position="after">
                 <field name="attachment"/>
+            </xpath>
+
+            <xpath expr="//field[@name='attachment']" position="after" invisible="1">
                 <field name="is_true"/>
             </xpath>
 
@@ -38,12 +45,18 @@
             <xpath expr="//field[@name='order_line']/tree/field[@name='name']" position="after">
                 <field name="message"/>
             </xpath>
-            <xpath expr="//form/sheet/group/group/field[@name='validity_date']" position="attributes">
-                <attributes name="required">1</attributes>
-            </xpath>
+
             <xpath expr="//field[@name='order_line']/tree/field[@name='product_id']" position="before">
                 <field name="select_item"/>
             </xpath>
+
+<!--            <xpath expr="//form/sheet/group/group/field[@name='validity_date']" position="attributes">-->
+<!--                <attributes name="required">1</attributes>-->
+<!--            </xpath>-->
+
+            <field name="validity_date" position="attributes">
+                <attribute name="required">1</attribute>
+            </field>
 
             <field name="state" position="replace">
                 <field name="state" widget="statusbar" statusbar_visible="draft,sent,sale,cancel"
