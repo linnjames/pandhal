@@ -107,10 +107,10 @@ class PlanPlaning(models.Model):
         # self.state = 'approval'
         date_today = date.today()
         print(date_today)
-        # if self.planning_date >= date_today:
-        #     self.state = 'approval'
-        # else:
-        #     raise UserError(_("Planning Date Must Be Greater or Equal To Today Date"))
+        if self.planning_date >= date_today:
+            self.state = 'approval'
+        else:
+            raise UserError(_("Planning Date Must Be Greater or Equal To Today Date"))
     def action_approve(self):
         user = self.env.uid
         self.state = 'approve'
