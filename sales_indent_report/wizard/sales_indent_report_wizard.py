@@ -41,7 +41,7 @@ class ActionSaleReportWizard(models.TransientModel):
         # print(query)
 
         query = ("""select rp.id rp_id, rp.name rp_name,rp.phone phone,
-                                        so.id so_id, so.reference so_name,so.sale_id so_purchase_ref,
+                                        so.id so_id, so.reference so_name,so.no_id so_purchase_ref,
                                         pt.name pt_name, sil.qty pt_qty,pt.list_price pt_list_price,
                                         pt.standard_price pt_standard_price,
                                         sil.message pt_message, so.company_id so_com
