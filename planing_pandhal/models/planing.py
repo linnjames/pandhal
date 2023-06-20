@@ -61,26 +61,30 @@ class PlanPlaning(models.Model):
             SELECT pt.categ_id AS categ,
                    sil.product_id AS product,
                    uom.id as uom_name,
+                   bom.id as bom,
                    SUM(sil.qty) AS total_qty
             FROM sales_indent_lines sil
             LEFT JOIN sales_indent si ON sil.pur_id = si.id
             LEFT JOIN uom_uom uom ON sil.uom_id = uom.id
             LEFT JOIN product_product pp ON sil.product_id = pp.id
             LEFT JOIN product_template pt ON pp.product_tmpl_id = pt.id
+            JOIN mrp_bom bom ON pt.id = bom.product_tmpl_id
             %s 
-            GROUP BY sil.product_id, pt.categ_id,uom.id
+            GROUP BY sil.product_id, pt.categ_id,uom.id,bom.id
             union all
             SELECT pt.categ_id AS categ,
                            sol.product_id AS product,
                            uom.id as uom_name,
+                           bom.id as bom,
                            SUM(sol.product_uom_qty) AS total_qty
                     FROM sale_order_line sol
                     LEFT JOIN sale_order so ON sol.order_id = so.id
                     LEFT JOIN uom_uom uom ON sol.product_uom = uom.id
                     LEFT JOIN product_product pp ON sol.product_id = pp.id
                     LEFT JOIN product_template pt ON pp.product_tmpl_id = pt.id
+                    JOIN mrp_bom bom ON pt.id = bom.product_tmpl_id
                     %s 
-                    GROUP BY sol.product_id, pt.categ_id,uom.id
+                    GROUP BY sol.product_id, pt.categ_id,uom.id,bom.id
             """ % (filter_cdtn, cdtn)
         print(query)
         self._cr.execute(query)
