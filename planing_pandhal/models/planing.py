@@ -113,45 +113,123 @@ class PlanPlaning(models.Model):
             self.state = 'approval'
         else:
             raise UserError(_("Planning Date Must Be Greater or Equal To Today Date"))
+
+    def action_waiting_approval(self):
+        # plan = self.production_lines_ids
+        user = self.env.uid
+        # self.state = 'approval'
+        date_today = date.today()
+        print(date_today)
+        if self.planning_date >= date_today:
+            self.state = 'approval'
+        else:
+            raise UserError(_("Planning Date Must Be Greater or Equal To Today Date"))
+
     def action_approve(self):
         user = self.env.uid
         self.state = 'approve'
 
     def action_confirm(self):
         self.state = 'done'
-    #     self.action_create_transfer()
-    # def action_create_transfer(self):
-    #     if self.company_id.production_operation_type:
-    #         if self.company_id.production_operation_type.default_location_src_id and self.company_id.production_operation_type.default_location_dest_id:
-    #             picking_type = self.company_id.production_operation_type
-    #             to_location_id = self.company_id.production_operation_type.default_location_dest_id
-    #             from_location_id = self.company_id.production_operation_type.default_location_src_id
-    #             transfer_move = self.env['stock.picking'].create({
-    #                 # 'partner_id': self.sale_id.partner_id.id,
-    #                 'picking_type_id': picking_type.id,
-    #                 'company_id': self.company_id.id,
-    #                 'origin': "Material Request",
-    #                 # 'project_name': self.project_name_id.id,
-    #                 # 'project_task': self.project_task_id.id,
-    #                 'location_id': from_location_id.id,
-    #                 'location_dest_id': to_location_id.id,
-    #                 'production_id': self.id,
-    #             })
-    #             for vals in self.product_line_ids:
-    #                 transfer_move.sudo().write({
-    #                     'move_ids_without_package': [(0, 0, {
-    #                         'product_id': vals.product_id.id,
-    #                         'name': vals.product_id.name,
-    #                         'product_uom_qty': vals.quantity,
-    #                         'location_id': from_location_id.id,
-    #                         'location_dest_id': to_location_id.id,
-    #                         'product_uom': vals.product_uom_id.id,
-    #                         'company_id': self.company_id.id,
-    #                     })]
-    #                 })
+        planing_cdtn = '''where so.state = 'sale' and so.validity_date BETWEEN '%s' AND '%s'
+
+                        ''' % (
+            self.planning_date.strftime("%Y-%m-%d 00:00:00"), self.planning_date.strftime("%Y-%m-%d 23:59:59"))
+        ind_cdtn = '''where si.state = 'confirmed' and si.expected_date BETWEEN '%s' AND '%s'
+
+        ''' % (self.planning_date.strftime("%Y-%m-%d 00:00:00"), self.planning_date.strftime("%Y-%m-%d 23:59:59"))
+        if self.company_id:
+            planing_cdtn += ''' and so.company_id = %s
+            ''' % (self.company_id.id)
+            ind_cdtn += ''' and si.company_id = %s
+            ''' % (self.company_id.id)
+
+        ind = """
+                        SELECT si.id as indent
+                        FROM sales_indent_lines sil
+                        LEFT JOIN sales_indent si ON sil.pur_id = si.id
+                        %s
+                        GROUP BY si.id
+                    """ % (ind_cdtn)
+        self._cr.execute(ind)
+        ind_ids = self._cr.dictfetchall()
+        for ind in ind_ids:
+            indent = self.env['sales.indent'].browse(ind['indent'])
+            indent.write({
+                'is_true': True
+            })
+        planing = """
+                        SELECT so.id as sale
+                        FROM sale_order_line sol
+                        LEFT JOIN sale_order so ON sol.order_id = so.id
+                        %s
+                        GROUP BY so.id
+                    """ % (planing_cdtn)
+        self._cr.execute(planing)
+        planing_ids = self._cr.dictfetchall()
+        print(planing_ids, 'sucess achieved')
+
+        # Iterate over the selected order IDs and update the values
+        for inv in planing_ids:
+            order = self.env['sale.order'].browse(inv['sale'])
+            order.write({
+                'is_true': True
+            })
+
+        transfer_cdtn = '''where si.state ='approve' and si.planning_date BETWEEN '%s' AND '%s'
+
+                                ''' % (
+            self.planning_date.strftime("%Y-%m-%d 00:00:00"), self.planning_date.strftime("%Y-%m-%d 23:59:59"))
+        transfer = """
+                SELECT ptb.categ_id AS categ,  
+                       mbl.product_id AS product,
+                       uom.id as uom_name,
+                       sum(sil.actual_plan_qty * mbl.product_qty) as total
+                FROM production_plan_lines sil
+                LEFT JOIN plan_planing si ON sil.ref_id = si.id
+                LEFT JOIN product_product pp ON sil.item_list_id = pp.id
+                LEFT JOIN product_template pt ON pp.product_tmpl_id = pt.id
+                JOIN mrp_bom bom ON pt.id = bom.product_tmpl_id
+                INNER JOIN mrp_bom_line mbl ON bom.id = mbl.bom_id
+                LEFT JOIN product_product pn ON mbl.product_id = Pn.id
+                LEFT JOIN product_template ptb ON mbl.product_tmpl_id = ptb.id
+                LEFT JOIN uom_uom uom ON mbl.product_uom_id = uom.id
+                %s
+                GROUP BY mbl.product_id, ptb.categ_id,uom.id
+            """ % (transfer_cdtn)
+        self._cr.execute(transfer)
+        transfer_ids = self._cr.dictfetchall()
+        print(transfer_ids, 'pandal')
+        if self.company_id.production_picking_type_id:
+            if self.company_id.production_picking_type_id.default_location_dest_id:
+                if self.company_id.production_picking_type_id.default_location_src_id:
+                    picking_type = self.company_id.production_picking_type_id
+                    to_location_id = self.company_id.production_picking_type_id.default_location_dest_id
+                    from_location_id = self.company_id.production_picking_type_id.default_location_src_id
+                    transfer_move = self.env['stock.picking'].create({
+                        'picking_type_id': picking_type.id,
+                        'company_id': self.company_id.id,
+                        'origin': "Material Request",
+                        'location_id': from_location_id.id,
+                        'location_dest_id': to_location_id.id,
+                        'request_id': self.id,
+                    })
+                    for vals in transfer_ids:
+                        transfer_move.sudo().write({
+                            'move_ids_without_package': [(0, 0, {
+                                'product_id': vals['product'],
+                                'name': vals['product'],
+                                'product_uom_qty': vals['total'],
+                                'location_id': from_location_id.id,
+                                'location_dest_id': to_location_id.id,
+                                'product_uom': vals['uom_name'],
+                                'company_id': self.company_id.id,
+                            })]
+                        })
+
     def action_reject(self):
         if self.reason:
-           self.state = 'reject'
+            self.state = 'reject'
 
     @api.onchange('tick')
     def _onchange_tick(self):
@@ -213,7 +291,15 @@ class ProductionPlanningLines(models.Model):
                 elif sel.varience == 0:
                     sel.actual_plan_qty = sel.planed_quantity
 
-# class ResCompany(models.Model):
-#      _inherit = 'res.company'
-#
-#      production_picking_id = fields.Many2one('')
+
+class ResCompany(models.Model):
+    _inherit = 'res.company'
+
+    production_picking_type_id = fields.Many2one('stock.picking.type',
+                                                 string='Picking Type For Material From Production')
+
+
+class StockPicking(models.Model):
+    _inherit = 'stock.picking'
+
+    request_id = fields.Many2one('plan.planing', string='Material Request For Production')
