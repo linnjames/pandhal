@@ -36,10 +36,10 @@ class PlanPlaning(models.Model):
                         ''' % (
         self.planning_date.strftime("%Y-%m-%d 00:00:00"), self.planning_date.strftime("%Y-%m-%d 23:59:59"))
 
-        filter_cdtn = '''where si.state = 'confirmed' and si.expected_date BETWEEN '%s' AND '%s'
+        filter_cdtn = '''where si.state = 'confirmed' and si.is_true = false and si.expected_date BETWEEN '%s' AND '%s'
 
         ''' % (self.planning_date.strftime("%Y-%m-%d 00:00:00"), self.planning_date.strftime("%Y-%m-%d 23:59:59"))
-        cdtn = '''where so.state = 'sale' and so.validity_date BETWEEN '%s' AND '%s'
+        cdtn = '''where so.state = 'sale' and so.is_true = false and so.validity_date BETWEEN '%s' AND '%s'
                 ''' % (
         self.planning_date.strftime("%Y-%m-%d 00:00:00"), self.planning_date.strftime("%Y-%m-%d 23:59:59"))
         if self.item_category_id:
@@ -234,6 +234,10 @@ class PlanPlaning(models.Model):
     @api.onchange('tick')
     def _onchange_tick(self):
         self.production_lines_ids._compute_plan_qty()
+
+    @api.onchange('production_lines_ids')
+    def _onchange_production_lines_ids(self):
+        self.production_lines_ids = False
 
 
 class ProductionPlanningLines(models.Model):
