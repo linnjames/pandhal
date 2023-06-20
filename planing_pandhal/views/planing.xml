@@ -98,26 +98,26 @@
             </form>
         </field>
     </record>
-    <record id="view_company_form_inherit" model="ir.ui.view">
-        <field name="name">res.company.form</field>
-        <field name="model">res.company</field>
-        <field name="inherit_id" ref="base.view_company_form"/>
-        <field name="arch" type="xml">
-            <field name="favicon" position="after">
-                <field name="production_picking_type_id"/>
-            </field>
-        </field>
-    </record>
-    <record model="ir.ui.view" id="transfer_inventory_customisation_preview">
-        <field name="name">Transfer</field>
-        <field name="model">stock.picking</field>
-        <field name="inherit_id" ref="stock.view_picking_form"/>
-        <field name="arch" type="xml">
-            <xpath expr="//field[@name='origin']" position="after">
-                <field name="request_id"/>
-            </xpath>
-        </field>
-    </record>
+<!--    <record id="view_company_form_inherit" model="ir.ui.view">-->
+<!--        <field name="name">res.company.form</field>-->
+<!--        <field name="model">res.company</field>-->
+<!--        <field name="inherit_id" ref="base.view_company_form"/>-->
+<!--        <field name="arch" type="xml">-->
+<!--            <field name="favicon" position="after">-->
+<!--                <field name="production_picking_type_id"/>-->
+<!--            </field>-->
+<!--        </field>-->
+<!--    </record>-->
+<!--    <record model="ir.ui.view" id="transfer_inventory_customisation_preview">-->
+<!--        <field name="name">Transfer</field>-->
+<!--        <field name="model">stock.picking</field>-->
+<!--        <field name="inherit_id" ref="stock.view_picking_form"/>-->
+<!--        <field name="arch" type="xml">-->
+<!--            <xpath expr="//field[@name='origin']" position="after">-->
+<!--                <field name="request_id"/>-->
+<!--            </xpath>-->
+<!--        </field>-->
+<!--    </record>-->
     <record id="production_plan_action" model="ir.actions.act_window">
         <field name="name">Production Planning</field>
         <field name="res_model">plan.planing</field>
