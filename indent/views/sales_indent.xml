@@ -59,7 +59,7 @@
                             <field name="indent_type" required="1" attrs="{'readonly':[('state', 'in', 'confirmed')]}"/>
                             <field name="no_id"/>
                             <field name="attachment"/>
-                             <field name="is_true" invisible="1"/>
+                             <field name="is_true" invisible="0"/>
                         </group>
                         <group>
                             <!--                            <field name="order_date"/>-->
