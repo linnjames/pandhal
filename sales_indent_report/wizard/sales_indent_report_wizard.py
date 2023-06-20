@@ -27,7 +27,7 @@ class ActionSaleReportWizard(models.TransientModel):
         print(filter_cdtn, 'qqqqqqqqqqqqqqqqqqqqqqqqq')
 
         # query = ("""select rp.id rp_id, rp.name rp_name,rp.phone phone,
-        #                         so.id so_id, so.reference so_name,so.sale_id so_purchase_ref,
+        #                         so.id so_id, so.reference so_name,so.no_id so_purchase_ref,
         #                         pt.name pt_name, sil.qty pt_qty,
         #                         sil.message pt_message, so.company_id so_com
         #                         from sales_indent_lines sil
