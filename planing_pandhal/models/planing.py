@@ -100,7 +100,7 @@ class PlanPlaning(models.Model):
                     'item_list_id': each['product'],
                     'order_quantity': each['total_qty'],
                     'production_uom_id': each['uom_name'],
-
+                    'bom_id': each['bom'],
                 })]
             })
 
@@ -170,6 +170,7 @@ class ProductionPlanningLines(models.Model):
     ref_id = fields.Many2one('plan.planing')
     varience = fields.Float(string="Varience")
     actual_plan_qty = fields.Float(string="Actual Plan Qty", compute='_compute_actual_plan_qty',store=True)
+    bom_id = fields.Many2one('mrp.bom',string='Bom')
 
     @api.depends('order_quantity', 'on_quantity')
     def _compute_plan_qty(self):
