@@ -22,9 +22,9 @@
                 <attribute name="groups">indent.purchase_multi_level_approval_confirm</attribute>
             </xpath>
 
-            <xpath expr="//button[@id='bid_confirm']" position="replace">
-                    <button name="button_confirm" type="object" states="approve,sent" string="Confirm Order" context="{'validate_analytic': True}" class="oe_highlight" id="bid_confirm" data-hotkey="v" groups="indent.purchase_multi_level_approval_confirm"/>
-            </xpath>
+<!--            <xpath expr="//button[@id='bid_confirm']" position="replace">-->
+<!--                    <button name="button_confirm" type="object" states="approve,sent" string="Confirm Order" context="{'validate_analytic': True}" class="oe_highlight" id="bid_confirm" data-hotkey="v" groups="in/>-->
+<!--            </xpath>-->
 
             <xpath expr="//field[@name='order_line']/tree/field[@name='product_qty']"
                    position="after">

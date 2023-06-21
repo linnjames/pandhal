@@ -17,15 +17,12 @@
         <field name="model">plan.planing</field>
         <field name="arch" type="xml">
             <tree>
-<!--                <field name="reference"/>-->
+                <field name="reference"/>
                 <field name="planning_date"/>
-<!--                <field name="kitchen_ids" widget="many2many_tags"/>-->
-<!--                <field name="trip_ids" options="{'no_create': True}" widget="many2many_tags"/>-->
-<!--                <field name="item_category_id"/>-->
-<!--                <field name="state" widget="badge" decoration-info="state == 'draft'"-->
-<!--                       decoration-danger="state == 'reject'"-->
-<!--                       decoration-warning="state == 'approve'"-->
-<!--                       decoration-success="state == 'done'"/>-->
+                <field name="state" widget="badge" decoration-info="state == 'draft'"
+                       decoration-danger="state == 'reject'"
+                       decoration-warning="state == 'approve'"
+                       decoration-success="state == 'done'"/>
             </tree>
         </field>
     </record>
