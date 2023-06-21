@@ -116,7 +116,7 @@ class ActionSaleReportWizard(models.TransientModel):
                      
                     SELECT rp.id rp_id, rp.name rp_name,rp.phone phone,
                     so.id si_id, so.name si_name,null so_purchase_ref,
-                    p.name pt_name,pt.list_price pt_list_price,
+                    pt.name pt_name,pt.list_price pt_list_price,
                     pt.standard_price pt_standard_price,
                     sol.message pt_message,
                      sol.product_id AS product,
