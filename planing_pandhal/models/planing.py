@@ -87,24 +87,6 @@ class PlanPlaning(models.Model):
         self._cr.execute(query)
         print(query)
         intent_ids = self._cr.dictfetchall()
-        # list1 = []
-        # print(intent_ids, 'pandal')
-        # grouped_data = {}
-        # for item in intent_ids:
-        #     product_id = item['product']
-        #     if product_id in grouped_data:
-        #         grouped_data[product_id]['order_quantity'] += item['total_qty']
-        #     else:
-        #         grouped_data[product_id] = {
-        #             'item_list_id': product_id,
-        #             'order_quantity': item['total_qty'],
-        #             'production_uom_id': item['uom_name'],
-        #             'bom_id': item['bom']
-        #         }
-        #
-        # result = list(grouped_data.values())
-        # list1.append(result)
-
         grouped_data = {}
         for item in intent_ids:
             product_id = item['product']
@@ -124,45 +106,6 @@ class PlanPlaning(models.Model):
                     'order_quantity': i['total_qty'],
                 })]
             })
-
-        # list = []
-        # print(list)
-        # no_dup = []
-        # no_dup2_list = []
-        # for j in intent_ids:
-        #     # if j not in no_dup:
-        #         no_dup.append(j['product'])
-        # print(set(no_dup))
-        # tot = 0
-        # for i in set(no_dup):
-        #     print(i)
-        #     x = {}
-        #     for pand in intent_ids:
-        #         print(pand)
-        #         if pand['product'] == i:
-        #             # if pand['bom'] == i['bom']:
-        #
-        #             tot += pand['total_qty']
-        #
-        #             x = {
-        #                 'product': pand['product'],
-        #                 'total_quan': tot,
-        #                 'uom': pand['uom_name'],
-        #                 'bom': pand['bom']
-        #             }
-        #     no_dup2_list.append(x)
-        #
-        # print(no_dup2_list, 'okkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkk')
-        # for lines in no_dup2_list:
-        #     self.write({
-        #         'production_lines_ids': [(0, 0, {
-        #             'item_list_id': lines['product'],
-        #             'order_quantity': lines['total_quan'],
-        #             'production_uom_id': lines['uom'],
-        #             'bom_id': lines['bom'],
-        #         })]
-        #     })
-
     def action_waiting_approval(self):
         # plan = self.production_lines_ids
         user = self.env.uid

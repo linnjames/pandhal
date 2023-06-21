@@ -14,6 +14,7 @@
                             </group>
                             <group>
                                 <field name="order_type"/>
+                                <field name="company_id"/>
                             </group>
                         </group>
                         <footer>

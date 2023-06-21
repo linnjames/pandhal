@@ -87,10 +87,10 @@
                                     <tr>
                                         <td class="table_data" align="center"
                                             style="font-size: 13px;padding-left: 5px;padding-top:10px;">
-                                            <span t-att-style="style" t-esc="v['so_name']"/>
+                                            <span t-att-style="style" t-esc="v['si_name']"/>
                                         </td>
                                         <td class="table_data" align="center" style="font-size: 13px;padding-top:10px;">
-                                            <span t-att-style="style" t-esc="v['pt_qty']"/>
+                                            <span t-att-style="style" t-esc="v['total_qty']"/>
                                         </td>
                                         <td class="table_data" align="center"
                                             style="font-size: 13px;padding-left: 5px;padding-top:10px;">
