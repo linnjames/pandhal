@@ -208,8 +208,8 @@ class PurchaseState(models.Model):
 
     state = fields.Selection(selection_add=[('approve', 'Approved'), ("purchase",)])
 
-    def button_purchase_approval(self):
-        self.state = 'approve'
+    # def button_purchase_approval(self):
+    #     self.state = 'approve'
 
     # def button_confirm(self):
     #     res = super(PurchaseState, self).button_confirm()
