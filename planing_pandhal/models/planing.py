@@ -397,3 +397,7 @@ class SalesOrder(models.Model):
     _inherit = 'sale.order'
 
     planing_id = fields.Many2one('plan.planing', string='Planing')
+class PlanPlaning(models.Model):
+    _inherit = 'plan.planing'
+
+    planing_id = fields.Many2one('plan.planing', string='Planing')

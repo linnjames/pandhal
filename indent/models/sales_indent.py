@@ -38,7 +38,7 @@ class SalesIndent(models.Model):
 
     attachment = fields.Binary(string="Attachment")
     is_true = fields.Boolean(string='is_true')
-    planing_id = fields.Many2one('plan.planing',string='Plan')
+    # planing_id = fields.Many2one('plan.planing',string='Plan')
 
 
     @api.depends('no_id')

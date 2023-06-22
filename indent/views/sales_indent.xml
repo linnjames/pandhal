@@ -60,7 +60,7 @@
                             <field name="no_id"/>
                             <field name="attachment"/>
                             <field name="is_true" invisible="1"/>
-                            <field name="planing_id" invisible="1"/>
+<!--                            <field name="planing_id" invisible="1"/>-->
 
                         </group>
                         <group>
