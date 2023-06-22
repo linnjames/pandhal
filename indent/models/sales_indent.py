@@ -124,7 +124,7 @@ class SalesOrder(models.Model):
     state = fields.Selection(selection_add=[('indent_created', 'Indent Created')])
     attachment = fields.Binary(string="Attachment")
     is_true = fields.Boolean(string='is_true')
-    planing_id = fields.Many2one('plan.planing',string='Plan')
+    # planing_id = fields.Many2one('plan.planing',string='Plan')
 
 
     def action_create_purchase_indent(self):
