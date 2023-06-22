@@ -9,26 +9,23 @@ class SalesIndent(models.Model):
     _order = 'create_date desc'
 
 
-    # vendor_id = fields.Many2one('res.partner', string='Vendor')
+
     vendor_id = fields.Many2one('res.partner', string='Partner')
-    # vendor_id = fields.Many2one('res.company', string='Partner')
     reference = fields.Char(string='Order Reference', required=True, copy=False, readonly=True,
                             default=lambda self: _('New'))
 
     currency_id = fields.Many2one('res.currency', string='Currency')
     order_date = fields.Datetime(string='Order Deadline', default=fields.Date.today)
-    expected_date = fields.Datetime(string='Expected Date')
-    # purchase_line_ids = fields.One2many('purchase.indent.lines', 'pur_id', string='Purchase Lines')
+    expected_date = fields.Datetime(string='Expected Date', required=True)
     state = fields.Selection(
         [('draft', "Draft"), ('confirmed', "Confirmed"), ('cancel', "Cancelled")], default='draft',)
     sales_line_ids = fields.One2many('sales.indent.lines','pur_id', string='Sales Line')
     indent_type = fields.Selection([('bakery', 'Bakery'),
                                     ('store', 'Store'),
                                     ('customer order', 'Customer Order')], required=True)
-    # sale_id = fields.Char('ID')
-    # sale_id = fields.Many2one('indent.request', string='ID')
     # sale_id = fields.Integer(string='Purchase Indent Number')
-    sale_id = fields.Char(string='Purchase Indent Number', readonly=True)
+    # sale_id = fields.Char(string='Purchase Indent Number', readonly=True)
+    no_id = fields.Many2one('indent.request', string="Purchase Indent Number")
     company_id = fields.Many2one('res.company', string='company', readonly=True,
                                  default=lambda self: self.env.company.id)
     delivery_status = fields.Selection([('draft', 'Draft'),
@@ -37,18 +34,18 @@ class SalesIndent(models.Model):
                                               ('waiting', "Waiting Another Operation"),
                                               ('assigned', "Ready"),
                                               ('confirmed', "Waiting"),
-                                              ], required=True, compute='_compute_delivery_state_sales')
+                                              ], required=True, compute='_compute_delivery_state')
 
     attachment = fields.Binary(string="Attachment")
-    is_true = fields.Boolean(string='Is True')
-    is_indent = fields.Boolean(string='Is True')
-    planing_id = fields.Many2one('plan.planing',string='Planing')
+    is_true = fields.Boolean(string='is_true')
 
 
-    @api.depends('sale_id')
-    def _compute_delivery_state_sales(self):
+    @api.depends('no_id')
+    def _compute_delivery_state(self):
+        print('qqqqqqqqqqqqqqqqqqqqqqq')
         for record in self:
-            x = self.env['stock.picking'].sudo().search([('transfer_id', '=', record.sale_id)], limit=1).state
+            print('wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww')
+            x = self.env['stock.picking'].sudo().search([('transfer_id', '=', record.no_id.id)], limit=1).state
             print(x)
             record.delivery_status = x
 
@@ -60,21 +57,20 @@ class SalesIndent(models.Model):
         res = super(SalesIndent, self).create(vals)
         return res
 
-    # def action_confirmed(self):
-    #     self.state = 'confirmed'
+
 
     def action_confirmed(self):
         self.state = 'confirmed'
-        comp = self.env['res.company'].sudo().search([('partner_id', '=', self.vendor_id.id)])
-        d = self.env['indent.request'].sudo().create({
-            'vendor_id': self.company_id.partner_id.id,
-            # 'sale_id': self.reference,
-            'indent_type': self.indent_type,
-            'reference_id': self.reference,
-            'expected_date': self.expected_date,
-            'company_id': comp.id,
-            'attachment': self.attachment,
-        })
+        # comp = self.env['res.company'].sudo().search([('partner_id', '=', self.vendor_id.id)])
+        # d = self.env['indent.request'].sudo().create({
+        #     'vendor_id': self.company_id.partner_id.id,
+        #     # 'sale_id': self.reference,
+        #     'indent_type': self.indent_type,
+        #     'reference_id': self.reference,
+        #     'expected_date': self.expected_date,
+        #     'company_id': comp.id,
+        #     'attachment': self.attachment,
+        # })
 
 
     def action_cancel(self):
@@ -87,17 +83,13 @@ class SalesIndent(models.Model):
         else:
             raise ValidationError("Transfer In Progress")
 
-    # def action_open_transfer(self):
-    #     pass
-
     def action_open_transfer(self):
         return {
             'name': _('Transfer'),
             'type': 'ir.actions.act_window',
             'res_model': 'stock.picking',
             'view_mode': 'tree,form',
-            # 'domain': [('transfer_id', '=', self.sale_id.id)],
-            'domain': [('transfer_id', '=', self.sale_id)],
+            'domain': [('transfer_id', '=', self.no_id.id)],
         }
 
 
@@ -130,8 +122,7 @@ class SalesOrder(models.Model):
 
     state = fields.Selection(selection_add=[('indent_created', 'Indent Created')])
     attachment = fields.Binary(string="Attachment")
-    is_true = fields.Boolean(string='Is True')
-    planing_id = fields.Many2one('plan.planing',string='Planing')
+    is_true = fields.Boolean(string='is_true')
 
     def action_create_purchase_indent(self):
         if not self.order_line.filtered(lambda l: l.select_item):

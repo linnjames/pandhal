@@ -56,17 +56,15 @@
                     <group>
                         <group>
                             <field name="vendor_id" required="1"/>
-<!--                            <field name="indent_type" required="1"/>-->
                             <field name="indent_type" required="1" attrs="{'readonly':[('state', 'in', 'confirmed')]}"/>
-                            <field name="sale_id"/>
+                            <field name="no_id"/>
                             <field name="attachment"/>
+                             <field name="is_true" invisible="0"/>
                         </group>
                         <group>
                             <!--                            <field name="order_date"/>-->
                             <field name="expected_date"/>
                             <field name="company_id"/>
-                            <field name="is_indent"/>
-                            <field name="planing_id"/>
                         </group>
                     </group>
                     <notebook>
