@@ -42,7 +42,7 @@ class PlanPlaning(models.Model):
         filter_cdtn = '''where si.state = 'confirmed' and si.planing_id is null  and si.expected_date BETWEEN '%s' AND '%s'
 
         ''' % (self.planning_date.strftime("%Y-%m-%d 00:00:00"), self.planning_date.strftime("%Y-%m-%d 23:59:59"))
-        cdtn = '''where so.state = 'sale' and so.planning_id is null  and so.validity_date BETWEEN '%s' AND '%s'
+        cdtn = '''where so.state = 'sale' and so.planing_id is null  and so.validity_date BETWEEN '%s' AND '%s'
                 ''' % (
             self.planning_date.strftime("%Y-%m-%d 00:00:00"), self.planning_date.strftime("%Y-%m-%d 23:59:59"))
         if self.item_category_id:
@@ -191,7 +191,7 @@ class PlanPlaning(models.Model):
         indent_ids = self.production_lines_ids.mapped('sale_indent_ids')
         for a in sale_ids:
             query = """UPDATE sale_order
-                       SET planning_id = %s
+                       SET planing_id = %s
                         WHERE id = %s;"""
             query = query % (self.id, a.id)
             self._cr.execute(query)
