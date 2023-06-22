@@ -38,6 +38,7 @@ class SalesIndent(models.Model):
 
     attachment = fields.Binary(string="Attachment")
     is_true = fields.Boolean(string='is_true')
+    planing_id = fields.Many2one('plan.planing',string='Plan')
 
 
     @api.depends('no_id')
@@ -123,6 +124,8 @@ class SalesOrder(models.Model):
     state = fields.Selection(selection_add=[('indent_created', 'Indent Created')])
     attachment = fields.Binary(string="Attachment")
     is_true = fields.Boolean(string='is_true')
+    planing_id = fields.Many2one('plan.planing',string='Plan')
+
 
     def action_create_purchase_indent(self):
         if not self.order_line.filtered(lambda l: l.select_item):
