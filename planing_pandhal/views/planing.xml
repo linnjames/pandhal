@@ -20,6 +20,9 @@
                 <field name="reference"/>
                 <field name="planning_date"/>
                 <field name="activity_ids" widget="list_activity" optional="show"/>
+<!--                <field name="kitchen_ids" widget="many2many_tags"/>-->
+<!--                <field name="trip_ids" options="{'no_create': True}" widget="many2many_tags"/>-->
+<!--                <field name="item_category_id"/>-->
                 <field name="state" widget="badge" decoration-info="state == 'draft'"
                        decoration-danger="state == 'reject'"
                        decoration-warning="state == 'approve'"
@@ -90,6 +93,8 @@
                                     <field name="planed_quantity" force_save="1"/>
                                     <field name="varience"/>
                                     <field name="actual_plan_qty"/>
+                                    <field name="sale_order_ids" optional="hide"/>
+                                    <field name="sale_indent_ids" optional="hide"/>
                                 </tree>
                             </field>
                         </page>

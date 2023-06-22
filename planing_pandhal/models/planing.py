@@ -22,10 +22,11 @@ class PlanPlaning(models.Model):
         default='draft', string="Status",tracking=True)
     company_id = fields.Many2one('res.company', string='company', readonly=True,
                                  default=lambda self: self.env.company.id)
-    user_id = fields.Many2one('res.users', string='User', readonly=True,tracking=True,
-                                 default=lambda self: self.env.user.id)
     is_confirm = fields.Boolean(string='Is confirm')
     tick = fields.Boolean(string="Consider Closing Stock")
+    user_id = fields.Many2one('res.users', string='User', readonly=True,
+                                 default=lambda self: self.env.user.id,tracking=True)
+
 
     @api.model
     def create(self, vals):
@@ -35,11 +36,13 @@ class PlanPlaning(models.Model):
         return res
 
     def action_line_value(self):
+        #and so.is_true = false
+        #and si.is_true = false
         self.production_lines_ids = False
-        filter_cdtn = '''where si.state = 'confirmed' and si.expected_date BETWEEN '%s' AND '%s'
+        filter_cdtn = '''where si.state = 'confirmed' and si.planing_id is null  and si.expected_date BETWEEN '%s' AND '%s'
 
         ''' % (self.planning_date.strftime("%Y-%m-%d 00:00:00"), self.planning_date.strftime("%Y-%m-%d 23:59:59"))
-        cdtn = '''where so.state = 'sale' and so.validity_date BETWEEN '%s' AND '%s'
+        cdtn = '''where so.state = 'sale' and so.planing_id is null  and so.validity_date BETWEEN '%s' AND '%s'
                 ''' % (
             self.planning_date.strftime("%Y-%m-%d 00:00:00"), self.planning_date.strftime("%Y-%m-%d 23:59:59"))
         if self.item_category_id:
@@ -62,7 +65,8 @@ class PlanPlaning(models.Model):
                    sil.product_id AS product,
                    uom.id as uom_name,
                    bom.id as bom,
-                   SUM(sil.qty) AS total_qty
+                   SUM(sil.qty) AS total_qty,
+                   si.id as i_type, '0' as s_type
             FROM sales_indent_lines sil
             LEFT JOIN sales_indent si ON sil.pur_id = si.id
             LEFT JOIN uom_uom uom ON sil.uom_id = uom.id
@@ -70,13 +74,14 @@ class PlanPlaning(models.Model):
             LEFT JOIN product_template pt ON pp.product_tmpl_id = pt.id
             JOIN mrp_bom bom ON pt.id = bom.product_tmpl_id
             %s 
-            GROUP BY sil.product_id, pt.categ_id,uom.id,bom.id
+            GROUP BY sil.product_id, pt.categ_id,uom.id,bom.id, si.id
             union all
             SELECT pt.categ_id AS categ,
                            sol.product_id AS product,
                            uom.id as uom_name,
                            bom.id as bom,
-                           SUM(sol.product_uom_qty) AS total_qty
+                           SUM(sol.product_uom_qty) AS total_qty,
+                           '0' as i_type, so.id as s_type
                     FROM sale_order_line sol
                     LEFT JOIN sale_order so ON sol.order_id = so.id
                     LEFT JOIN uom_uom uom ON sol.product_uom = uom.id
@@ -84,12 +89,63 @@ class PlanPlaning(models.Model):
 					LEFT JOIN product_template pt ON pp.product_tmpl_id = pt.id
                     JOIN mrp_bom bom ON pt.id = bom.product_tmpl_id
                     %s 
-                    GROUP BY sol.product_id, pt.categ_id,uom.id,bom.id
+                    GROUP BY sol.product_id, pt.categ_id,uom.id,bom.id, so.id
             """ % (filter_cdtn, cdtn)
         print(query)
         self._cr.execute(query)
         print(query)
         intent_ids = self._cr.dictfetchall()
+        print('intent_ids', intent_ids)
+        #amal
+        row = []
+        # intent_ids2 = [
+        #     {'categ': 593, 'product': 18668, 'uom_name': 12, 'bom': 9, 'total_qty': 2.0, 'i_type': 145, 's_type': 0},
+        #     {'categ': 593, 'product': 18668, 'uom_name': 12, 'bom': 9, 'total_qty': 2.0, 'i_type': 0,'s_type': 74},
+        #     {'categ': 595, 'product': 18719, 'uom_name': 1, 'bom': 7, 'total_qty': 3.0, 'i_type': 0, 's_type': 74},
+        #     {'categ': 593, 'product': 18668, 'uom_name': 12, 'bom': 9, 'total_qty': 2.0, 'i_type': 0,'s_type': 76},
+        #     {'categ': 595,'product': 18719,'uom_name': 1, 'bom': 7,'total_qty': 3.0,'i_type': 0,'s_type': 76}
+        # ]
+
+        for line in intent_ids:
+            row.append({'data': {
+                'product': line['product'],
+                'uom_name': line['uom_name']
+            }})
+
+        no_dup = []
+        for i in row:
+            if i['data'] not in no_dup:
+                no_dup.append(i['data'])
+
+        lst_final = []
+        for v in no_dup:
+            product = v['product']
+            uom_name = v['uom_name']
+            qty = 0
+            bom = 0
+            sale = []
+            print('sale', sale)
+            indent = []
+            for i in intent_ids:
+                if (i['product'] == product) and (i['uom_name'] == uom_name):
+                    qty += i['total_qty']
+                    bom = i['bom']
+                    if i['s_type'] != 0:
+                        sale.append(i['s_type'])
+                    if i['i_type'] != 0:
+                        indent.append(i['i_type'])
+            lst_final.append({
+                'product': product,
+                'uom_name': uom_name,
+                'bom': bom,
+                'total_qty': qty,
+                'sale': list(set(sale)),
+                'indent': list(set(indent)),
+            })
+
+        result = lst_final
+        #amal
+
         grouped_data = {}
         for item in intent_ids:
             product_id = item['product']
@@ -98,15 +154,20 @@ class PlanPlaning(models.Model):
             else:
                 grouped_data[product_id] = item
 
-        result = list(grouped_data.values())
-        print(result)
+        # result = list(grouped_data.values())
         for i in result:
+            sale = self.env['sale.order'].browse([value for value in i['sale']])
+            indent = self.env['sales.indent'].browse([value for value in i['indent']])
+
+
             self.write({
                 'production_lines_ids': [(0, 0, {
                     'item_list_id': i['product'],
                     'bom_id': i['bom'],
                     'production_uom_id': i['uom_name'],
                     'order_quantity': i['total_qty'],
+                    'sale_order_ids': [(6, 0, sale.ids)],
+                    'sale_indent_ids': [(6, 0, indent.ids)]
                 })]
             })
     def action_waiting_approval(self):
@@ -126,50 +187,69 @@ class PlanPlaning(models.Model):
 
     def action_confirm(self):
         self.state = 'done'
-        planing_cdtn = '''where so.state = 'sale' and so.validity_date BETWEEN '%s' AND '%s'
-    
-                            ''' % (
-            self.planning_date.strftime("%Y-%m-%d 00:00:00"), self.planning_date.strftime("%Y-%m-%d 23:59:59"))
-        ind_cdtn = '''where si.state = 'confirmed' and si.expected_date BETWEEN '%s' AND '%s'
-    
-            ''' % (self.planning_date.strftime("%Y-%m-%d 00:00:00"), self.planning_date.strftime("%Y-%m-%d 23:59:59"))
-        if self.company_id:
-            planing_cdtn += ''' and so.company_id = %s
-                ''' % (self.company_id.id)
-            ind_cdtn += ''' and si.company_id = %s
-                ''' % (self.company_id.id)
+        sale_ids = self.production_lines_ids.mapped('sale_order_ids')
+        indent_ids = self.production_lines_ids.mapped('sale_indent_ids')
+        for a in sale_ids:
+            query = """UPDATE sale_order
+                       SET planing_id = %s
+                        WHERE id = %s;"""
+            query = query % (self.id, a.id)
+            self._cr.execute(query)
+        for a in indent_ids:
+            query = """UPDATE sales_indent
+                        SET planing_id = %s
+                        WHERE id = %s;"""
+            query = query % (self.id, a.id)
+            self._cr.execute(query)
 
-        ind = """
-                            SELECT si.id as indent
-                            FROM sales_indent_lines sil
-                            LEFT JOIN sales_indent si ON sil.pur_id = si.id
-                            %s
-                            GROUP BY si.id
-                        """ % (ind_cdtn)
-        self._cr.execute(ind)
-        ind_ids = self._cr.dictfetchall()
-        for ind in ind_ids:
-            indent = self.env['sales.indent'].browse(ind['indent'])
-            indent.write({
-                'is_true': True
-            })
-        planing = """  
-                            SELECT so.id as sale
-                            FROM sale_order_line sol
-                            LEFT JOIN sale_order so ON sol.order_id = so.id
-                            %s
-                            GROUP BY so.id
-                        """ % (planing_cdtn)
-        self._cr.execute(planing)
-        planing_ids = self._cr.dictfetchall()
-        print(planing_ids, 'sucess achieved')
-
-        # Iterate over the selected order IDs and update the values
-        for inv in planing_ids:
-            order = self.env['sale.order'].browse(inv['sale'])
-            order.write({
-                'is_true': True
-            })
+        #
+        # print('a, a', a)
+        # print('a, a', aw)
+        # self.state = 'done'
+        # planing_cdtn = '''where so.state = 'sale' and so.validity_date BETWEEN '%s' AND '%s'
+        #
+        #                     ''' % (
+        #     self.planning_date.strftime("%Y-%m-%d 00:00:00"), self.planning_date.strftime("%Y-%m-%d 23:59:59"))
+        # ind_cdtn = '''where si.state = 'confirmed' and si.expected_date BETWEEN '%s' AND '%s'
+        #
+        #     ''' % (self.planning_date.strftime("%Y-%m-%d 00:00:00"), self.planning_date.strftime("%Y-%m-%d 23:59:59"))
+        # if self.company_id:
+        #     planing_cdtn += ''' and so.company_id = %s
+        #         ''' % (self.company_id.id)
+        #     ind_cdtn += ''' and si.company_id = %s
+        #         ''' % (self.company_id.id)
+        #
+        # ind = """
+        #                     SELECT si.id as indent
+        #                     FROM sales_indent_lines sil
+        #                     LEFT JOIN sales_indent si ON sil.pur_id = si.id
+        #                     %s
+        #                     GROUP BY si.id
+        #                 """ % (ind_cdtn)
+        # self._cr.execute(ind)
+        # ind_ids = self._cr.dictfetchall()
+        # for ind in ind_ids:
+        #     indent = self.env['sales.indent'].browse(ind['indent'])
+        #     indent.write({
+        #         'is_true': True
+        #     })
+        # planing = """
+        #                     SELECT so.id as sale
+        #                     FROM sale_order_line sol
+        #                     LEFT JOIN sale_order so ON sol.order_id = so.id
+        #                     %s
+        #                     GROUP BY so.id
+        #                 """ % (planing_cdtn)
+        # self._cr.execute(planing)
+        # planing_ids = self._cr.dictfetchall()
+        # print(planing_ids, 'sucess achieved')
+        #
+        # # Iterate over the selected order IDs and update the values
+        # for inv in planing_ids:
+        #     order = self.env['sale.order'].browse(inv['sale'])
+        #     order.write({
+        #         'is_true': True
+        #     })
 
         transfer_cdtn = '''where si.state ='approve' and si.planning_date BETWEEN '%s' AND '%s'
     
@@ -253,6 +333,12 @@ class ProductionPlanningLines(models.Model):
     ref_id = fields.Many2one('plan.planing')
     varience = fields.Float(string="Varience")
     actual_plan_qty = fields.Float(string="Actual Plan Qty", compute='_compute_actual_plan_qty', store=True)
+    sale_order_ids = fields.Many2many('sale.order', 'sale_order_production_plan_line_rel',
+                                      'plan_line_id', 'sale_id', string='Sales')
+    indent_ids = fields.Many2many('indent.request', 'indent_request_production_plan_line_rel',
+                                  'plan_line_id', 'indent_id', string='Indents')
+    sale_indent_ids = fields.Many2many('sales.indent', 'sale_indent_request_production_plan_line_rel',
+                                  'plan_line_id', 'indent_id', string='Indents')
 
     @api.depends('order_quantity', 'on_quantity')
     def _compute_plan_qty(self):
