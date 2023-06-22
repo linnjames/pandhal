@@ -125,6 +125,16 @@
             </field>
         </field>
     </record>
+    <record id="indent_sales_order" model="ir.ui.view">
+        <field name="name">indent.sales.order</field>
+        <field name="model">sale.order</field>
+        <field name="inherit_id" ref="sale.view_order_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='partner_id']" position="after">
+                <field name="planing_id"/>
+            </xpath>
+        </field>
+    </record>
     <record model="ir.ui.view" id="transfer_inventory_customisation_preview">
         <field name="name">Transfer</field>
         <field name="model">stock.picking</field>

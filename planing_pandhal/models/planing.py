@@ -393,3 +393,7 @@ class StockPicking(models.Model):
     _inherit = 'stock.picking'
 
     request_id = fields.Many2one('plan.planing', string='Material Request For Production')
+class SalesOrder(models.Model):
+    _inherit = 'sale.order'
+
+    planing_id = fields.Many2one('plan.planing', string='Planing')
