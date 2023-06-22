@@ -19,6 +19,7 @@
             <tree>
                 <field name="reference"/>
                 <field name="planning_date"/>
+                <field name="activity_ids" widget="list_activity" optional="show"/>
                 <field name="state" widget="badge" decoration-info="state == 'draft'"
                        decoration-danger="state == 'reject'"
                        decoration-warning="state == 'approve'"
@@ -101,6 +102,11 @@
 <!--                        </page>-->
                     </notebook>
                 </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids"/>
+                    <field name="activity_ids"/>
+                    <field name="message_ids"/>
+                </div>
             </form>
         </field>
     </record>

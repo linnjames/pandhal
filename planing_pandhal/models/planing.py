@@ -6,21 +6,24 @@ import json
 
 class PlanPlaning(models.Model):
     _name = 'plan.planing'
+    _inherit = ["mail.thread", "mail.activity.mixin"]
     _description = 'Plan'
     _rec_name = "reference"
 
-    planning_date = fields.Date(string="Planning Date", required=True)
+    planning_date = fields.Date(string="Planning Date", required=True,tracking=True)
     reference = fields.Char(string='Order Reference', required=True, copy=False, readonly=True,
                             default=lambda self: _('New'))
-    reason = fields.Text(String="Reason")
+    reason = fields.Text(String="Reason",tracking=True)
     item_category_id = fields.Many2one('product.category', string="Item Category")
     production_lines_ids = fields.One2many('production.plan.lines', 'ref_id')
     state = fields.Selection(
         [('draft', 'Draft'), ('approval', 'Waiting For Approval'), ('approve', 'Approved'), ('reject', 'Rejected'),
          ('done', 'Done')],
-        default='draft', string="Status")
+        default='draft', string="Status",tracking=True)
     company_id = fields.Many2one('res.company', string='company', readonly=True,
                                  default=lambda self: self.env.company.id)
+    user_id = fields.Many2one('res.users', string='User', readonly=True,tracking=True,
+                                 default=lambda self: self.env.user.id)
     is_confirm = fields.Boolean(string='Is confirm')
     tick = fields.Boolean(string="Consider Closing Stock")
 
