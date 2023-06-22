@@ -12,7 +12,7 @@
     'data': [
         'security/ir.model.access.csv',
         'security/security.xml',
-        'data/data.xml',pla
+        'data/data.xml',
         'views/indent_request.xml',
         'views/res_company.xml',
         'views/stock_picking.xml',
