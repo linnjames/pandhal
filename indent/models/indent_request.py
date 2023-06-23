@@ -180,10 +180,11 @@ class PurchaseState(models.Model):
     def button_purchase_approval(self):
         self.state = 'approve'
 
-    # def button_confirm(self):
-    #     res = super(PurchaseState, self).button_confirm()
-    #     for order in self:
-    #         if order.state in ['approve']:
+    def button_confirm(self):
+        res = super(PurchaseState, self).button_confirm()
+        for order in self:
+            if order.state in ['approve']:
+               order.state = 'purchase'
     #
     #             order.order_line._validate_analytic_distribution()
     #             order._add_supplier_to_product()
