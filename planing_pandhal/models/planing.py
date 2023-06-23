@@ -98,14 +98,6 @@ class PlanPlaning(models.Model):
         print('intent_ids', intent_ids)
         #amal
         row = []
-        # intent_ids2 = [
-        #     {'categ': 593, 'product': 18668, 'uom_name': 12, 'bom': 9, 'total_qty': 2.0, 'i_type': 145, 's_type': 0},
-        #     {'categ': 593, 'product': 18668, 'uom_name': 12, 'bom': 9, 'total_qty': 2.0, 'i_type': 0,'s_type': 74},
-        #     {'categ': 595, 'product': 18719, 'uom_name': 1, 'bom': 7, 'total_qty': 3.0, 'i_type': 0, 's_type': 74},
-        #     {'categ': 593, 'product': 18668, 'uom_name': 12, 'bom': 9, 'total_qty': 2.0, 'i_type': 0,'s_type': 76},
-        #     {'categ': 595,'product': 18719,'uom_name': 1, 'bom': 7,'total_qty': 3.0,'i_type': 0,'s_type': 76}
-        # ]
-
         for line in intent_ids:
             row.append({'data': {
                 'product': line['product'],
@@ -201,55 +193,6 @@ class PlanPlaning(models.Model):
                         WHERE id = %s;"""
             query = query % (self.id, a.id)
             self._cr.execute(query)
-
-        #
-        # print('a, a', a)
-        # print('a, a', aw)
-        # self.state = 'done'
-        # planing_cdtn = '''where so.state = 'sale' and so.validity_date BETWEEN '%s' AND '%s'
-        #
-        #                     ''' % (
-        #     self.planning_date.strftime("%Y-%m-%d 00:00:00"), self.planning_date.strftime("%Y-%m-%d 23:59:59"))
-        # ind_cdtn = '''where si.state = 'confirmed' and si.expected_date BETWEEN '%s' AND '%s'
-        #
-        #     ''' % (self.planning_date.strftime("%Y-%m-%d 00:00:00"), self.planning_date.strftime("%Y-%m-%d 23:59:59"))
-        # if self.company_id:
-        #     planing_cdtn += ''' and so.company_id = %s
-        #         ''' % (self.company_id.id)
-        #     ind_cdtn += ''' and si.company_id = %s
-        #         ''' % (self.company_id.id)
-        #
-        # ind = """
-        #                     SELECT si.id as indent
-        #                     FROM sales_indent_lines sil
-        #                     LEFT JOIN sales_indent si ON sil.pur_id = si.id
-        #                     %s
-        #                     GROUP BY si.id
-        #                 """ % (ind_cdtn)
-        # self._cr.execute(ind)
-        # ind_ids = self._cr.dictfetchall()
-        # for ind in ind_ids:
-        #     indent = self.env['sales.indent'].browse(ind['indent'])
-        #     indent.write({
-        #         'is_true': True
-        #     })
-        # planing = """
-        #                     SELECT so.id as sale
-        #                     FROM sale_order_line sol
-        #                     LEFT JOIN sale_order so ON sol.order_id = so.id
-        #                     %s
-        #                     GROUP BY so.id
-        #                 """ % (planing_cdtn)
-        # self._cr.execute(planing)
-        # planing_ids = self._cr.dictfetchall()
-        # print(planing_ids, 'sucess achieved')
-        #
-        # # Iterate over the selected order IDs and update the values
-        # for inv in planing_ids:
-        #     order = self.env['sale.order'].browse(inv['sale'])
-        #     order.write({
-        #         'is_true': True
-        #     })
 
         transfer_cdtn = '''where si.state ='approve' and si.planning_date BETWEEN '%s' AND '%s'
     

@@ -30,8 +30,7 @@
             </xpath>
 
             <xpath expr="//field[@name='attachment']" position="after" invisible="1">
-                <field name="is_true" invisible="1"/>
-<!--                <field name="planning_id" invisible="0"/>-->
+                <field name="is_true"/>
             </xpath>
 
         </field>

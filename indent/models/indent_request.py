@@ -17,7 +17,7 @@ class IndentRequest(models.Model):
                                     ('store', 'Store'),
                                     ('customer order', 'Customer Order')], required=True)
     currency_id = fields.Many2one('res.currency', string='Currency')
-    expected_date = fields.Datetime(string='Expected Date', required=True)
+    expected_date = fields.Datetime(string='Expected Date', date_format='%d/%m/%Y', required=True)
     purchase_line_ids = fields.One2many('purchase.indent.lines', 'pur_id', string='Purchase Lines')
     state = fields.Selection(
         [('draft', "Draft"), ('confirmed', "Confirmed"), ('cancel', "Cancelled")],
@@ -36,7 +36,8 @@ class IndentRequest(models.Model):
     sale_purchase_id = fields.Many2one('sale.order', string='ID')
     sale_indent_purchase_id = fields.Many2one('sales.indent', string='sale indent purchase id')
     attachment = fields.Binary(string="Attachment")
-    reference_id = fields.Char(string='Sale Indent Number')
+    reference_id = fields.Char(string='Sale Indent Number', copy=False)
+
 
     @api.depends('reference')
     def _compute_delivery_state(self):
@@ -58,10 +59,10 @@ class IndentRequest(models.Model):
             'res_model': 'stock.picking',
             'view_mode': 'tree,form',
             'domain': [('transfer_id', '=', self.id)],
-
         }
 
     def action_cancel(self):
+        self.filtered(lambda r: r.state == 'draft').write({'state': 'cancel'})
         print('yyyyyyyyyyyyyyyyyyyyyyyyyyy')
         self.state = 'cancel'
         a = self.env['stock.picking'].search([('transfer_id', '=', self.reference)], limit=1)
@@ -72,50 +73,43 @@ class IndentRequest(models.Model):
             raise ValidationError("Transfer In Progress")
 
     def action_confirmed(self):
-        partner = self.env['res.company'].sudo().search([('partner_id', '=', self.vendor_id.id)])
-        print(partner)
-        if partner.partner_id.id == self.env.company.partner_id.id:
-            print("qqqqqqqqqqqqqqqqqqqqqq")
-            raise ValidationError('Partner cannot be the same as company.')
+        if not self.reference_id:
+            if not self.expected_date:
+                raise ValidationError('Please provide required date.')
 
-        if self.expected_date == False:
-            raise ValidationError('Please provide required date.')
+            if not self.reference_id:
+                partner = self.env['res.company'].sudo().search([('partner_id', '=', self.vendor_id.id)])
+                print(partner)
+                if partner.partner_id.id == self.env.company.partner_id.id:
+                    print("qqqqqqqqqqqqqqqqqqqqqq")
+                    raise ValidationError('Partner cannot be the same as company.')
 
-        operation = partner.operation_type_out
-        print('wwwwwwwwwwwwwwww')
-        op = partner
-        print('eeeeeeee')
-        self.state = 'confirmed'
-        print(operation.name)
-        print(operation.sudo().company_id.name)
+                comp = self.env['res.company'].sudo().search([('partner_id', '=', self.vendor_id.id)])
+                c = self.env['sales.indent'].sudo().create({
+                    'vendor_id': self.company_id.partner_id.id,
+                    'no_id': self.id,
+                    'indent_type': self.indent_type,
+                    'expected_date': self.expected_date,
+                    'company_id': comp.id,
+                    'attachment': self.attachment,
 
-        a = self.env['stock.picking'].sudo().create({
-            'partner_id': partner.partner_id.id,
-            'picking_type_id': operation.id,
-            'location_id': op.sudo().operation_type_out.default_location_src_id.id,
-            'location_dest_id': op.sudo().operation_type_out.default_location_dest_id.id,
-            'company_id': partner.id,
-            'transfer_id': self.id,
-            'scheduled_date': False,
-            'date_done': False,
+                })
+                self.reference_id = c.reference
+                for vals in self.purchase_line_ids:
+                    # tax = self.env['account.tax'].sudo().search(
+                    #     [('name', '=', vals.product_id.taxes_id.name), ('company_id', '=', self.vendor_id.id)])
+                    c.write({
+                        'sales_line_ids': [(0, 0, {
+                            'product_id': vals.product_id.id,
+                            'qty': vals.qty,
+                            'uom_id': vals.uom_id.id,
+                            'message': vals.message,
 
-        })
-        for vals in self.purchase_line_ids:
-            a.write({
-                'move_ids_without_package': [(0, 0, {
-                    'product_id': vals.product_id.id,
-                    'product_uom_qty': vals.qty,
-                    'name': vals.product_id.name,
-                    'company_id': partner.id,
-                    'location_id': op.sudo().operation_type_out.default_location_src_id.id,
-                    'location_dest_id': op.sudo().operation_type_out.default_location_dest_id.id,
-                })]
-            })
-        a.scheduled_date = self.expected_date
-        a.date_done = self.expected_date
+                        })]
+                    })
+                    print(c,'ccccccccccccccccccccccccccccccccccc')
 
         b = self.env['stock.picking'].sudo().create({
-            # 'partner_id': self.env.company.partner_id.id,
             'partner_id': self.vendor_id.id,
             'picking_type_id': self.env.company.sudo().operation_type_in.id,
             'location_id': self.env.company.sudo().operation_type_in.default_location_src_id.id,
@@ -130,44 +124,18 @@ class IndentRequest(models.Model):
                 'move_ids_without_package': [(0, 0, {
                     'product_id': vals.product_id.id,
                     'product_uom_qty': vals.qty,
-                    # 'description_picking': vals.product_id.id,
                     'name': vals.product_id.name,
                     'company_id': self.env.company.id,
                     'location_id': self.env.company.sudo().operation_type_in.default_location_src_id.id,
                     'location_dest_id': self.env.company.sudo().operation_type_in.default_location_dest_id.id,
                 })]
             })
+            print(b,'bbbbbbbbbbbbbbbbbbbbbbbbbbbb')
         b.scheduled_date = self.expected_date
         b.date_done = self.expected_date
-        #
-        comp = self.env['res.company'].sudo().search([('partner_id', '=', self.vendor_id.id)])
-        c = self.env['sales.indent'].sudo().create({
-            # 'vendor_id': self.vendor_id.id,
-            'vendor_id': self.company_id.partner_id.id,
-            # 'no_id': self.reference,
-            'no_id': self.id,
-            'indent_type': self.indent_type,
-            # 'order_date': self.order_date,
-            'expected_date': self.expected_date,
-            'company_id': comp.id,
-            'attachment': self.attachment,
-            # 'company_id': self.vendor_id.id,
-        })
-        print('sale_id')
-        for vals in self.purchase_line_ids:
-            tax = self.env['account.tax'].sudo().search(
-                [('name', '=', vals.product_id.taxes_id.name), ('company_id', '=', self.vendor_id.id)])
-            print(tax)
-            c.write({
-                'sales_line_ids': [(0, 0, {
-                    # 'product_template_id': vals.product_id.id,
-                    'product_id': vals.product_id.id,
-                    'qty': vals.qty,
-                    'uom_id': vals.uom_id.id,
-                    'message': vals.message,
-
-                })]
-            })
+        print(b, "multi")
+        records_to_confirm = self.filtered(lambda r: r.state == 'draft')
+        records_to_confirm.write({'state': 'confirmed'})
 
 
 class PurchaseIndentLines(models.Model):
@@ -198,7 +166,8 @@ class ResCompany(models.Model):
 class StockPicking(models.Model):
     _inherit = 'stock.picking'
 
-    transfer_id = fields.Many2one('indent.request', string='ID')
+    transfer_id = fields.Many2one('indent.request', string='Purchase Transfer ID')
+    sale_transfer_id = fields.Many2one('sales.indent', string='Sales Transfer ID')
     location_id = fields.Many2one(states={'assigned': [('readonly', True)]})
     location_dest_id = fields.Many2one(states={'assigned': [('readonly', True)]})
 
@@ -208,8 +177,8 @@ class PurchaseState(models.Model):
 
     state = fields.Selection(selection_add=[('approve', 'Approved'), ("purchase",)])
 
-    # def button_purchase_approval(self):
-    #     self.state = 'approve'
+    def button_purchase_approval(self):
+        self.state = 'approve'
 
     # def button_confirm(self):
     #     res = super(PurchaseState, self).button_confirm()

@@ -11,6 +11,10 @@
 
                 </field>
 
+                <field name="transfer_id" position="after">
+                    <field name="sale_transfer_id"/>
+                </field>
+
 <!--                <xpath expr="//button[@name='button_validate'][2]" position="attributes">-->
 <!--                    <attribute name="groups">indent_request.transfer_validate</attribute>-->
 <!--                </xpath>-->
@@ -49,6 +53,18 @@
             <field name="arch" type="xml">
                 <xpath expr="//field[@name='origin']" position="attributes">
                     <attribute name="invisible">1</attribute>
+                </xpath>
+            </field>
+        </record>
+
+        <record id="view_stock_picking_form_product_customization_inherit" model="ir.ui.view">
+            <field name="name">stock.picking.form.product_customization.inherit</field>
+            <field name="model">stock.picking</field>
+            <field name="inherit_id" ref="stock.view_picking_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='move_ids_without_package']/tree/field[@name='product_id']"
+                       position="attributes">
+                    <attribute name="options">{'no_create': True, 'no_edit': True, 'no_open': True}</attribute>
                 </xpath>
             </field>
         </record>
