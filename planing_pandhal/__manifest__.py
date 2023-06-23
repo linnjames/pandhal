@@ -14,6 +14,8 @@
              # 'security/security.xml',
              # 'data/trip_name.xml',
              'data/sequence.xml',
+             'report/production_planning_template.xml',
+             'report/production_planning.xml',
              'views/planing.xml'],
     'qweb': [],
     'license': 'LGPL-3',

@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+
+
+        <record id="paperformat_euro_lowmargin_plan_planing_print" model="report.paperformat">
+            <field name="name">European A4 low margin</field>
+            <field name="default" eval="True"/>
+            <field name="format">A4</field>
+            <field name="page_height">0</field>
+            <field name="page_width">0</field>
+            <field name="orientation">Portrait</field>
+            <field name="margin_top">15</field>
+            <field name="margin_bottom">33</field>
+            <field name="margin_left">7</field>
+            <field name="margin_right">7</field>
+            <field name="header_line" eval="False"/>
+        </record>
+
+        <record id="pandhal_report_print_id" model="ir.actions.report">
+            <field name="name">Production Planning Print</field>
+            <field name="model">plan.planing</field>
+            <field name="report_type">qweb-pdf</field>
+            <field name="report_name">planing_pandhal.production_planning_template</field>
+            <field name="report_file">planing_pandhal.production_planning_template</field>
+            <field name="paperformat_id" ref="planing_pandhal.paperformat_euro_lowmargin_plan_planing_print"/>
+            <field name="binding_model_id" ref="model_plan_planing"/>
+            <field name="binding_view_types">form,tree</field>
+            <field name="binding_type">report</field>
+        </record>
+
+<!--        <record id="record_sales_quotation_pdf_print" model="ir.actions.report">-->
+<!--            <field name="name">Production Planning Print</field>-->
+<!--            <field name="model">plan.planing</field>-->
+<!--            <field name="report_type">qweb-pdf</field>-->
+<!--            <field name="report_name">planing_pandhal.production_planning_template</field>-->
+<!--            <field name="report_file">planing_pandhal.production_planning_template</field>-->
+<!--            <field name="paperformat_id" ref="planing_pandhal.paperformat_euro_lowmargin_plan_planing_print"/>-->
+<!--            <field name="binding_model_id" ref="planing_pandhal.model_plan.planing"/>-->
+<!--            <field name="binding_view_types">form</field>-->
+<!--            <field name="binding_type">report</field>-->
+<!--        </record>-->
+</odoo>

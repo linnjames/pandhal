@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <data>
+        <template id="production_planning_template">
+            <t t-call="web.basic_layout">
+                <t t-foreach="docs" t-as="doc">
+
+                    <t t-call="web.html_container">
+                        <style type="text/css">
+                            .head_border{
+                            vertical-align: middle;
+                            font-size:18px;
+                            padding-top:5px;padding-bottom:5px;
+                            border-right: 1px solid black;
+                            border-left: 1px solid black;
+                            border-top: 1px solid black;
+                            border-bottom: 1px solid black;
+                            text-align: center;
+                            background-color: #e5e5e5;
+                            }
+                            .body_border{
+                            vertical-align: middle;
+                            font-size:15px;
+                            font-weight:800;
+                            padding-top:5px;padding-bottom:5px;
+                            border-left: 1px solid black;
+                            border-right: 1px solid black;
+                            border-top: 1px solid black;
+                            border-bottom: 1px solid black;
+
+                            }
+                            .total_border{
+                            vertical-align: middle;
+                            border-right: 1px solid black;
+                            border-left: 1px solid black;
+                            border-top: 1px solid black;
+                            border-bottom: 1px solid black;
+                            }
+                            .container{
+                            padding: 0 !important;
+                            }
+                        </style>
+                        <table width="100%">
+                            <tr>
+                                <td style="border-bottom: 1px solid white;border-top:1px solid white;border-right: 1px solid white;border-left: 1px solid white;padding-top:1px;font-size: 20px;text-align:center"
+                                    width="10%">
+                                    <span>
+                                        <strong>PRODUCTION PLANNING PRINT</strong>
+                                    </span>
+                                </td>
+                            </tr>
+                        </table>
+                        <br/>
+                        <table style="width:100%">
+                            <tr>
+                                <td colspan="3"
+                                    style="border-bottom: 1px solid white;border-top:1px solid white;border-right: 1px solid white;border-left: 1px solid white;font-size: 15px;padding: 1px 1px 1px 10px;text-align:left"
+                                    width="20%">
+                                    <span>Date :</span>
+                                    <span t-field="doc.planning_date"/>
+                                </td>
+                            </tr>
+                        </table>
+                        <br/>
+                        <br/>
+                        <br/>
+                        <table width="95%" align="centre" style="font-size:12px;border-bottom: 1px solid black">
+                            <tr>
+                                <td colspan="1"
+                                    style="border-bottom: 1px solid black;border-top:1px solid black;border-right: 1px solid black;border-left: 1px solid black;font-size: 15px;padding: 5px 0px 0px 5px;text-align:center"
+                                    width="5%">
+                                    <strong>Products</strong>
+                                </td>
+                                <td colspan="1"
+                                    style="border-bottom: 1px solid black;border-top:1px solid black;border-right: 1px solid black;border-left: 1px solid black;font-size: 15px;padding: 5px 0px 0px 5px;text-align:center"
+                                    width="10%">
+                                    <strong>Actual Plan Qty</strong>
+                                </td>
+                                <td colspan="1"
+                                    style="border-bottom: 1px solid black;border-top:1px solid black;border-right: 1px solid black;border-left: 1px solid black;font-size: 15px;padding: 5px 0px 0px 5px;text-align:center"
+                                    width="10%">
+                                    <strong>Units</strong>
+                                </td>
+                            </tr>
+                            <t t-set="products" t-value="0"/>
+                            <t t-set="actual_plan_qty" t-value="0"/>
+                            <t t-set="unit" t-value="0"/>
+                            <t t-foreach="doc.production_lines_ids" t-as="line">
+                                <t if="line.product_id">
+                                    <tr>
+                                        <!--                                <t t-set="sl_no" t-value="sl_no + 1"/>-->
+                                        <td width="14.2%"
+                                            style="border-bottom: 1px solid black;border-top:1px solid black;border-right: 1px solid black;border-left: 1px solid black;font-size: 15px;text-align:center">
+                                            <span t-field="line.item_list_id.product_tmpl_id.name"/>
+                                        </td>
+                                        <td width="14.2%"
+                                            style="border-bottom: 1px solid black;border-top:1px solid black;border-right: 1px solid black;border-left: 1px solid black;font-size: 15px;text-align:center">
+
+                                            <span t-field="line.actual_plan_qty"/>
+
+                                        </td>
+                                        <td width="14.2%"
+                                            style="border-bottom: 1px solid black;border-top:1px solid black;border-right: 1px solid black;border-left: 1px solid black;font-size: 15px;text-align:center">
+                                            <span t-field="line.production_uom_id"/>
+
+                                        </td>
+                                    </tr>
+                                </t>
+                            </t>
+
+
+                        </table>
+
+                        <div class="footer o_standard_footer">
+                            <div class="row text-center">
+                                <div class="col col-12 text-center">
+                                    <ul class="list-inline">
+                                        <li class="list-inline-item">
+                                            <span class="page"/>
+                                        </li>
+                                        <li class="list-inline-item">/</li>
+                                        <li class="list-inline-item">
+                                            <span class="topage"/>
+                                        </li>
+                                        <li>
+                                            <span t-esc="user.name"/>&#160;-&#160;
+                                                                                        <span t-esc="context_timestamp(datetime.datetime.now()).strftime('%d/%m/%Y %H:%M')"/>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </t>
+                </t>
+            </t>
+        </template>
+    </data>
+</odoo>
