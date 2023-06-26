@@ -26,7 +26,7 @@
                             type="object"/>
                     <button name="action_waiting_approval" string="Submit" class="btn-primary" states="draft"
                             type="object"/>
-                    <button name="action_approve" string="Approve" class="btn-primary" states="approval" type="object"/>
+                    <button name="action_approve" string="Approve" class="btn-primary" states="approval" type="object" groups="planing_pandhal.group_production_approve"/>
                     <button name="action_reject" string="Reject" class="btn-danger" states="approval" type="object"/>
                     <button name="action_confirm" string="Confirm" class="btn-primary" states="approve" type="object"/>
                     <field name="state" widget="statusbar" statusbar_visible="draft,approval,approve,reject,done"/>
@@ -137,8 +137,8 @@
     <menuitem id="production_plan_root"
               name="Production Planning"
               sequence="10"
-              web_icon="production_planning,static/description/icon.png"/>
-<!--              groups="production_planning.group_production_planning"/>-->
+              web_icon="production_planning,static/description/icon.png"
+              groups="planing_pandhal.group_plan_planning"/>
 
     <menuitem id="planning"
               name="Planning"

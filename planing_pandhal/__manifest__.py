@@ -11,7 +11,7 @@
                 'uom','sale','sale_management'],
 
     'data': ['security/ir.model.access.csv',
-             # 'security/security.xml',
+             'security/security.xml',
              # 'data/trip_name.xml',
              'data/sequence.xml',
              'report/production_planning_template.xml',
