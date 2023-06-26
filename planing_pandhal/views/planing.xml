@@ -65,7 +65,7 @@
                     <notebook>
                         <page string="Production Lines" name="production_planning_lines">
                             <group>
-                                <field name="tick" attrs="{'readonly' :[('state','in', ('done', 'reject'))]}"/>
+                                <field name="tick" attrs="{'readonly' :[('state','in', ('approve','done', 'reject'))]}"/>
                             </group>
                             <field name="production_lines_ids" attrs="{'readonly' :[('state','in', ('done', 'reject'))]}">
                                 <tree editable="bottom">
