@@ -144,7 +144,7 @@ class SalesIndent(models.Model):
     def action_cancel(self):
         print('wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww')
         self.state = 'cancel'
-        a = self.env['stock.picking'].search([('sale_transfer_id', '=', self.reference)], limit=1)
+        a = self.env['stock.picking'].search([('sale_transfer_id', '=', self.id)], limit=1)
         print(a)
         if a.state == 'draft':
             a.state = 'cancel'

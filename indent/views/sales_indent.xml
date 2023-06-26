@@ -112,7 +112,9 @@
         <field name="binding_view_types">list</field>
         <field name="state">code</field>
         <field name="code">
-            records.action_confirmed()
+            for record in records:
+                if record:
+                  re = record.action_confirmed()
         </field>
     </record>
 
@@ -123,7 +125,9 @@
         <field name="binding_view_types">list</field>
         <field name="state">code</field>
         <field name="code">
-            records.action_cancel()
+           for rec in records:
+                if rec and rec.state == 'draft':
+                    r = rec.action_cancel()
         </field>
     </record>
 
