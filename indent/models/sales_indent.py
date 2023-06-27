@@ -143,10 +143,10 @@ class SalesIndent(models.Model):
 
     def action_cancel(self):
         print('wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww')
-        self.state = 'cancel'
-        a = self.env['stock.picking'].search([('transfer_id', '=', self.no_id.id)])
-        if a.state == 'draft':
-            a.state = 'cancel'
+        # self.state = 'cancel'
+        # a = self.env['stock.picking'].search([('transfer_id', '=', self.no_id.id)])
+        if self.state == 'draft':
+            self.state = 'cancel'
         else:
             raise ValidationError("Transfer In Progress")
 
