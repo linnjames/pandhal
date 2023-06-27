@@ -84,7 +84,7 @@
 <!--                        </page>-->
 <!--                    </notebook>-->
                     <notebook>
-                        <page string="Purchase" name="purchase_lines">
+                        <page string="Sale" name="purchase_lines">
                             <field name="sales_line_ids" attrs="{'readonly': [('state', 'in', ('confirmed','cancel'))]}">
                                 <tree editable="bottom">
                                     <field name="product_id" options="{'no_create': True, 'no_edit': True, 'no_open': True}"/>
