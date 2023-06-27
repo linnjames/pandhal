@@ -47,14 +47,11 @@ class SalesIndent(models.Model):
     def _compute_delivery_state(self):
         print('qqqqqqqqqqqqqqqqqqqqqqq')
         for record in self:
-            if record.state == 'cancel':
-               y = 'Invalid'
-               record.delivery_status = y
+            print('wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww')
+            x = self.env['stock.picking'].sudo().search([('transfer_id', '=', record.no_id.id)], limit=1).state
+            print(x)
+            record.delivery_status = x
 
-            else:
-                x = self.env['stock.picking'].sudo().search([('transfer_id', '=', record.no_id.id)], limit=1).state
-                print(x)
-                record.delivery_status = x
 
     @api.model
     def create(self, vals):
