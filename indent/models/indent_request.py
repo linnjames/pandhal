@@ -65,7 +65,7 @@ class IndentRequest(models.Model):
         self.filtered(lambda r: r.state == 'draft').write({'state': 'cancel'})
         print('yyyyyyyyyyyyyyyyyyyyyyyyyyy')
         self.state = 'cancel'
-        a = self.env['stock.picking'].search([('transfer_id', '=', self.reference)], limit=1)
+        a = self.env['stock.picking'].search([('sale_transfer_id', '=', self.id)])
         print(a)
         if a.state == 'draft':
             a.state = 'cancel'
