@@ -46,7 +46,7 @@ class SalesIndent(models.Model):
     @api.depends('reference')
     def _compute_delivery_state(self):
         for record in self:
-            x = self.env['stock.picking'].sudo().search([('transfer_id', '=', record.reference)], limit=1).state
+            x = self.env['stock.picking'].sudo().search([('sale_transfer_id', '=', record.reference)], limit=1).state
             if x:
                 record.delivery_status = x
             else:
