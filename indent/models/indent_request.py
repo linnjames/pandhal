@@ -31,19 +31,22 @@ class IndentRequest(models.Model):
                                         ('waiting', "Waiting Another Operation"),
                                         ('assigned', "Ready"),
                                         ('confirmed', "Waiting"),
-                                        ], required=True, compute='_compute_delivery_state')
+                                        ('no_transfer', "No Valid Transfer"),
+                                        ], required=True, compute='_compute_sales_delivery_state')
 
     sale_purchase_id = fields.Many2one('sale.order', string='ID')
     sale_indent_purchase_id = fields.Many2one('sales.indent', string='sale indent purchase id')
     attachment = fields.Binary(string="Attachment")
     reference_id = fields.Char(string='Sale Indent Number', copy=False)
 
-
-    @api.depends('reference')
-    def _compute_delivery_state(self):
+    @api.depends('no_id')
+    def _compute_sales_delivery_state(self):
         for record in self:
-            x = self.env['stock.picking'].sudo().search([('transfer_id', '=', record.reference)], limit=1).state
-            record.delivery_status = x
+            x = self.env['stock.picking'].sudo().search([('sale_transfer_id', '=', record.reference)], limit=1).state
+            if x:
+                record.delivery_status = x
+            else:
+                record.delivery_status = 'no_transfer'
 
     @api.model
     def create(self, vals):
@@ -64,12 +67,7 @@ class IndentRequest(models.Model):
     def action_cancel(self):
         self.filtered(lambda r: r.state == 'draft').write({'state': 'cancel'})
         print('yyyyyyyyyyyyyyyyyyyyyyyyyyy')
-        self.state = 'cancel'
-        a = self.env['stock.picking'].search([('sale_transfer_id', '=', self.id)])
-        print(a)
-        if a.state == 'draft':
-            a.state = 'cancel'
-        else:
+        if self.state == 'confirmed':
             raise ValidationError("Transfer In Progress")
 
     def action_confirmed(self):
