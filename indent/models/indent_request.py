@@ -39,7 +39,7 @@ class IndentRequest(models.Model):
     attachment = fields.Binary(string="Attachment")
     reference_id = fields.Char(string='Sale Indent Number', copy=False)
 
-    @api.depends('no_id')
+    @api.depends('reference')
     def _compute_sales_delivery_state(self):
         for record in self:
             x = self.env['stock.picking'].sudo().search([('sale_transfer_id', '=', record.reference)], limit=1).state
