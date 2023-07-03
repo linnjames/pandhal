@@ -30,7 +30,7 @@
             </xpath>
 
             <xpath expr="//field[@name='attachment']" position="after" invisible="1">
-                <field name="is_true" invisible="1"/>
+                <field name="is_true"/>
             </xpath>
 
         </field>
@@ -42,9 +42,6 @@
         <field name="model">sale.order</field>
         <field name="inherit_id" ref="sale.view_order_form"/>
         <field name="arch" type="xml">
-            <xpath expr="//field[@name='payment_term_id']" position="after">
-                <field name="discount_per" force_save="1"/>
-            </xpath>
             <xpath expr="//field[@name='order_line']/tree/field[@name='name']" position="after">
                 <field name="message"/>
             </xpath>
@@ -68,7 +65,7 @@
 
             <xpath expr="//div[@name='button_box']" position="inside">
                 <button name="action_view_purchase_indent" class="oe_stat_button"
-                        icon="fa-star" type="object" states="indent_created" string="Indent">
+                        icon="fa-star" type="object" states="sale" string="Indent">
                 </button>
             </xpath>
         </field>
