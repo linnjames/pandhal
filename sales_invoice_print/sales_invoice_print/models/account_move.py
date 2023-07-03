@@ -11,6 +11,7 @@ class AccountMoveReport(models.Model):
 
     amount_in_words = fields.Char(string='Amount In Words', compute='_compute_total_amount_in_words')
     discount_total = fields.Float(string='Total Discount', compute='_compute_discount_total')
+    total_global_discount = fields.Float(string='Total Global Discount')
     vehicle_number = fields.Char(string='Vehicle No:')
     prnt_qr_code = fields.Binary("QR Code", attachment=True, store=True, copy=False)
     export_type = fields.Selection([('exp_with_pay', 'Export with payment'), ('exp_wo_pay', 'Export without payment')])
@@ -72,15 +73,15 @@ class AccountMoveReport(models.Model):
             else:
                 sel.convert_inr = 1 / sel.currency_id.rate
 
-    def einv_compute(self):
-        res = super(AccountMoveReport, self).einv_compute()
+    def inv_compute(self):
+        res = super(AccountMoveReport, self).inv_compute()
         qr = qrcode.QRCode(
             version=1,
             error_correction=qrcode.constants.ERROR_CORRECT_L,
             box_size=20,
             border=8,
         )
-        qr.add_data(self.einv_qr_code)
+        # qr.add_data(self.inv_qr_code)
         qr.make(fit=True)
         img = qr.make_image()
         temp = BytesIO()
@@ -89,21 +90,21 @@ class AccountMoveReport(models.Model):
         self.prnt_qr_code = qr_image
         return res
 
-    def einv_qr_generate(self):
-        if self.einv_qr_code:
-            qr = qrcode.QRCode(
-                version=1,
-                error_correction=qrcode.constants.ERROR_CORRECT_L,
-                box_size=20,
-                border=8,
-            )
-            qr.add_data(self.einv_qr_code)
-            qr.make(fit=True)
-            img = qr.make_image()
-            temp = BytesIO()
-            img.save(temp, format="PNG")
-            qr_image = base64.b64encode(temp.getvalue())
-            self.prnt_qr_code = qr_image
+    # def inv_qr_generate(self):
+    #     if self.inv_qr_code:
+    #         qr = qrcode.QRCode(
+    #             version=1,
+    #             error_correction=qrcode.constants.ERROR_CORRECT_L,
+    #             box_size=20,
+    #             border=8,
+    #         )
+    #         qr.add_data(self.inv_qr_code)
+    #         qr.make(fit=True)
+    #         img = qr.make_image()
+    #         temp = BytesIO()
+    #         img.save(temp, format="PNG")
+    #         qr_image = base64.b64encode(temp.getvalue())
+    #         self.prnt_qr_code = qr_image
 
     @api.depends('amount_untaxed', 'currency_id')
     def _compute_total_amount_in_words(self):

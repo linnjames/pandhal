@@ -69,58 +69,58 @@
 
                                         </td>
 
-                                        <td style="vertical-align:top;" width="30%" rowspan="3">
-                                            <t t-if="to_text(doc.prnt_qr_code)">
-                                                <img t-att-src="'data:image/png;base64,%s' % to_text(doc.prnt_qr_code)"
-                                                     style="width:130%; height:175pt; align:left; padding-right:100px; "/>
-                                            </t>
-                                        </td>
+<!--                                        <td style="vertical-align:top;" width="30%" rowspan="3">-->
+<!--                                            <t t-if="to_text(doc.prnt_qr_code)">-->
+<!--                                                <img t-att-src="'data:image/png;base64,%s' % to_text(doc.prnt_qr_code)"-->
+<!--                                                     style="width:130%; height:175pt; align:left; padding-right:100px; "/>-->
+<!--                                            </t>-->
+<!--                                        </td>-->
 
                                     </tr>
                                     <tr>
                                         <td style="vertical-align: bottom; padding-top:60px;" colspan="4">
                                             GST IN
                                             :&amp;nbsp;&amp;nbsp;
-                                            <span t-field="doc.company_id.einv_gstin"/>
+<!--                                            <span t-field="doc.company_id.einv_gstin"/>-->
                                         </td>
                                     </tr>
-                                    <tr>
-                                        <t t-if="doc.ewaybill_no">
-                                            <td style="vertical-align: middle;" colspan="4">
-                                                Eway Bill No
-                                                :&amp;nbsp;&amp;nbsp;
-                                                <span t-field="doc.ewaybill_no"/>
-                                            </td>
-                                        </t>
-                                    </tr>
+<!--                                    <tr>-->
+<!--                                        <t t-if="doc.ewaybill_no">-->
+<!--                                            <td style="vertical-align: middle;" colspan="4">-->
+<!--                                                Eway Bill No-->
+<!--                                                :&amp;nbsp;&amp;nbsp;-->
+<!--                                                <span t-field="doc.ewaybill_no"/>-->
+<!--                                            </td>-->
+<!--                                        </t>-->
+<!--                                    </tr>-->
 
-                                    <tr>
-                                        <t t-if="doc.irn_no">
-                                            <td style="vertical-align: middle;" colspan="4">
-                                                IRN
-                                                :&amp;nbsp;&amp;nbsp;
-                                                <span t-field="doc.irn_no"/>
-                                            </td>
-                                        </t>
-                                    </tr>
-                                    <tr>
-                                        <t t-if="doc.ack_no">
-                                            <td style="vertical-align: middle;" colspan="4">
-                                                Acknowledgement No
-                                                :&amp;nbsp;&amp;nbsp;
-                                                <span t-field="doc.ack_no"/>
-                                            </td>
-                                        </t>
-                                    </tr>
-                                    <tr>
-                                        <t t-if="doc.ack_date">
-                                            <td style="vertical-align: middle;" colspan="4">
-                                                Acknowledge Date
-                                                :&amp;nbsp;&amp;nbsp;
-                                                <span t-field="doc.ack_date"/>
-                                            </td>
-                                        </t>
-                                    </tr>
+<!--                                    <tr>-->
+<!--                                        <t t-if="doc.irn_no">-->
+<!--                                            <td style="vertical-align: middle;" colspan="4">-->
+<!--                                                IRN-->
+<!--                                                :&amp;nbsp;&amp;nbsp;-->
+<!--                                                <span t-field="doc.irn_no"/>-->
+<!--                                            </td>-->
+<!--                                        </t>-->
+<!--                                    </tr>-->
+<!--                                    <tr>-->
+<!--                                        <t t-if="doc.ack_no">-->
+<!--                                            <td style="vertical-align: middle;" colspan="4">-->
+<!--                                                Acknowledgement No-->
+<!--                                                :&amp;nbsp;&amp;nbsp;-->
+<!--                                                <span t-field="doc.ack_no"/>-->
+<!--                                            </td>-->
+<!--                                        </t>-->
+<!--                                    </tr>-->
+<!--                                    <tr>-->
+<!--                                        <t t-if="doc.ack_date">-->
+<!--                                            <td style="vertical-align: middle;" colspan="4">-->
+<!--                                                Acknowledge Date-->
+<!--                                                :&amp;nbsp;&amp;nbsp;-->
+<!--                                                <span t-field="doc.ack_date"/>-->
+<!--                                            </td>-->
+<!--                                        </t>-->
+<!--                                    </tr>-->
                                     <t t-if="doc.ref">
                                         <tr>
                                             <td style="vertical-align: middle;" colspan="4">
@@ -152,11 +152,11 @@
                                             <span t-field="doc.name"/>
                                         </td>
                                         <td style="border:none;text-align:left;padding: 0px 0px 0px 5px;">
-                                            Vehicle Number
+<!--                                            Vehicle Number-->
                                         </td>
                                         <td style="border:none;text-align:left;padding: 0px 0px 0px 5px;">
-                                            :&amp;nbsp;&amp;nbsp;
-                                            <span t-field="doc.vehicle_no"/>
+<!--                                            :&amp;nbsp;&amp;nbsp;-->
+<!--                                            <span t-field="doc.vehicle_no"/>-->
                                         </td>
                                     </tr>
                                     <tr>
@@ -176,11 +176,11 @@
                                             <span t-field="doc.invoice_date"/>
                                         </td>
                                         <td style="border:none;text-align:left;padding: 0px 0px 0px 5px;">
-                                            Order Reference No
+<!--                                            Order Reference No-->
                                         </td>
                                         <td style="border:none;text-align:left;padding: 0px 0px 0px 5px;">
-                                            :&amp;nbsp;&amp;nbsp;
-                                            <span t-esc="doc.order_ref"/>
+<!--                                            :&amp;nbsp;&amp;nbsp;-->
+<!--                                            <span t-esc="doc.order_ref"/>-->
                                         </td>
                                     </tr>
                                     <t t-if="doc.move_type == 'in_refund'">
@@ -211,11 +211,11 @@
                                             :&amp;nbsp;&amp;nbsp;Kerala (32)
                                         </td>
                                         <td style="border:none;text-align:left;padding: 0px 0px 0px 5px;">
-                                            Terms
+<!--                                            Terms-->
                                         </td>
                                         <td style="border:none;text-align:left;padding: 0px 0px 0px 5px;">
-                                            :&amp;nbsp;&amp;nbsp;
-                                            <span t-field="doc.terms_and_con"/>
+<!--                                            :&amp;nbsp;&amp;nbsp;-->
+<!--                                            <span t-field="doc.terms_and_con"/>-->
                                         </td>
 
                                     </tr>
@@ -376,7 +376,7 @@
                                                         <span t-esc="val.quantity"/>
                                                     </td>
                                                     <td class="table_value_border_data" align="center">
-                                                        <span t-esc="val.box"/>
+<!--                                                        <span t-esc="val.box"/>-->
                                                     </td>
                                                     <td class="table_value_border_data" align="right"
                                                         style="padding-right: 7px;">
@@ -411,8 +411,8 @@
                                             </td>
                                             <td style="font-weight: 800;border-right: 1px solid black;border-top: 1px solid black;border-bottom: none"/>
                                             <td style="font-weight: 800;border-right: 1px solid black;border-top: 1px solid black;border-bottom: none"/>
-                                            <!--                                                <td style="border-right: 1px solid black;border-top: 1px solid black;border-bottom: none">-->
-                                            <!--                                                </td>-->
+<!--                                                                                            <td style="border-right: 1px solid black;border-top: 1px solid black;border-bottom: none">-->
+<!--                                                                                            </td>-->
                                             <td style="font-weight: 800;border-right: 1px solid black;border-top: 1px solid black;border-bottom: none; padding-right: 7px; vertical-align: middle;"
                                                 class="text-right">
                                                 <span t-esc="'%.2f'%(sub_sum * doc.convert_inr)"/>
@@ -427,8 +427,8 @@
                                         </tr>
                                     </tbody>
                                 </table>
-                                <br/>
-                                <table width="50%"
+<!--                                <br/>-->
+                                <table width="49.5%"
                                        style="font-size:12px;border:1px solid black;page-break-inside:avoid;"
                                        align="left">
                                     <tr>
@@ -579,7 +579,7 @@
                                     </tr>
                                 </table>
 
-                                <table width="50%"
+                                <table width="50.5%"
                                        style="font-size:12px;border:1px solid black; page-break-inside:avoid;"
                                        align="left">
 
@@ -658,15 +658,15 @@
                                             <span>TOTAL AMOUNT</span>
                                         </td>
                                         <td style="font-weight: 800;font-size: 16px;border-right: 1px solid black;padding: 2px 2px 2px 2px;">
-                                            <!--                                            <t t-if="doc.convert_inr &gt; 0">-->
-                                            <!--                                                <span t-esc="'%.2f'%(doc.amount_total * doc.convert_inr)"/>-->
-                                            <!--                                            </t>-->
-                                            <!--                                            <t t-else="">-->
-                                            <!--                                                <span t-esc="'%.2f'%doc.amount_total"/>-->
-                                            <!--                                            </t>-->
+<!--                                                                                        <t t-if="doc.convert_inr &gt; 0">-->
+<!--                                                                                            <span t-esc="'%.2f'%(doc.amount_total * doc.convert_inr)"/>-->
+<!--                                                                                        </t>-->
+<!--                                                                                        <t t-else="">-->
+<!--                                                                                            <span t-esc="'%.2f'%doc.amount_total"/>-->
+<!--                                                                                        </t>-->
                                             <t t-set="dis" t-value="doc.total_global_discount * doc.convert_inr"/>
-                                            <span t-esc="'%.2f'% ((((doc.amount_untaxed - r_amt) * doc.convert_inr)+(r_amt * doc.convert_inr)+(tax_sgst * doc.convert_inr)+(tax_cgst * doc.convert_inr)+(tax_igst * doc.convert_inr)) - dis)"/>
-                                            <!--                                            <span t-esc="'%.2f'% (((((doc.amount_untaxed - r_amt) * doc.convert_inr))+(r_amt * doc.convert_inr)+(sum(linesss.mapped('sgst_perc'))* doc.convert_inr)+(sum(linesss.mapped('cgst_perc'))* doc.convert_inr)+(sum(linesss.mapped('igst_perc'))* doc.convert_inr)) - dis)"/>-->
+<!--                                            <span t-esc="'%.2f'% ((((doc.amount_untaxed - r_amt) * doc.convert_inr)+(r_amt * doc.convert_inr)+(tax_sgst * doc.convert_inr)+(tax_cgst * doc.convert_inr)+(tax_igst * doc.convert_inr)) - dis)"/>-->
+                                                                                        <span t-esc="'%.2f'% (((((doc.amount_untaxed - r_amt) * doc.convert_inr))+(r_amt * doc.convert_inr)+(sum(linesss.mapped('sgst_perc'))* doc.convert_inr)+(sum(linesss.mapped('cgst_perc'))* doc.convert_inr)+(sum(linesss.mapped('igst_perc'))* doc.convert_inr)) - dis)"/>
                                         </td>
                                     </tr>
 
@@ -676,7 +676,7 @@
                                             <strong>Amount in Words&amp;nbsp;:&amp;nbsp;
                                             </strong>
                                             <span t-esc="doc.amount_in_words"/>
-                                            <!--                                            <span t-esc="doc.sales_amount_in_words"/>-->
+<!--                                                                                        <span t-esc="doc.sales_amount_in_words"/>-->
                                         </td>
                                     </tr>
                                 </table>
@@ -710,88 +710,88 @@
                                             </td>
                                             <td></td>
                                         </tr>
-                                        <tr>
-                                            <td>
-                                                <span>Payee
-                                                    :&amp;nbsp;
-                                                    <span t-field="doc.company_id.name"/>
-                                                </span>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td>
-                                                <span>Acc No.
-                                                    :&amp;nbsp;
-                                                    <span t-field="doc.company_id.acc_number"/>
-                                                </span>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td>
-                                                <span>Bank
-                                                    :&amp;nbsp;
-                                                    <span t-field="doc.company_id.acc_bank_name"/>
-                                                </span>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td>
-                                                <span>Branch
-                                                    :&amp;nbsp;
-                                                    <span t-field="doc.company_id.bank_branch"/>
-                                                </span>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td>
-                                                <span>IFSC
-                                                    :&amp;nbsp;
-                                                    <span t-field="doc.company_id.bank_ifsc"/>
-                                                </span>
-                                            </td>
-                                        </tr>
+<!--                                        <tr>-->
+<!--                                            <td>-->
+<!--                                                <span>Payee-->
+<!--                                                    :&amp;nbsp;-->
+<!--                                                    <span t-field="doc.company_id.name"/>-->
+<!--                                                </span>-->
+<!--                                            </td>-->
+<!--                                        </tr>-->
+<!--                                        <tr>-->
+<!--                                            <td>-->
+<!--                                                <span>Acc No.-->
+<!--                                                    :&amp;nbsp;-->
+<!--                                                    <span t-field="doc.company_id.acc_number"/>-->
+<!--                                                </span>-->
+<!--                                            </td>-->
+<!--                                        </tr>-->
+<!--                                        <tr>-->
+<!--                                            <td>-->
+<!--                                                <span>Bank-->
+<!--                                                    :&amp;nbsp;-->
+<!--                                                    <span t-field="doc.company_id.acc_bank_name"/>-->
+<!--                                                </span>-->
+<!--                                            </td>-->
+<!--                                        </tr>-->
+<!--                                        <tr>-->
+<!--                                            <td>-->
+<!--                                                <span>Branch-->
+<!--                                                    :&amp;nbsp;-->
+<!--                                                    <span t-field="doc.company_id.bank_branch"/>-->
+<!--                                                </span>-->
+<!--                                            </td>-->
+<!--                                        </tr>-->
+<!--                                        <tr>-->
+<!--                                            <td>-->
+<!--                                                <span>IFSC-->
+<!--                                                    :&amp;nbsp;-->
+<!--                                                    <span t-field="doc.company_id.bank_ifsc"/>-->
+<!--                                                </span>-->
+<!--                                            </td>-->
+<!--                                        </tr>-->
 
-                                    </table>
-                                    <table width="10%">
-                                        <tr>
-                                            <th style="align:center;">
-                                                <b>Scan &amp; Pay</b>
-                                            </th>
-                                        </tr>
-                                        <tr>
-                                            <td>
-                                                <img t-att-src="'data:image/png;base64,%s' % to_text(doc.company_id.code_qr)"
-                                                     style="width:100%; max-height:150pt;max-width:160pt;"/>
-                                            </td>
-                                        </tr>
+<!--                                    </table>-->
+<!--                                    <table width="10%">-->
+<!--                                        <tr>-->
+<!--                                            <th style="align:center;">-->
+<!--                                                <b>Scan &amp; Pay</b>-->
+<!--                                            </th>-->
+<!--                                        </tr>-->
+<!--                                        <tr>-->
+<!--                                            <td>-->
+<!--                                                <img t-att-src="'data:image/png;base64,%s' % to_text(doc.company_id.code_qr)"-->
+<!--                                                     style="width:100%; max-height:150pt;max-width:160pt;"/>-->
+<!--                                            </td>-->
+<!--                                        </tr>-->
 
-                                    </table>
-                                    <table width="60%">
-                                        <tr>
-                                            <td align="right">
-                                                <span>Certified that the particulars given above are true and correct.
-                                                </span>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td align="right">
-                                                <span>
-                                                    <strong>For,
-                                                        <span t-field="doc.company_id.name"/>
-                                                    </strong>
-                                                </span>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td style="padding-left: 10px;" align="left">
-                                                <t t-if="doc.show_fssai == True">
-                                                    <span>
-                                                        FSSAI No:
-                                                        <span t-field="doc.company_id.fssai_no"/>
-                                                    </span>
-                                                </t>
-                                            </td>
-                                        </tr>
+<!--                                    </table>-->
+<!--                                    <table width="60%">-->
+<!--                                        <tr>-->
+<!--                                            <td align="right">-->
+<!--                                                <span>Certified that the particulars given above are true and correct.-->
+<!--                                                </span>-->
+<!--                                            </td>-->
+<!--                                        </tr>-->
+<!--                                        <tr>-->
+<!--                                            <td align="right">-->
+<!--                                                <span>-->
+<!--                                                    <strong>For,-->
+<!--                                                        <span t-field="doc.company_id.name"/>-->
+<!--                                                    </strong>-->
+<!--                                                </span>-->
+<!--                                            </td>-->
+<!--                                        </tr>-->
+<!--                                        <tr>-->
+<!--                                            <td style="padding-left: 10px;" align="left">-->
+<!--                                                <t t-if="doc.show_fssai == True">-->
+<!--                                                    <span>-->
+<!--                                                        FSSAI No:-->
+<!--                                                        <span t-field="doc.company_id.fssai_no"/>-->
+<!--                                                    </span>-->
+<!--                                                </t>-->
+<!--                                            </td>-->
+<!--                                        </tr>-->
                                         <tr>
                                             <td></td>
                                         </tr>

@@ -40,7 +40,7 @@
         'report/report_tax.xml',
         'report/report_aged_partner.xml',
         'report/report_journal_audit.xml',
-        'report/report_journal_entries.xml',
+        # 'report/report_journal_entries.xml',
     ],
     'pre_init_hook': '_pre_init_clean_m2m_models',
     'installable': True,

@@ -15,7 +15,7 @@
         'reports/sales_invoice_print_multiple_view.xml',
         'reports/sales_invoice_print_view.xml',
         'reports/sales_invoice_pdf.xml',
-        'reports/export_local_invoice_temp.xml',
+        # 'reports/export_local_invoice_temp.xml',
         'views/account_move.xml',
         # 'views/product_category.xml',
         # 'views/res_partner.xml',

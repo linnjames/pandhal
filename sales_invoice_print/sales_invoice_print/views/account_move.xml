@@ -1,14 +1,13 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <odoo>
-
     <record id="account_move_notebook_fields_added" model="ir.ui.view">
         <field name="name">account.move.notebook.fields.added</field>
         <field name="model">account.move</field>
         <field name="inherit_id" ref="account.view_move_form"/>
         <field name="arch" type="xml">
             <xpath expr="//field[@name='payment_reference']" position="after">
-                <button string="QR" type="object" name="einv_qr_generate" class="oe_highlight"
-                        invisible="1"/>
+<!--                <button string="QR" type="object" name="inv_qr_generate" class="oe_highlight"-->
+<!--                        invisible="1"/>-->
                 <field name="vehicle_number" invisible="1"/>
                 <field name="is_ship_diff_address" attrs="{'invisible':[('move_type', 'in', ('entry'))]}"/>
                 <field name="convert_inr" readonly="0" digits="[12,12]"
@@ -29,9 +28,9 @@
                 <field name="igst_amount" force_save="1" invisible="1"/>
                 <field name="cess_amount" force_save="1" invisible="1"/>
             </xpath>
-            <field name="amount_untaxed" position="after">
-                <field name="discount_total" force_save="1"/>
-            </field>
+<!--            <field name="amount_untaxed" position="after">-->
+<!--                <field name="discount_total" force_save="1"/>-->
+<!--            </field>-->
             <xpath expr="//notebook/page/field[@name='line_ids']/tree/field[@name='name']"
                    position="after">
                 <field name="convert_inr_amount" force_save="1" invisible="1"/>
@@ -84,8 +83,6 @@
                 </group>
 
             </xpath>
-
-
         </field>
     </record>
     <record id="res_company_fields_added" model="ir.ui.view">
@@ -108,20 +105,19 @@
         </field>
     </record>
 
-    <record model="ir.ui.view" id="invoice_qr_code">
-        <field name="name">account.move.qr.code</field>
-        <field name="model">account.move</field>
-        <field name="type">form</field>
-        <field name="inherit_id" ref="account.view_move_form"/>
-        <field name="arch" type="xml">
-            <field name="vehicle_number" position="after">
-                <field name="prnt_qr_code" widget='image' class="oe_avatar" invisible="1"/>
-            </field>
-            <xpath expr="//div[@name='journal_div']" position="after">
-                <field name="supplier_bill_ref" attrs="{'invisible': [('move_type','!=', 'in_refund')]}"/>
-                <field name="supplier_bill_date" attrs="{'invisible':[('move_type','!=', 'in_refund')]}"/>
-            </xpath>
-        </field>
-    </record>
-
+<!--    <record model="ir.ui.view" id="invoice_qr_code">-->
+<!--        <field name="name">account.move.qr.code</field>-->
+<!--        <field name="model">account.move</field>-->
+<!--        <field name="type">form</field>-->
+<!--        <field name="inherit_id" ref="account.view_move_form"/>-->
+<!--        <field name="arch" type="xml">-->
+<!--            <field name="vehicle_number" position="after">-->
+<!--                <field name="prnt_qr_code" widget='image' class="oe_avatar" invisible="1"/>-->
+<!--            </field>-->
+<!--            <xpath expr="//div[@name='journal_div']" position="after">-->
+<!--                <field name="supplier_bill_ref" attrs="{'invisible': [('move_type','!=', 'in_refund')]}"/>-->
+<!--                <field name="supplier_bill_date" attrs="{'invisible':[('move_type','!=', 'in_refund')]}"/>-->
+<!--            </xpath>-->
+<!--        </field>-->
+<!--    </record>-->
 </odoo>

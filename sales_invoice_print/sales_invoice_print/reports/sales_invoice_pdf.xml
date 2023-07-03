@@ -18,7 +18,7 @@
             <!--            <field name="dpi">90</field>-->
         </record>
 
-        <record id="record_sales_invoice_report_print" model="ir.actions.report">
+        <record id="report_sales_invoice_report_print" model="ir.actions.report">
             <field name="name">Sales Invoice</field>
             <field name="model">account.move</field>
             <field name="report_type">qweb-pdf</field>
@@ -42,19 +42,17 @@
             <field name="binding_type">report</field>
         </record>
 
-        <record id="report_export_local_invoice_multiple" model="ir.actions.report">
-            <field name="name">Export Local Invoice (2 Copies)</field>
-            <field name="model">account.move</field>
-            <field name="report_type">qweb-pdf</field>
-            <field name="report_name">sales_invoice_print.report_export_local_invoice</field>
-            <field name="report_file">sales_invoice_print.report_export_local_invoice</field>
-            <field name="paperformat_id" ref="sales_invoice_print.paperformat_euro_lowmargin_sales_invoice_print_pdf"/>
-            <field name="binding_model_id" ref="sale.model_account_move"/>
-            <field name="binding_view_types">form</field>
-            <field name="binding_type">report</field>
-        </record>
-
+<!--        <record id="report_export_local_invoice_multiple" model="ir.actions.report">-->
+<!--            <field name="name">Export Local Invoice (2 Copies)</field>-->
+<!--            <field name="model">account.move</field>-->
+<!--            <field name="report_type">qweb-pdf</field>-->
+<!--            <field name="report_name">sales_invoice_print.report_export_local_invoice</field>-->
+<!--            <field name="report_file">sales_invoice_print.report_export_local_invoice</field>-->
+<!--            <field name="paperformat_id" ref="sales_invoice_print.paperformat_euro_lowmargin_sales_invoice_print_pdf"/>-->
+<!--            <field name="binding_model_id" ref="sale.model_account_move"/>-->
+<!--            <field name="binding_view_types">form</field>-->
+<!--            <field name="binding_type">report</field>-->
+<!--        </record>-->
     </data>
-
 </odoo>
 
