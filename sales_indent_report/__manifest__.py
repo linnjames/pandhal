@@ -13,7 +13,7 @@
         'wizard/sales_indent_report_wizard.xml',
         'report/report.xml',
         'report/sales_indent_report.xml',
-        'views/sales_indent_menu.xml',
+        # 'views/sales_indent_menu.xml',
 
     ],
     'demo': [],
