@@ -68,6 +68,7 @@ class InventoryInOutReportWizard(models.TransientModel):
                                         order by sml.date ASC""")
                             % (condition))
         move_ids = self.env.cr.dictfetchall()
+        print(move_ids,'>>>>>>>>>>>>>>>>>>>>>>')
         for i in move_ids:
             tran = self.env['stock.picking'].search([('name', '=', i['number'])])
             if tran:
@@ -83,6 +84,7 @@ class InventoryInOutReportWizard(models.TransientModel):
                 i['movement'] = "IN"
                 opening_bal += i['qty_done']
                 i['opening_qty_done'] = opening_bal
+                print(opening_bal,'<<<<<<<<<<<<<<<<<<<<<<<<,')
 
         data = {
             'ids': self.ids,
@@ -108,6 +110,8 @@ class InventoryInOutReportWizard(models.TransientModel):
             'opening': opening,
             'vals': move_ids,
         }
+        print(data, '//////////////////')
+        print(move_ids,'-----------------')
         action = self.env.ref('inventory_in_out_report.record_inventory_in_out_report_print').report_action(self,
                                                                                                             data=data)
         return action
