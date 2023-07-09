@@ -34,7 +34,7 @@
         <field name="arch" type="xml">
             <notebook position="inside">
                 <page string="MRP Updation Details" >
-                    <field name="mrp_line_ids">
+                    <field name="mrp_line_ids" force_save="1">
                         <tree editable="bottom">
                             <field name="mrp_updated_date" force_save="1"/>
                             <field name="mrp_updated_value" force_save="1"/>
