@@ -10,7 +10,7 @@
         
     """,
     'author': 'Catalist',
-    'depends': ['base', 'sale', 'sale_management', 'account', 'l10n_in', 'stock', 'purchase'],
+    'depends': ['base', 'sale', 'sale_management', 'account', 'l10n_in', 'stock', 'purchase','contacts'],
     'data': [
         'security/ir.model.access.csv',
         'views/sales_price_calculation.xml',

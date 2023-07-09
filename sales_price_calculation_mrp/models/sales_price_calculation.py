@@ -5,9 +5,27 @@ from odoo.exceptions import AccessDenied, ValidationError
 class ProductTemplate(models.Model):
     _inherit = 'product.template'
 
-    mrp = fields.Float(string='MRP')
+    mrp = fields.Float(string='MRP', tracking=True)
+    mrp_line_ids = fields.One2many('mrp.details.line', 'product_id', string='MRP DETAILS')
+    # mrp_updated_ids = fields.One2many('mrp.line', 'temp_id', string='MRP_Updated_line')
+    product_category_type_id = fields.Many2one('product.category.type', string="Product Category Type", tracking=True)
+    mrp_updated_date = fields.Datetime(string="MRP Updated Date", default=lambda self: datetime.datetime.now(),
+                                       tracking=True)
+    user_name = fields.Many2one('res.users', string="Updated by", default=lambda self: self.env.user.partner_id.id,
+                                tracking=True)
 
-    product_category_type_id = fields.Many2one('product.category.type', string="Product Category Type")
+    # -------------------mrp updation__________
+    @api.onchange('mrp')
+    def onchange_mrp(self):
+        if self.mrp:
+            new_mrp_line = self.env['mrp.details.line'].new({
+                'mrp_updated_date': fields.Datetime.now(),
+                'user_name': self.user_name.id,
+                'mrp_updated_value': self.mrp,
+                'product_id': self.product_category_type_id,
+
+            })
+            self.mrp_line_ids += new_mrp_line
 
     def action_mrp(self):
         # for mrp in self:
@@ -62,7 +80,22 @@ class SaleOrderLineInherit(models.Model):
 
     mrp = fields.Float(string='MRP')
 
+    # -------------------mrp (sale.order.line)__________
     @api.onchange('product_id')
     def onchange_product_id(self):
         if self.product_id:
-            self.mrp = self.product_id.mrp
+            self.update({'mrp': self.product_id.mrp})
+
+
+class MrpUpdationDetailsLine(models.Model):
+    _name = 'mrp.details.line'
+    _description = "MRP Updation Details"
+
+    product_id = fields.Many2one('product.template', string="product id ")
+    mrp_line_ids = fields.One2many('mrp.details.line', 'product_id', string='MRP DETAILS')
+    mrp_updated_value = fields.Float(string="Updated MRP ")
+    # mrp_updated_date = fields.Datetime(string="MRP Updated Date", default=fields.Datetime.now, tracking=True)
+    mrp_updated_date = fields.Datetime(string="MRP Updated Date", default=lambda self: datetime.datetime.now(),
+                                       tracking=True)
+    user_name = fields.Many2one('res.users', string="Updated by", default=lambda self: self.env.user.partner_id.id,
+                                tracking=True)
