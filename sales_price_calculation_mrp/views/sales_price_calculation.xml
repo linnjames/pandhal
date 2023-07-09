@@ -36,9 +36,9 @@
                 <page string="MRP Updation Details" >
                     <field name="mrp_line_ids">
                         <tree editable="bottom">
-                            <field name="mrp_updated_date"/>
-                            <field name="mrp_updated_value"/>
-                            <field name="user_name"/>
+                            <field name="mrp_updated_date" force_save="1"/>
+                            <field name="mrp_updated_value" force_save="1"/>
+                            <field name="user_name" force_save="1"/>
                         </tree>
                     </field>
                 </page>
