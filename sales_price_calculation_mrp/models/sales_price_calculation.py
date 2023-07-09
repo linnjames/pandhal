@@ -96,7 +96,5 @@ class MrpUpdationDetailsLine(models.Model):
     mrp_line_ids = fields.One2many('mrp.details.line', 'product_id', string='MRP DETAILS')
     mrp_updated_value = fields.Float(string="Updated MRP ")
     # mrp_updated_date = fields.Datetime(string="MRP Updated Date", default=fields.Datetime.now, tracking=True)
-    mrp_updated_date = fields.Datetime(string="MRP Updated Date", default=lambda self: datetime.datetime.now(),
-                                       tracking=True)
-    user_name = fields.Many2one('res.users', string="Updated by", default=lambda self: self.env.user.partner_id.id,
-                                tracking=True)
+    mrp_updated_date = fields.Datetime(string="MRP Updated Date")
+    user_name = fields.Many2one('res.users', string="Updated by", default=lambda self: self.env.user.partner_id.id)
