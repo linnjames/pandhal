@@ -7,7 +7,7 @@ class ProductTemplate(models.Model):
     _inherit = 'product.template'
 
     mrp = fields.Float(string='MRP', tracking=True)
-    mrp_line_ids = fields.One2many('mrp.details.line', 'product_id', string='MRP DETAILS')
+    mrp_line_ids = fields.One2many('mrp.details.line', 'product_id', string='MRP DETAILS',readonly=True)
     # mrp_updated_ids = fields.One2many('mrp.line', 'temp_id', string='MRP_Updated_line')
     product_category_type_id = fields.Many2one('product.category.type', string="Product Category Type", tracking=True)
     mrp_updated_date = fields.Datetime(string="MRP Updated Date",tracking=True)
