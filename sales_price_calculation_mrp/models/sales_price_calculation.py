@@ -10,8 +10,7 @@ class ProductTemplate(models.Model):
     mrp_line_ids = fields.One2many('mrp.details.line', 'product_id', string='MRP DETAILS')
     # mrp_updated_ids = fields.One2many('mrp.line', 'temp_id', string='MRP_Updated_line')
     product_category_type_id = fields.Many2one('product.category.type', string="Product Category Type", tracking=True)
-    mrp_updated_date = fields.Datetime(string="MRP Updated Date", default=lambda self: datetime.datetime.now(),
-                                       tracking=True)
+    mrp_updated_date = fields.Datetime(string="MRP Updated Date",tracking=True)
     user_name = fields.Many2one('res.users', string="Updated by", default=lambda self: self.env.user.partner_id.id,
                                 tracking=True)
 
