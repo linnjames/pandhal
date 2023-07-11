@@ -48,21 +48,36 @@ class IndentRequest(models.Model):
             else:
                 record.delivery_status = 'no_transfer'
 
+    # @api.model
+    # def create(self, vals):
+    #     if vals.get('reference', _('New')) == _('New'):
+    #         vals['reference'] = self.env['ir.sequence'].next_by_code('indent.sequence') or _('New')
+    #     res = super(IndentRequest, self).create(vals)
+    #     return res
+
     @api.model
     def create(self, vals):
-        if vals.get('reference', _('New')) == _('New'):
-            vals['reference'] = self.env['ir.sequence'].next_by_code('indent.sequence') or _('New')
+        if 'company_id' in vals:
+            self = self.with_company(vals['company_id'])
+        if vals.get('name', _('New')) == _('New'):
+            seq_date = None
+            if 'expected_date' in vals:
+                seq_date = fields.Datetime.context_timestamp(self, fields.Datetime.to_datetime(vals['expected_date']))
+            vals['reference'] = self.env['ir.sequence'].next_by_code('indent.sequence', sequence_date=seq_date) or _('New')
         res = super(IndentRequest, self).create(vals)
         return res
 
+
+
+
     def action_open_purchase_transfer(self):
-        return {
-            'name': _('Transfer'),
-            'type': 'ir.actions.act_window',
-            'res_model': 'stock.picking',
-            'view_mode': 'tree,form',
-            'domain': [('transfer_id', '=', self.id)],
-        }
+            return {
+                'name': _('Transfer'),
+                'type': 'ir.actions.act_window',
+                'res_model': 'stock.picking',
+                'view_mode': 'tree,form',
+                'domain': [('transfer_id', '=', self.id)],
+            }
 
     def action_cancel(self):
         for record in self:
