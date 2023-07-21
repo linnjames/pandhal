@@ -81,6 +81,10 @@ class SaleOrderLineInherit(models.Model):
     mrp = fields.Float(string='MRP')
 
     # -------------------mrp (sale.order.line)__________
+    def __init__(self, env, ids, prefetch_ids):
+        super().__init__(env, ids, prefetch_ids)
+        self.product_id = None
+
     @api.onchange('product_id')
     def onchange_product_id(self):
         if self.product_id:

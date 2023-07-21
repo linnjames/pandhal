@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="mrp_updation_template_print">
+        <t t-call="web.html_container">
+            <t t-call="web.basic_layout">
+                <style type="text/css">
+                    .table_data {
+                    border-top : 1px solid black;
+                    border-bottom : 1px solid black;
+                    border-left : 1px solid black;
+                    border-right : 1px solid black;
+                    vertical-align: middle;
+                    }
+                </style>
+                <div class="page">
+                    <table width="100%">
+                        <tr>
+                            <tr>
+                                <td style="font-size:70%; padding-top: 7px;">
+                                    <span t-esc="context_timestamp(datetime.datetime.now()).strftime('%d/%m/%Y %H:%M')"/>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style="font-size:85%; padding-top: 7px;">
+                                    <b>Date From:</b>
+                                    <b>
+                                        <span t-esc="x"/>
+                                    </b>
+                                </td>
+                            </tr>
+                        </tr>
+                        <tr>
+                            <td style="font-size:85%; padding-top: 7px;">
+                                <b>Date To:</b>
+                                <b>
+                                    <t t-esc="y"/>
+                                </b>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+                <br/>
+                <table width="100%">
+                    <tr>
+                        <td align="center" style="font-size:100%; vertical-align: middle;">
+                            <b>
+                                <t t-esc="company"/>
+                            </b>
+                        </td>
+                    </tr>
+                </table>
+                <br/>
+                <t t-foreach="dup" t-as="cu">
+                    <table width="100%">
+                        <tr>
+                            <th style="background-color: #c2c2d6;padding-top:10px;" colspan="4">
+                                <span t-att-style="style" t-esc="cu['product_name']"/>
+                            </th>
+                            <th style="text-align:left;background-color: #c2c2d6 ;" colspan="3">
+                                HSN/SAC :
+                                <span t-att-style="style" t-esc="cu['hsn']"/>
+                            </th>
+                        </tr>
+                        <tr>
+                            <th style="background-color:#efeff5; width: 30;font-size: 15px;">Updated Date</th>
+                            <th style="background-color:#efeff5; width: 30%;font-size: 15px;text-align:center;">
+                                Updated Mrp
+                            </th>
+                            <th style="background-color:#efeff5; width: 40%; text-align:center; font-size: 15px">
+                                Updated User
+                            </th>
+                        </tr>
+                        <t t-foreach="vals" t-as="v">
+                            <t t-if="cu['product_id'] == v['pt']">
+                                <tr>
+                                    <tr>
+                                        <td class="table_data" align="center"
+                                            style="font-size: 13px;padding-left: 5px;padding-top:10px;">
+                                            <span t-att-style="style" t-esc="v['updated_date']"/>
+                                        </td>
+                                        <td class="table_data" align="center" style="font-size: 13px;padding-top:10px;">
+                                            <span t-att-style="style" t-esc="v['updated_value']"/>
+                                        </td>
+                                        <td class="table_data" align="center"
+                                            style="font-size: 13px;padding-left: 5px;padding-top:10px;">
+                                            <span t-att-style="style" t-esc="v['user_name']"/>
+                                        </td>
+                                    </tr>
+                                </tr>
+                            </t>
+                        </t>
+                    </table>
+                </t>
+                <div class="footer o_standard_footer">
+                    <div class="row text-center">
+                        <div class="col col-12 text-center">
+                            <ul class="list-inline">
+                                <li class="list-inline-item">
+                                    <span class="page"/>
+                                </li>
+                                <li class="list-inline-item">/</li>
+                                <li class="list-inline-item">
+                                    <span class="topage"/>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </t>
+        </t>
+    </template>
+</odoo>
