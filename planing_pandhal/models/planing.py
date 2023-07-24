@@ -244,6 +244,8 @@ class PlanPlaning(models.Model):
                                 'company_id': self.company_id.id,
                             })]
                         })
+        else:
+            raise UserError(_("Raw Material Request for Production Is Not Mentioned In Company"))
 
     def action_reject(self):
         if self.reason:
@@ -329,7 +331,7 @@ class ResCompany(models.Model):
     _inherit = 'res.company'
 
     production_picking_type_id = fields.Many2one('stock.picking.type',
-                                                 string='Picking Type For Material From Production')
+                                                 string='Raw Material Request for Production')
 
 
 class StockPicking(models.Model):
