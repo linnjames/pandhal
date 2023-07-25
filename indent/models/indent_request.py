@@ -239,7 +239,7 @@ class StockPicking(models.Model):
 class PurchaseState(models.Model):
     _inherit = 'purchase.order'
 
-    state = fields.Selection(selection_add=[('approve', 'Approved'), ("purchase",)])
+    state = fields.Selection(selection_add=[('approve', 'Approved')])
 
     def button_purchase_approval(self):
         self.state = 'approve'
