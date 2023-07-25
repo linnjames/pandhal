@@ -8,7 +8,7 @@
     'sequence': 10,
     'description': """Indent Request""",
     'website': 'https://www.catalisterp.com/',
-    'depends': ['base', 'sale', 'sale_management', 'account', 'purchase', 'stock', 'point_of_sale'],
+    'depends': ['base', 'sale', 'sale_management', 'account', 'purchase', 'stock','purchase_stock', 'point_of_sale'],
     'data': [
         'security/ir.model.access.csv',
         'security/security.xml',
