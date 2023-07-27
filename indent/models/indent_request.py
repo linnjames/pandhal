@@ -241,15 +241,10 @@ class PurchaseState(models.Model):
 
     state = fields.Selection(selection_add=[('approve', 'Approved')])
 
-    def button_purchase_approval(self):
-        self.state = 'approve'
+    
 
-    def button_confirm(self):
-        res = super(PurchaseState, self).button_confirm()
-        for order in self:
-            if order.state in ['approve']:
-                order.state = 'purchase'
-        return res
+    def button_purchase_approval(self):
+        pass
 
 
 class PurchaseQuantity(models.Model):
