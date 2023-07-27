@@ -241,7 +241,7 @@ class PurchaseState(models.Model):
 
     state = fields.Selection(selection_add=[('approve', 'Approved')])
 
-    
+
 
     def button_purchase_approval(self):
         pass

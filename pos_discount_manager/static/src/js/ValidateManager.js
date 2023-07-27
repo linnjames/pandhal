@@ -62,22 +62,15 @@ odoo.define('pos_discount_manager.ValidateManager', function(require) {
             var employee_dis = this.env.pos.get_cashier()['limited_discount'];
             var employee_name = this.env.pos.get_cashier()['name']
             var flag = 1;
-//            console.log("orderlines",order);
-//            console.log("discount",employee_dis);
-//            console.log("employee_name",employee_name);
              orderlines.forEach((order) => {
-//               console.log("discount",order,"emplo",employee_dis);
                if(order.description){
                 var discription = order.description;
-//                var discount_amt = parseInt(discription, 100)
                 var dis_pct_str = discription.split(',');
                 var discount_amt = Number(dis_pct_str[0].replace('%',""))
-                 console.log("flagggggggggggggggggggg",discount_amt);
-//                 var dis_str = dis_pct_str[0];
+
                }else{
                var discount_amt = 0;
                }
-               console.log("discount_amt",typeof discount_amt,":",typeof employee_dis);
                if(discount_amt > employee_dis){
 
                 flag = 0;
@@ -90,8 +83,9 @@ odoo.define('pos_discount_manager.ValidateManager', function(require) {
                     });
                     if(confirmed){
                      var output = this.env.pos.employees.filter((obj) => obj.role == 'manager');
-                     console.log("output",output);
-                     var pin = output[0].pin
+                     var res = output.filter((checkPin) => checkPin.pin != false)
+                     var pin = res[0].pin
+
                      if (Sha1.hash(payload) == pin) {
                         this.showScreen(this.nextScreen);
                         }
