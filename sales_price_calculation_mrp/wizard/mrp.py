@@ -42,7 +42,7 @@ class MrpReportWizard(models.TransientModel):
         # print(condition, '10000000000000000000000000000000000000000000000000000')
 
         query = """
-                SELECT mdl.id mdl, mdl.mrp_updated_date updated_date, mdl.mrp_updated_value updated_value, pt.id pt, pt.name product, pt.l10n_in_hsn_code vat,
+                SELECT mdl.id mdl, mdl.mrp_updated_date updated_date, mdl.mrp_updated_value updated_value, pt.id pt,(pt.name->>'en_US')::text product, pt.l10n_in_hsn_code vat,
                     pt.categ_id category, pt.default_code code, u.login user_name
                 FROM mrp_details_line AS mdl
                 LEFT JOIN product_template AS pt ON mdl.product_id = pt.id
@@ -57,15 +57,15 @@ class MrpReportWizard(models.TransientModel):
 
 
         values = []
-
-        values = []
         dup = []
+        unique_product_ids = set()
 
         for i in mrp_details_lines:
             product_id = i['pt']
             product_name = i['product']
 
             if product_id not in [item['product_id'] for item in values]:
+                unique_product_ids.add(product_id)
                 values.append({
                     'product_id': product_id,
                     'product_name': product_name,
@@ -87,13 +87,10 @@ class MrpReportWizard(models.TransientModel):
         data = {
                     'ids': self.ids,
                     'model': self._name,
-                    'dup': dup,
+                    'dup': values,
                     'vals': mrp_details_lines,
                     'x': x,
                     'y': y,
-
-
-
         }
         print('data=',data)
 

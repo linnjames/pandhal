@@ -1,0 +1,26 @@
+{
+    'name': 'Purchase Register Report',
+    'version': '14.0.1.0.0',
+    'summary': 'Report of Purchase Register',
+    'sequence': -100,
+    'description': """Report of Purchase Register""",
+    'category': 'Purchase',
+    'website': 'https://www.catalisterp.com/',
+    'author': 'Divergent Catalist ERP Solutions',
+    'company': 'Divergent Catalist ERP Solutions',
+    'maintainer': 'Divergent Catalist ERP Solutions',
+    'depends': ['purchase'],
+    'data': [
+        'security/ir.model.access.csv',
+        'wizard/purchase_register_wizard.xml',
+        # 'reports/inventory_in_out_pdf.xml',
+        # 'reports/inventory_in_out_report_template.xml',
+        # 'reports/inventory_in_out_detailed_report_template.xml'
+    ],
+    'demo': [],
+    'qweb': [],
+    'installable': True,
+    'application': True,
+    'auto_install': False,
+    'license': 'LGPL-3',
+}

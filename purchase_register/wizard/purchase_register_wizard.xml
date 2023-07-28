@@ -1,0 +1,42 @@
+<?xml version="1.0"?>
+<odoo>
+    <record id="purchase_register_report_wizard_form" model="ir.ui.view">
+        <field name="name">Purchase Register Report Wizard Form</field>
+        <field name="model">purchase.register.report.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Purchase Register Report">
+                <group>
+                    <group>
+                        <field name="month_selection" widget="selection"/>
+                        <field name="company_name" widget="many2many_tags"/>
+                    </group>
+                    <group>
+                        <field name="year" widget="selection"/>
+                    </group>
+                </group>
+                 <footer>
+                    <button name="excel_action" string="Print" type="object" default_focus="1"
+                            class="oe_highlight"/>
+                    <button string="Cancel" class="btn btn-default" special="cancel"/>
+                </footer>
+
+            </form>
+        </field>
+    </record>
+    <record id="purchase_register_report_wizard_report_action" model="ir.actions.act_window">
+        <field name="name"> Purchase Register Report</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">purchase.register.report.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="view_id" ref="purchase_register_report_wizard_form"/>
+        <field name="target">new</field>
+    </record>
+    <menuitem
+        id="purchase_register_menu"
+        name="Purchase Register Report"
+        parent="purchase.purchase_report_main"
+        action="purchase_register_report_wizard_report_action"
+        sequence="10"/>
+<!--print_xlsx_report-->
+
+</odoo>

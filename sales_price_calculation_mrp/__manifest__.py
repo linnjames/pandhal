@@ -16,7 +16,6 @@
         'reports/mrp_updation_template.xml',
         'wizard/multi_sales_price_wizard_view.xml',
         'wizard/mrp.xml',
-
     ],
     'qweb': [],
     'installable': True,

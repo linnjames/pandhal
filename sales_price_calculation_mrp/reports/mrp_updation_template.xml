@@ -44,7 +44,7 @@
                     <tr>
                         <td align="center" style="font-size:100%; vertical-align: middle;">
                             <b>
-                                <t t-esc="company"/>
+                                Productwise MRP Upadation Report
                             </b>
                         </td>
                     </tr>
@@ -53,16 +53,16 @@
                 <t t-foreach="dup" t-as="cu">
                     <table width="100%">
                         <tr>
-                            <th style="background-color: #c2c2d6;padding-top:10px;" colspan="4">
+                            <th style="background-color: #c2c2d6;padding-top:10px;" colspan="2">
                                 <span t-att-style="style" t-esc="cu['product_name']"/>
                             </th>
-                            <th style="text-align:left;background-color: #c2c2d6 ;" colspan="3">
+                            <th style="text-align:left;background-color: #c2c2d6 ;" colspan="1">
                                 HSN/SAC :
                                 <span t-att-style="style" t-esc="cu['hsn']"/>
                             </th>
                         </tr>
                         <tr>
-                            <th style="background-color:#efeff5; width: 30;font-size: 15px;">Updated Date</th>
+                            <th style="background-color:#efeff5; width: 30%;font-size: 15px;">Updated Date</th>
                             <th style="background-color:#efeff5; width: 30%;font-size: 15px;text-align:center;">
                                 Updated Mrp
                             </th>
