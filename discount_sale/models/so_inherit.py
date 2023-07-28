@@ -13,22 +13,20 @@ class SaleOrderInherit(models.Model):
     @api.depends('order_line.discount', 'order_line.price_unit')
     def _compute_lines_discount_amount(self):
         print("eeeeeeeeeeeeeeeeeeeeeeeee")
-        if self.is_discount_sale:
-            for record in self:
-                disc_amt = 0.0
-                for line in record.order_line:
-                    disc_amt += (line.price_unit * line.discount / 100)
-                record.discount_amt = disc_amt
+        for record in self:
+            disc_amt = 0.0
+            for line in record.order_line:
+                disc_amt += (line.price_unit * line.discount / 100)
+            record.discount_amt = disc_amt
 
     @api.depends('order_line.product_uom_qty', 'order_line.price_unit')
     def _compute_line_amount(self):
         print("ppppppppppppppppppppppppppp")
-        if self.is_discount_sale:
-            for order in self:
-                tot = 0
-                for line in order.order_line:
-                    tot += (line.product_uom_qty * line.price_unit)
-                order.total_price = tot
+        for order in self:
+            tot = 0
+            for line in order.order_line:
+                tot += (line.product_uom_qty * line.price_unit)
+            order.total_price = tot
 
 class SaleOrderLineInherit(models.Model):
     _inherit = 'sale.order.line'
