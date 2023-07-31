@@ -251,6 +251,7 @@ class PurchaseQuantity(models.Model):
     _inherit = 'purchase.order.line'
 
     available_qty = fields.Float(string='Quantity On Hand')
+    message = fields.Char(string='Message')
 
     @api.onchange('product_id')
     def _onchange_product_id_warning(self):
