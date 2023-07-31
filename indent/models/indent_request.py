@@ -240,6 +240,9 @@ class PurchaseState(models.Model):
     _inherit = 'purchase.order'
 
     state = fields.Selection(selection_add=[('approve', 'Approved')])
+    indent_type = fields.Selection([('customer order', 'Customer Order'),
+                                    ('bakery', 'Bakery'),
+                                    ('store', 'Store')], required=True, default='customer order')
 
 
 
