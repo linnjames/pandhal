@@ -11,6 +11,7 @@
     'depends': ['base', 'sale', 'sale_management', 'account', 'l10n_in', 'stock', 'purchase', 'contacts'],
     'data': [
         'security/ir.model.access.csv',
+        'data/data.xml',
         'views/sales_price_calculation.xml',
         'reports/mrp_updation_report.xml',
         'reports/mrp_updation_template.xml',
