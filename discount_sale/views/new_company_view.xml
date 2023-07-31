@@ -10,9 +10,9 @@
                     <form>
                         <group>
                             <group>
-                                <field name="user" widget="many2many_tags" required="1"/>
-                                <field name="manager_ids" widget="many2many_tags" required="1"/>
-                                <field name="owner" widget="many2many_tags" required="1"/>
+                                <field name="user" widget="many2many_tags"/>
+                                <field name="manager_ids" widget="many2many_tags"/>
+                                <field name="owner" widget="many2many_tags"/>
                             </group>
                             <group>
                                 <field name="user_discount" attrs="{'invisible': [('user', '==', False)]}" required="1"/>
