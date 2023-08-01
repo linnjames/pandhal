@@ -85,24 +85,6 @@
             </xpath>
         </field>
     </record>
-    <record id="view_sales_order_filter_inherit_sale_filter" model="ir.ui.view">
-                    <field name="name">sale.order.filter</field>
-                    <field name="model">sale.order</field>
-                    <field name="inherit_id" ref="sale.view_sales_order_filter"/>
-                    <field name="arch" type="xml">
-
-                        <search>
-
-<!--                            <filter name="today" string="Today"-->
-<!--                                    domain="[-->
-<!--                                ('create_date', '=', context_today().strftime('%Y-%m-%d'))]"-->
-<!--                            />-->
-                            <filter string="Today" name="today_date_filter"
-                            domain="[('create_date','>=', ((context_today()).strftime('%Y-%m-%d'))+' '+'00:00:00'),('create_date','&lt;=', ((context_today()).strftime('%Y-%m-%d'))+' '+'23:59:59')]"/>
-                        </search>
-
-                    </field>
-                </record>
     <record id="res_company_fields_added" model="ir.ui.view">
         <field name="name">res.company.fields.added</field>
         <field name="model">res.company</field>

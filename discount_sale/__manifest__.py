@@ -12,7 +12,6 @@
           'views/new_company_view.xml',
           'views/so_view.xml'
           ],
-
  'images': [],
  'license': 'AGPL-3',
  'installable': True,

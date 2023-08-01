@@ -7,20 +7,20 @@
         <field name="arch" type="xml">
             <xpath expr="//notebook" position="inside">
                 <page string="Discount Sale Details">
-                    <form>
+<!--                    <form>-->
                         <group>
                             <group>
-                                <field name="user" widget="many2many_tags"/>
-                                <field name="manager_ids" widget="many2many_tags"/>
-                                <field name="owner" widget="many2many_tags"/>
+                                <field name="user" widget="many2many_tags" required="1"/>
+                                <field name="manager_ids" widget="many2many_tags" required="1"/>
+                                <field name="owner" widget="many2many_tags" required="1"/>
                             </group>
-                            <group>
-                                <field name="user_discount" attrs="{'invisible': [('user', '==', False)]}" required="1"/>
-                                <field name="manager_discount" attrs="{'invisible': [('user', '==', False)]}" required="1"/>
-                                <field name="owner_discount" attrs="{'invisible': [('owner', '==', False)]}" required="1"/>
-                            </group>
+<!--                            <group>-->
+<!--                                <field name="user_discount" attrs="{'invisible': [('user', '==', False)]}" required="1"/>-->
+<!--                                <field name="manager_discount" attrs="{'invisible': [('user', '==', False)]}" required="1"/>-->
+<!--                                <field name="owner_discount" attrs="{'invisible': [('owner', '==', False)]}" required="1"/>-->
+<!--                            </group>-->
                         </group>
-                    </form>
+<!--                    </form>-->
                 </page>
             </xpath>
         </field>

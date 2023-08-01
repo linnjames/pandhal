@@ -9,9 +9,11 @@
     'category': 'Sales',
     "author": "Divergent Catalist pvt ltd",
     "website": "www.catalisterp.com/",
-    'depends': ['base', 'sale', 'account', 'stock', 'sale_management', 'l10n_in', 'contacts', 'purchase'],
+    'depends': ['base', 'sale', 'account', 'stock', 'sale_management', 'l10n_in', 'contacts',  'sale_advance_payment', 'sale_order_quotation_report', 'purchase', 'discount_sale'],
     'data': [
         'security/ir.model.access.csv',
+        'reports/invoice_print_template.xml',
+        'reports/invoice_print.xml',
         'reports/sales_invoice_print_multiple_view.xml',
         'reports/sales_invoice_print_view.xml',
         'reports/sales_invoice_pdf.xml',
