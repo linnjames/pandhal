@@ -1,0 +1,228 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <template id="delivery_out_print_template">
+        <t t-call="web.basic_layout">
+            <t t-call="web.html_container">
+                <t t-foreach="docs" t-as="doc">
+                    <div width="100%" style="font-size: 14px; text-align: right;">
+                        <span t-esc="context_timestamp(datetime.datetime.now()).strftime('%d/%m/%Y %H:%M')"/>
+                    </div>
+                    <br></br>
+                    <div width="100%">
+                        <table width="100%" align="center"
+                               style=" border-color:solid black; font-size:20px;">
+                            <tr>
+                                <td align="center">
+                                    <div width="100%" style="text-align: center;">
+                                        <!--                                                 <img src='/web/binary/company_logo' -->
+                                        <!--                                                      style="max-height: 25px;" -->
+                                        <!--                                                      alt="Logo"/> -->
+                                        <img src="/delivery_note/static/src/img/Screenshot from 2023-07-06 20-38-28.png"
+                                             style="max-height: 100px;"/>
+                                    </div>
+
+                                </td>
+                            </tr>
+                            <tr>
+                                <td align="center"
+                                    style="font-size: 17px; font-weight: bold; padding: 10px; text-align: center;">
+                                    <!-- Fetching the company name -->
+                                    <span t-esc="doc.company_id.name"/>
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <td style="text-align: center; font-size: 15px;">
+                                    <span t-esc="doc.company_id.partner_id.street2"/>
+                                    <span t-esc="doc.company_id.partner_id.city"/>
+                                    GSTIN:
+                                    <span t-field="doc.company_id.vat"/>
+                                    <span t-esc="doc.company_id.state_id.name"/>
+                                    <span t-esc="doc.company_id.zip"/>
+                                    <span t-esc="doc.company_id.country_id.name"/>
+
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                    <br></br>
+                    <br></br>
+                    <div style="width: 100%; padding: 0px; margin: 0; font-size: 15px;text-align:left">
+                        <table width="100%" align="center"
+                               style="border-bottom: 1px white;border-top: 1px white; border-left: 1px white; border-right: 1px white; border-collapse: collapse;">
+                            <tr>
+                                <td style="text-align:left;font-size:15px;border-left: 1px solid white;padding-left: 12px;">
+                                    Reference Number:
+                                </td>
+                                <td style="text-align:left;font-size:15px;border-left: 1px solid white;padding-left: 5px;">
+                                    <span t-field="doc.name"/>
+                                </td>
+                                <td style="text-align:left;font-size:15px;border-left: 1px solid white; padding-left: 8px;">
+                                    Receiver Name:
+                                </td>
+                                <td style="text-align:left;font-size:17px;border-left: 1px solid white; padding-left: 5px;">
+                                    <span t-field="doc.partner_id.name"/>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style="text-align:left;font-size:15px;border-left: 1px solid white; padding-left: 12px;">
+                                    Date :
+                                </td>
+                                <td style="text-align:left;font-size:15px;border-left: 1px solid white; padding-left: 5px;">
+                                    <span t-field="doc.scheduled_date"/>
+                                </td>
+                                <td style="text-align:left;font-size:15px;border-left: 1px solid white; padding-left: 8px;">
+                                    Receiver Address :
+                                </td>
+                                <td style="text-align:left;font-size:15px;border-left: 1px solid white; padding-left: 5px;">
+                                    <span t-esc="doc.partner_id.street2"/>
+                                    <span t-esc="doc.partner_id.city"/>
+                                    <br/>
+                                    <span t-esc="doc.partner_id.state_id.name"/>
+                                    <span t-esc="doc.partner_id.zip"/>
+                                    <br/>
+                                    <span t-esc="doc.partner_id.country_id.name"/>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td></td>
+                                <td></td>
+                                <td style="text-align:left;font-size:15px;border-left: 1px solid white; padding-left: 8px;">
+                                    Receiver GSTIN
+                                    :
+                                </td>
+                                <td></td>
+                            </tr>
+                        </table>
+                    </div>
+                    <br></br>
+                    <div style="width: 100%;">
+                        <table style="border: 1px solid black; width: 100%; border-collapse: collapse;">
+                            <thead>
+                                <tr>
+                                    <th style="border: 1px solid black; padding: 5px;font-size:17px;">S. No</th>
+                                    <th style="border: 1px solid black; padding: 5px;font-size:17px;">Name</th>
+                                    <th style="border: 1px solid black; padding: 5px;font-size:17px;">HSN/SAC Code</th>
+                                    <th style="border: 1px solid black; padding: 5px;font-size:17px;">Unit</th>
+                                    <th style="border: 1px solid black; padding: 5px;font-size:17px;">Unit Price</th>
+                                    <th style="border: 1px solid black; padding: 5px;font-size:17px;">Quantity</th>
+                                    <th style="border: 1px solid black; padding: 5px;font-size:17px;">Grand Total</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <t t-set="sl_no" t-value="1"/>
+                                <t t-foreach="docs" t-as="doc">
+                                    <t t-foreach="doc.move_line_ids" t-as="move_line">
+                                        <tr>
+                                            <td style="border: 1px solid black; padding: 5px;font-size:16px;">
+                                                <span>
+                                                    <t t-esc="sl_no"/>
+                                                </span>
+                                            </td>
+                                            <td style="border: 1px solid black; padding: 5px;font-size:16px;">
+                                                <span>
+                                                    <t t-esc="move_line.product_id.name"/>
+                                                </span>
+                                            </td>
+                                            <td style="border: 1px solid black; padding: 5px;font-size:16px;">
+                                                <span>
+                                                    <t t-esc="move_line.product_id.l10n_in_hsn_code"/>
+                                                </span>
+                                            </td>
+                                            <td style="border: 1px solid black; padding: 5px;font-size:16px;">
+                                                <span>
+                                                    <t t-esc="move_line.product_uom_id.name"/>
+                                                </span>
+                                            </td>
+                                            <td style="border: 1px solid black; padding: 5px;font-size:16px;">
+                                                <span>
+                                                    <t t-esc="move_line.product_id.standard_price"/>
+                                                </span>
+                                            </td>
+                                            <td style="border: 1px solid black; padding: 5px;font-size:16px;">
+                                                <span>
+                                                    <t t-esc="move_line.qty_done"/>
+                                                </span>
+                                            </td>
+                                            <td style="border: 1px solid black; padding: 5px;font-size:16px;">
+                                                <span>
+                                                    <t t-esc="move_line.product_id.standard_price * move_line.qty_done"/>
+                                                </span>
+                                            </td>
+                                        </tr>
+                                        <t t-set="sl_no" t-value="sl_no + 1"/>
+                                    </t>
+                                </t>
+                                <tr>
+                                    <td colspan="2" align="center"
+                                        style="font-size:15px; vertical-align: middle; border-right:1px solid black; border-left:1px solid black; border-top:1px solid black; border-bottom:1px solid black;">
+                                        <b>GRAND TOTAL</b>
+                                    </td>
+                                    <td colspan="5" align="center"
+                                        style="font-size:18px; padding-left: 4px; vertical-align: middle; border-right:1px solid black; border-left:1px solid black; border-top:1px solid black; border-bottom:1px solid black;">
+                                        <b>
+                                            <!--                                        <t t-esc="sum(move_line.product_id.standard_price * move_line.qty_done for move_line in doc.move_line_ids)"/>-->
+                                            <span t-field="doc.total_amount"/>
+
+                                        </b>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td align="center" colspan="2"
+                                        style="font-size:15px; padding-left: 4px; vertical-align: middle; border-right:1px solid black; border-left:1px solid black; border-top:1px solid black; border-bottom:1px solid black;">
+                                        <b>
+                                            Challan Total value (In Words)
+                                        </b>
+                                    </td>
+                                    <td align="center" colspan="7"
+                                        style="font-size:15px; padding-left: 4px; vertical-align: middle; border-right:1px solid black; border-left:1px solid black; border-top:1px solid black; border-bottom:1px solid black;">
+                                        <b>
+                                            <span t-field="doc.amount_in_words"/>
+                                        </b>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td align="left" rowspan="3" colspan="2"
+                                        style="font-size:14px; padding-left: 4px; vertical-align: top; border-right:1px solid black; border-left:1px solid black; border-top:1px solid black; border-bottom:1px solid black;">
+                                        <b>
+                                            Terms &amp; Conditions:
+                                        </b>
+                                    </td>
+                                    <td align="center" colspan="7"
+                                        style="font-size:16px; padding-left: 4px; vertical-align: middle; border-right:1px solid black; border-left:1px solid black; border-top:1px solid black; border-bottom:1px solid black;">
+                                        For,
+                                        <b>
+                                            <t t-esc="doc.company_id.partner_id.name"/>
+                                        </b>
+                                        <br/>
+                                        <br/>
+                                        <br/>
+                                        <br/>
+                                        <b>
+                                            Authorised Signatory
+                                        </b>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="footer o_standard_footer">
+                        <div class="row text-center">
+                            <div class="col col-12 text-center">
+                                <ul class="list-inline" style="text-align:center; padding: 8px; list-style: none;">
+                                    <li class="list-inline-item">
+                                        <span class="page"/>
+                                    </li>
+                                    <li class="list-inline-item">/</li>
+                                    <li class="list-inline-item">
+                                        <span class="toppage"/>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </t>
+            </t>
+        </t>
+    </template>
+</odoo>

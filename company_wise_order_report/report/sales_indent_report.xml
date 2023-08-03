@@ -110,7 +110,7 @@
                                         </td>
                                         <td class="table_data" align="center"
                                             style="font-size: 13px;padding-left: 5px;padding-top:10px;">
-                                            <span t-att-style="style" t-esc="v['so_purchase_ref']"/>
+                                            <span t-att-style="style" t-esc="v['purchase_name']"/>
                                         </td>
                                     </tr>
                                 </tr>

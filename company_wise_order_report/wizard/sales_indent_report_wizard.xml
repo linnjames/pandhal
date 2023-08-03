@@ -28,7 +28,7 @@
         </record>
 
         <record id="action_sales_indent_report" model="ir.actions.act_window">
-            <field name="name">Sale Indent Report</field>
+            <field name="name">Sale Order Report</field>
             <field name="type">ir.actions.act_window</field>
             <field name="res_model">sales.indent.report</field>
             <field name="view_mode">form</field>
@@ -37,7 +37,7 @@
         </record>
 
         <menuitem id="sale_indent_report_menu_root"
-                  name="Sales Indent Report"
+                  name="Sales Order Report"
                   parent="sale.menu_sale_report"
                   action="action_sales_indent_report"
                   sequence="5"

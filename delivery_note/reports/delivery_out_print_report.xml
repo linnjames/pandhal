@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <data>
+        <record id="paperformat_euro_lowmargin_delivery_out_print_report" model="report.paperformat">
+            <field name="name">European A4 low margin</field>
+            <field name="default" eval="True"/>
+            <field name="format">A4</field>
+            <field name="orientation">Portrait</field>
+            <field name="margin_top">10</field>
+            <field name="margin_bottom">15</field>
+            <field name="margin_left">6</field>
+            <field name="margin_right">6</field>
+            <field name="header_line" eval="False"/>
+            <field name="header_spacing">10</field>
+        </record>
+
+        <record id="delivery_out_print" model="ir.actions.report">
+            <field name="name">Delivery Note</field>
+            <field name="model">stock.picking</field>
+            <field name="report_type">qweb-pdf</field>
+            <field name="report_name">delivery_note.delivery_out_print_template</field>
+            <field name="report_file">delivery_note.delivery_out_print_template</field>
+            <field name="paperformat_id" ref="delivery_note.paperformat_euro_lowmargin_delivery_out_print_report"/>
+            <field name="binding_model_id" ref="stock.model_stock_picking"/>
+            <field name="binding_type">report</field>
+        </record>
+    </data>
+    <!--        <record id="delivery_out_print_report" model="report.paperformat">-->
+    <!--            <field name="name">European A4 low margin</field>-->
+    <!--            <field name="default" eval="True"/>-->
+    <!--            <field name="format">A4</field>-->
+    <!--            &lt;!&ndash;            <field name="page_height">100</field>&ndash;&gt;-->
+    <!--            &lt;!&ndash;            <field name="page_width">50</field>&ndash;&gt;-->
+    <!--            <field name="orientation">Portrait</field>-->
+    <!--            <field name="margin_top">20</field>-->
+    <!--            <field name="margin_bottom">10</field>-->
+    <!--            <field name="margin_left">5</field>-->
+    <!--            <field name="margin_right">5</field>-->
+    <!--            <field name="header_line" eval="False"/>-->
+    <!--            <field name="header_spacing">30</field>-->
+    <!--            <field name="dpi">80</field>-->
+    <!--        </record>-->
+
+
+    <!--        &lt;!&ndash;        <record id="delivery_out_print" model="ir.actions.report">&ndash;&gt;-->
+    <!--        &lt;!&ndash;            <field name="name">Delivery_Note_OUT_Print</field>&ndash;&gt;-->
+    <!--        &lt;!&ndash;            <field name="model">delivery.note</field>&ndash;&gt;-->
+    <!--        &lt;!&ndash;            <field name="report_type">qweb-pdf</field>&ndash;&gt;-->
+    <!--        &lt;!&ndash;            <field name="report_name">delivery_note.delivery_out_print_template</field>&ndash;&gt;-->
+    <!--        &lt;!&ndash;            <field name="report_file">delivery_note.delivery_out_print_template</field>&ndash;&gt;-->
+    <!--        &lt;!&ndash;                    <field name="paperformat_id" ref="delivery_note.delivery_out_print_report"/>&ndash;&gt;-->
+    <!--        &lt;!&ndash;                    <field name="binding_type">report</field>&ndash;&gt;-->
+    <!--        &lt;!&ndash;        </record>&ndash;&gt;-->
+    <!--        <record model="ir.actions.report" id="delivery_out_print">-->
+    <!--            <field name="name">Delivery Note</field>-->
+    <!--            <field name="model">stock.picking</field>-->
+    <!--            <field name="report_type">qweb-pdf</field>-->
+    <!--            <field name="report_name">delivery_note.delivery_out_print_template</field>-->
+    <!--            <field name="report_file">delivery_note.delivery_out_print_template</field>-->
+    <!--            <field name="print_report_name">"Delivery Note"</field>-->
+    <!--&lt;!&ndash;            <field name="paperformat_id" ref="delivery_note.delivery_out_print_report"/>&ndash;&gt;-->
+    <!--            <field name="binding_model_id" ref="stock.model_stock_picking"/>-->
+    <!--            <field name="binding_type">report</field>-->
+    <!--        </record>-->
+    <!--    </data>-->
+</odoo>

@@ -7,7 +7,7 @@
     'category': 'productivity',
     'website': 'https://www.odoo.com/app/invoicing',
     'license': 'LGPL-3',
-    'depends': ['base', 'stock', 'indent'],
+    'depends': ['base', 'stock', 'indent','sale', 'purchase'],
     'data': [
         'security/ir.model.access.csv',
         'wizard/sales_indent_report_wizard.xml',
