@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="preferred_vendor_list_form" model="ir.ui.view">
+        <field name="name">preferred.vendor.list.form</field>
+        <field name="model">preferred.vendor</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <field name="state" widget="statusbar" statusbar_visible="draft,confirm"/>
+                </header>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="product_id"
+                                   options="{'no_create': True, 'no_create_edit':True}"/>
+                            <field name="vendor_name"/>
+                        </group>
+                    </group>
+                    <notebook position="inside">
+                        <page string="Preference">
+                            <button name="add_details" string="Add Details" type="object" class="oe_highlight" states="draft"/>
+                            <field name="pref_ven_line">
+                                <tree editable="bottom">
+                                    <field name="company_id"/>
+                                    <field name="partner_id"/>
+                                    <field name="ref_id" invisible="1"/>
+                                </tree>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="preferred_vendor_list_tree" model="ir.ui.view">
+        <field name="name">preferred.vendor.list.tree</field>
+        <field name="model">preferred.vendor</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="product_id"/>
+            </tree>
+        </field>
+    </record>
+
+
+    <record id="preferred_vendor_list_action" model="ir.actions.act_window">
+        <field name="name">Preferred Vendor List Company wise</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">preferred.vendor</field>
+        <field name="view_mode">tree,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Create...
+            </p>
+        </field>
+    </record>
+
+    <menuitem id="preferred_vendor_list_menu"
+              name="Preferred Vendor List Company wise"
+              action="preferred_vendor_list_action"
+              parent="purchase.menu_purchase_products"
+              sequence="10"/>
+</odoo>

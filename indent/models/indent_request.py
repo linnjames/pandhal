@@ -71,70 +71,7 @@ class IndentRequest(models.Model):
             elif record.state == 'confirmed':
                 raise ValidationError("Transfer In Progress")
 
-    # def action_confirmed(self):
-    #     if not self.reference_id:
-    #         if not self.expected_date:
-    #             raise ValidationError('Please provide required date.')
-    #
-    #         if not self.reference_id:
-    #             partner = self.env['res.company'].sudo().search([('partner_id', '=', self.vendor_id.id)])
-    #             print(partner)
-    #             if partner.partner_id.id == self.env.company.partner_id.id:
-    #                 print("qqqqqqqqqqqqqqqqqqqqqq")
-    #                 raise ValidationError('Partner cannot be the same as company.')
-    #
-    #             comp = self.env['res.company'].sudo().search([('partner_id', '=', self.vendor_id.id)])
-    #             c = self.env['sales.indent'].sudo().create({
-    #                 'vendor_id': self.company_id.partner_id.id,
-    #                 'no_id': self.id,
-    #                 'indent_type': self.indent_type,
-    #                 'expected_date': self.expected_date,
-    #                 'company_id': comp.id,
-    #                 'attachment': self.attachment,
-    #
-    #             })
-    #             self.reference_id = c.reference
-    #             for vals in self.purchase_line_ids:
-    #                 # tax = self.env['account.tax'].sudo().search(
-    #                 #     [('name', '=', vals.product_id.taxes_id.name), ('company_id', '=', self.vendor_id.id)])
-    #                 c.write({
-    #                     'sales_line_ids': [(0, 0, {
-    #                         'product_id': vals.product_id.id,
-    #                         'qty': vals.qty,
-    #                         'uom_id': vals.uom_id.id,
-    #                         'message': vals.message,
-    #
-    #                     })]
-    #                 })
-    #                 print(c,'ccccccccccccccccccccccccccccccccccc')
-    #
-    #     b = self.env['stock.picking'].sudo().create({
-    #         'partner_id': self.vendor_id.id,
-    #         'picking_type_id': self.env.company.sudo().operation_type_in.id,
-    #         'location_id': self.env.company.sudo().operation_type_in.default_location_src_id.id,
-    #         'location_dest_id': self.env.company.sudo().operation_type_in.default_location_dest_id.id,
-    #         'company_id': self.env.company.id,
-    #         'transfer_id': self.id,
-    #         'scheduled_date': False,
-    #         'date_done': False,
-    #     })
-    #     for vals in self.purchase_line_ids:
-    #         b.write({
-    #             'move_ids_without_package': [(0, 0, {
-    #                 'product_id': vals.product_id.id,
-    #                 'product_uom_qty': vals.qty,
-    #                 'name': vals.product_id.name,
-    #                 'company_id': self.env.company.id,
-    #                 'location_id': self.env.company.sudo().operation_type_in.default_location_src_id.id,
-    #                 'location_dest_id': self.env.company.sudo().operation_type_in.default_location_dest_id.id,
-    #             })]
-    #         })
-    #         print(b,'bbbbbbbbbbbbbbbbbbbbbbbbbbbb')
-    #     b.scheduled_date = self.expected_date
-    #     b.date_done = self.expected_date
-    #     print(b, "multi")
-    #     records_to_confirm = self.filtered(lambda r: r.state == 'draft')
-    #     records_to_confirm.write({'state': 'confirmed'})
+
 
     def action_confirmed(self):
         records_to_confirm = self.filtered(lambda r: r.state == 'draft')
@@ -239,12 +176,10 @@ class StockPicking(models.Model):
 class PurchaseState(models.Model):
     _inherit = 'purchase.order'
 
-    state = fields.Selection(selection_add=[('approve', 'Approved')])
+    state = fields.Selection(selection_add=[('approve', 'Approved'), ("purchase",)])
     indent_type = fields.Selection([('customer order', 'Customer Order'),
                                     ('bakery', 'Bakery'),
                                     ('store', 'Store')], required=True, default='customer order')
-
-
 
     def button_purchase_approval(self):
         pass
@@ -254,7 +189,6 @@ class PurchaseQuantity(models.Model):
     _inherit = 'purchase.order.line'
 
     available_qty = fields.Float(string='Quantity On Hand')
-    message = fields.Char(string='Message')
 
     @api.onchange('product_id')
     def _onchange_product_id_warning(self):

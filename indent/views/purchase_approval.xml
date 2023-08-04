@@ -29,7 +29,6 @@
             <xpath expr="//field[@name='order_line']/tree/field[@name='product_qty']"
                    position="after">
                 <field name="available_qty"/>
-                <field name="message"/>
             </xpath>
         </field>
     </record>
