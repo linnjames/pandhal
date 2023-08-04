@@ -60,60 +60,6 @@ class SalesIndent(models.Model):
         res = super(SalesIndent, self).create(vals)
         return res
 
-    # def action_confirmed(self):
-    #     if not self.no_id:
-    #         comp = self.env['res.company'].sudo().search([('partner_id', '=', self.vendor_id.id)])
-    #         d = self.env['indent.request'].sudo().create({
-    #             'vendor_id': self.company_id.partner_id.id,
-    #             'indent_type': self.indent_type,
-    #             # 'reference_id': self.reference,
-    #             'reference_id':  self.reference,
-    #             'expected_date': self.expected_date,
-    #             'company_id': comp.id,
-    #             'attachment': self.attachment,
-    #         })
-    #         self.no_id = d.id
-    #         for vals in self.sales_line_ids:
-    #             d.write({
-    #                 'purchase_line_ids': [(0, 0, {
-    #                     'product_id': vals.product_id.id,
-    #                     'qty': vals.qty,
-    #                     'uom_id': vals.uom_id.id,
-    #                     'message': vals.message,
-    #                 })]
-    #             })
-    #             print(d, 'dddddddddddddddddddddddddddddddddd')
-    #
-    #     current_company = self.env['res.company'].sudo().search([('id', '=', self.env.company.id)], limit=1)
-    #     # current_company = self.env['res.company'].sudo().search([('partner_id', '=', self.vendor_id.id)])
-    #     a = self.env['stock.picking'].sudo().create({
-    #         'partner_id': self.vendor_id.id,
-    #         'picking_type_id': current_company.sudo().operation_type_out.id,
-    #         'location_id': current_company.sudo().operation_type_out.default_location_src_id.id,
-    #         'location_dest_id': current_company.sudo().operation_type_out.default_location_dest_id.id,
-    #         'company_id': current_company.id,
-    #         'sale_transfer_id': self.id,
-    #         # 'transfer_id': self.no_id.id,
-    #         'scheduled_date': False,
-    #         'date_done': False,
-    #     })
-    #     for vals in self.sales_line_ids:
-    #         a.write({
-    #             'move_ids_without_package': [(0, 0, {
-    #                 'product_id': vals.product_id.id,
-    #                 'product_uom_qty': vals.qty,
-    #                 'name': vals.product_id.name,
-    #                 'company_id': self.env.company.id,
-    #                 'location_id': self.env.company.sudo().operation_type_out.default_location_src_id.id,
-    #                 'location_dest_id': self.env.company.sudo().operation_type_out.default_location_dest_id.id,
-    #             })]
-    #         })
-    #         print(a, 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa')
-    #     a.scheduled_date = self.expected_date
-    #     a.date_done = self.expected_date
-    #     print(a, "multi")
-    #     records_to_confirm = self.filtered(lambda r: r.state == 'draft')
-    #     records_to_confirm.write({'state': 'confirmed'})
 
     def action_confirmed(self):
         for record in self:
@@ -218,28 +164,25 @@ class SalesOrder(models.Model):
     attachment = fields.Binary(string="Attachment")
     is_true = fields.Boolean(string='is_true')
     validity_date = fields.Date(string='Validity Date', date_format='%d/%m/%Y')
-    discount_per = fields.Selection([('10', '10'),
-                                     ('20', '20'),
-                                     ('30', '30')], string='Discount(%)')
+    # discount_per = fields.Selection([('10', '10'),
+    #                                  ('20', '20'),
+    #                                  ('30', '30')], string='Discount(%)')
 
-    @api.onchange('discount_per')
-    def onchange_discount_per(self):
-        v = 0
-        dis = 0
-        if self.discount_per:
-            if self.order_line:
-                v = len(self.order_line)
-                discount_per_value = int(self.discount_per) if self.discount_per else 0
-                for i in self.order_line:
-                    print(discount_per_value)
-                    dis = discount_per_value / v
-                    i.discount = dis
-        elif not self.discount_per and self.order_line:
-            for j in self.order_line:
-                j.discount = False
-
-
-
+    # @api.onchange('discount_per')
+    # def onchange_discount_per(self):
+    #     v = 0
+    #     dis = 0
+    #     if self.discount_per:
+    #         if self.order_line:
+    #             v = len(self.order_line)
+    #             discount_per_value = int(self.discount_per) if self.discount_per else 0
+    #             for i in self.order_line:
+    #                 print(discount_per_value)
+    #                 dis = discount_per_value / v
+    #                 i.discount = dis
+    #     elif not self.discount_per and self.order_line:
+    #         for j in self.order_line:
+    #             j.discount = False
 
     def action_create_purchase_indent(self):
         if not self.order_line.filtered(lambda l: l.select_item):

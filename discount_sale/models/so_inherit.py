@@ -9,29 +9,26 @@ class SaleOrderInherit(models.Model):
     total_price = fields.Float(string="Total Price", compute='_compute_line_amount', store=True)
     discount_amt = fields.Float(string="Discount", compute='_compute_lines_discount_amount', store=True)
     is_discount_sale = fields.Boolean(string="Is Discount Sale")
+    discount_per = fields.Selection([('10', '10'),
+                                     ('20', '20'),
+                                     ('30', '30')], string='Discount(%)')
 
-    def action_confirm(self):
-        res = super(SaleOrderInherit, self).action_confirm()
-        user = self.env.user
-        company = self.env.company
-        total_discount = 0
-        if self.is_discount_sale:
-            discount = (self.discount_amt / self.total_price) * 100
-            total_discount = discount
-            user_discount_ratio = float(company.user_discount_ratio)
-            manager_discount_ratio = float(company.manager_discount_ratio)
-            owner_discount_ratio = float(company.owner_discount_ratio)
-            if user.id in company.user.ids and total_discount <= user_discount_ratio:
-                return res
-            elif user.id in company.manager_ids.ids and total_discount <= manager_discount_ratio:
-                return res
-            elif user.id in company.owner.ids and total_discount <= owner_discount_ratio:
-                return res
-            else:
-                raise UserError(
-                    _("Your discount limit is exceeded! \n Kindly contact to your Administrator/Manager."))
-        else:
-            return res
+    @api.onchange('discount_per')
+    def onchange_discount_per(self):
+        v = 0
+        dis = 0
+        if self.discount_per:
+            if self.order_line:
+                v = len(self.order_line)
+                discount_per_value = int(self.discount_per) if self.discount_per else 0
+                for i in self.order_line:
+                    print(discount_per_value)
+                    dis = discount_per_value / v
+                    i.discount = dis
+        elif not self.discount_per and self.order_line:
+            for j in self.order_line:
+                j.discount = False
+
 
     @api.depends('order_line.discount', 'order_line.price_unit', 'order_line.product_uom_qty')
     def _compute_lines_discount_amount(self):
