@@ -7,7 +7,7 @@
  'maintainer': 'Catalist Divergent ERP',
  'company': 'Catalist Divergent ERP',
  'website': 'https://www.catalisterp.com/',
- 'depends': ['base', 'sale', 'sale_management'],
+ 'depends': ['base', 'sale', 'sale_management','indent'],
  'data': [
           'views/new_company_view.xml',
           'views/so_view.xml'
