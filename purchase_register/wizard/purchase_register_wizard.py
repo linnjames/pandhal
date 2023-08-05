@@ -38,6 +38,9 @@ class PurchaseRegisterReportWizard(models.TransientModel):
         month = self.month_selection
         year = str(self.year)  # Convert year to string
         company_ids = self.company_name.ids if self.company_name else []
+        if not company_ids:
+            all_companies = self.env['res.company'].search([])  # Fetch all companies
+            company_ids = all_companies.ids
 
         # month_start_date = datetime.strptime(f"{year}-{month}-01", "%Y-%m-%d")
         # month_end_date = month_start_date.replace(day=31)
