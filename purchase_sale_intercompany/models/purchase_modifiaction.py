@@ -50,6 +50,10 @@ class PurchaseOrder(models.Model):
             rec.partner_ref = sale_order.name
         else:
             pass
+class PurchaseOrderLines(models.Model):
+    _inherit = "purchase.order.line"
+
+    message = fields.Char(string="Message")
 
 class SaleOrder(models.Model):
     _inherit = 'sale.order'

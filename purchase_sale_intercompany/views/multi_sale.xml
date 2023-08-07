@@ -10,7 +10,17 @@
             </xpath>
         </field>
     </record>
-
+    <record id="purchase_sale_line_msg" model="ir.ui.view">
+        <field name="name">purchase_sale_line_msg</field>
+        <field name="model">purchase.order</field>
+        <field name="inherit_id" ref="purchase.purchase_order_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='order_line']/tree/field[@name='name']"
+                   position="after">
+                <field name="message"/>
+            </xpath>
+        </field>
+    </record>
     <record id="action_confirm_sale_purchase" model="ir.actions.server">
         <field name="name">Confirmed</field>
         <field name="model_id" ref="model_sale_order"/>
