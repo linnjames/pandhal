@@ -164,25 +164,6 @@ class SalesOrder(models.Model):
     attachment = fields.Binary(string="Attachment")
     is_true = fields.Boolean(string='is_true')
     validity_date = fields.Date(string='Validity Date', date_format='%d/%m/%Y')
-    # discount_per = fields.Selection([('10', '10'),
-    #                                  ('20', '20'),
-    #                                  ('30', '30')], string='Discount(%)')
-
-    # @api.onchange('discount_per')
-    # def onchange_discount_per(self):
-    #     v = 0
-    #     dis = 0
-    #     if self.discount_per:
-    #         if self.order_line:
-    #             v = len(self.order_line)
-    #             discount_per_value = int(self.discount_per) if self.discount_per else 0
-    #             for i in self.order_line:
-    #                 print(discount_per_value)
-    #                 dis = discount_per_value / v
-    #                 i.discount = dis
-    #     elif not self.discount_per and self.order_line:
-    #         for j in self.order_line:
-    #             j.discount = False
 
     def action_create_purchase_indent(self):
         if not self.order_line.filtered(lambda l: l.select_item):

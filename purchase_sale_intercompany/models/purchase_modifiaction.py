@@ -15,19 +15,29 @@ class PurchaseOrder(models.Model):
                                                                ('id', '!=', self.env.company.id)], limit=1,
                                                               order='id desc')
         if to_company_id.is_branch == True:
-            # Create a sale order when confirming the purchase order
-            sale_order = (
-                self.env["sale.order"].with_user(self.env.user.id).sudo().create({
-                    "company_id": to_company_id.id,
-                    "client_order_ref": rec.name,
-                    'indent_type':rec.indent_type,
-                    "purchase_id": rec.id,
-                    "partner_id": self.env.company.partner_id.id,
-                    "validity_date": rec.date_planned,
+            # Check for an existing sale order
+            existing_sale_order = self.env["sale.order"].sudo().search([
+                ("purchase_id", "=", rec.id),
+                ("company_id", "=", to_company_id.id),
+            ], limit=1)
 
-                })
-            )
-            print(sale_order, 'sale_order')
+            if existing_sale_order:
+                sale_order = existing_sale_order
+            else:
+                # Create a sale order when confirming the purchase order
+                sale_order = (
+                    self.env["sale.order"].with_user(self.env.user.id).sudo().create({
+                        "company_id": to_company_id.id,
+                        "client_order_ref": rec.name,
+                        'indent_type': rec.indent_type,
+                        "purchase_id": rec.id,
+                        "partner_id": self.env.company.partner_id.id,
+                        "validity_date": rec.date_planned,
+
+                    })
+                )
+                print(sale_order, 'sale_order')
+
             for line in rec.order_line.sudo():
                 tax_lst = []
                 for tax in line.product_id.taxes_id.sudo():
@@ -36,9 +46,9 @@ class PurchaseOrder(models.Model):
                                                                 ('type_tax_use', '=', 'sale'),
                                                                 ('company_id', '=', to_company_id.id)])
 
-
                 a = line.product_id.taxes_id.filtered(lambda r: r.company_id == to_company_id)
 
+                # Update existing sale order or create new order lines
                 sale_order.sudo().write({
                     'order_line': [(0, 0, {
                         "order_id": sale_order.id,
@@ -47,11 +57,58 @@ class PurchaseOrder(models.Model):
                         "product_uom": line.product_uom.id,
                         "product_uom_qty": line.product_qty,
                         'tax_id': [(6, 0, tax_id.ids)]
-                    })
-                     ]})
+                    })]
+                })
+
             rec.partner_ref = sale_order.name
         else:
             pass
+
+    # def button_confirm(self):
+    #     res = super(PurchaseOrder, self).button_confirm()
+    #     print(res)
+    #     rec = self.sudo()
+    #     to_company_id = self.env['res.company'].sudo().search([('partner_id', '=', rec.partner_id.id),
+    #                                                            ('id', '!=', self.env.company.id)], limit=1,
+    #                                                           order='id desc')
+    #     if to_company_id.is_branch == True:
+    #         # Create a sale order when confirming the purchase order
+    #         sale_order = (
+    #             self.env["sale.order"].with_user(self.env.user.id).sudo().create({
+    #                 "company_id": to_company_id.id,
+    #                 "client_order_ref": rec.name,
+    #                 'indent_type':rec.indent_type,
+    #                 "purchase_id": rec.id,
+    #                 "partner_id": self.env.company.partner_id.id,
+    #                 "validity_date": rec.date_planned,
+    #
+    #             })
+    #         )
+    #         print(sale_order, 'sale_order')
+    #         for line in rec.order_line.sudo():
+    #             tax_lst = []
+    #             for tax in line.product_id.taxes_id.sudo():
+    #                 tax_lst.append(tax.name)
+    #             tax_id = self.env['account.tax'].sudo().search([('name', 'in', tuple(tax_lst)),
+    #                                                             ('type_tax_use', '=', 'sale'),
+    #                                                             ('company_id', '=', to_company_id.id)])
+    #
+    #
+    #             a = line.product_id.taxes_id.filtered(lambda r: r.company_id == to_company_id)
+    #
+    #             sale_order.sudo().write({
+    #                 'order_line': [(0, 0, {
+    #                     "order_id": sale_order.id,
+    #                     "message": line.message,
+    #                     "product_id": line.product_id.id,
+    #                     "product_uom": line.product_uom.id,
+    #                     "product_uom_qty": line.product_qty,
+    #                     'tax_id': [(6, 0, tax_id.ids)]
+    #                 })
+    #                  ]})
+    #         rec.partner_ref = sale_order.name
+    #     else:
+    #         pass
 
 
 class PurchaseOrderLines(models.Model):

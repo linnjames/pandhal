@@ -15,14 +15,6 @@
                     <field name="sale_transfer_id"/>
                 </field>
 
-<!--                <xpath expr="//button[@name='button_validate'][2]" position="attributes">-->
-<!--                    <attribute name="groups">indent_request.transfer_validate</attribute>-->
-<!--                </xpath>-->
-
-<!--                <xpath expr="//button[@name='button_validate'][1]" position="attributes">-->
-<!--                    <attribute name="groups">indent_request.transfer_validate</attribute>-->
-<!--                </xpath>-->
-
                 <xpath expr="//page[@name='extra']" position="attributes">
                     <attribute name="invisible">1</attribute>
                 </xpath>
@@ -34,14 +26,6 @@
                 <xpath expr="//field[@name='origin']" position="attributes">
                     <attribute name="invisible">1</attribute>
                 </xpath>
-
-<!--                <xpath expr="//field[@name='date_done']" position="attributes">-->
-<!--                    <attribute name="attrs">{'invisible': [('state', 'not in', ('done', 'draft'))]}</attribute>-->
-<!--                </xpath>-->
-
-<!--                <xpath expr="//field[@name='scheduled_date']" position="attributes">-->
-<!--                    <attribute name="invisible">1</attribute>-->
-<!--                </xpath>-->
 
             </field>
         </record>

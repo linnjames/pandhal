@@ -4,9 +4,9 @@
         <field name="name">Product Creation</field>
     </record>
 
-    <record id="purchase_multi_level_approval" model="res.groups">
-        <field name="name">Purchase Approve</field>
-    </record>
+<!--    <record id="purchase_multi_level_approval" model="res.groups">-->
+<!--        <field name="name">Purchase Approve</field>-->
+<!--    </record>-->
 
     <record id="purchase_multi_level_approval_confirm" model="res.groups">
         <field name="name">Purchase Confirm</field>

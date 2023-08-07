@@ -33,6 +33,7 @@ class PurchaseOrderWizard(models.TransientModel):
                 'product_uom': partner.product_id.uom_id.id,
                 'product_qty': partner.product_qty,
                 'price_unit': partner.price_unit,
+                'message': partner.message,
             }
             purchase_order_lines.append((0, 0, vals))
 
@@ -69,7 +70,7 @@ class PurchaseOrderWizard(models.TransientModel):
                                               'price_unit': record.price_unit,
                                               'product_uom': record.product_uom.id,
                                               # 'unit_mrp': rec.price_mrp,
-                                              # 'message': rec.message,
+                                              'message': rec.message,
                                               'price_subtotal': record.price_unit * rec.product_uom_qty
                                               }))
 
