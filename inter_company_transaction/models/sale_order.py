@@ -26,7 +26,7 @@ class SaleOrderInherit(models.Model):
                 self.env["purchase.order"].with_user(self.env.user.id).sudo().create({
                     "company_id": to_company_id.id,
                     "partner_ref": rec.name,
-                    # "sales_id": rec.id,
+                    "indent_type": rec.indent_type,
                     "partner_id": self.env.company.partner_id.id,
                     "date_order": rec.date_order,
 
