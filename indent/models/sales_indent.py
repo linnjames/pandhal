@@ -157,8 +157,8 @@ class SalesOrder(models.Model):
     _inherit = 'sale.order'
 
     indent_type = fields.Selection([('customer order', 'Customer Order'),
-                                    ('indent', 'Indent'),
-                                    ('store', 'Store')], required=True, default='customer order', string='Order Type')
+                                    ('indent', 'Indent'), ], required=True, default='customer order',
+                                   string="Order Type")
 
     state = fields.Selection(selection_add=[('indent_created', 'Indent Created')])
     attachment = fields.Binary(string="Attachment")

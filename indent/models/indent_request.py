@@ -178,8 +178,8 @@ class PurchaseState(models.Model):
 
     state = fields.Selection(selection_add=[('approve', 'Approved'), ("purchase",)])
     indent_type = fields.Selection([('customer order', 'Customer Order'),
-                                    ('bakery', 'Bakery'),
-                                    ('store', 'Store')], required=True, default='customer order')
+                                    ('indent', 'Indent'), ], required=True, default='customer order',
+                                   string="Order Type")
 
     def button_purchase_approval(self):
         pass
