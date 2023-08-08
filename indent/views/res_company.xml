@@ -12,5 +12,30 @@
                 </field>
             </field>
         </record>
+
+        <record id="inherit_stock_warehouse" model="ir.ui.view">
+            <field name="name">stock.warehouse.form</field>
+            <field name="model">stock.warehouse</field>
+            <field name="inherit_id" ref="stock.view_warehouse"/>
+            <field name="arch" type="xml">
+                <field name="code" position="after">
+                    <field name="l10n_in_branch_journal_id"
+                           domain="[('company_id', '=', company_id), ('type','=','sale'),('indent_type','=','indent')]"/>
+                    <field name="l10n_in_branch_purchase_journal_id"
+                           domain="[('company_id', '=', company_id), ('type','=','purchase'),('indent_type','=','indent')]"/>
+                </field>
+            </field>
+        </record>
+
+        <record id="inherit_account_journal" model="ir.ui.view">
+            <field name="name">account.journal.form</field>
+            <field name="model">account.journal</field>
+            <field name="inherit_id" ref="account.view_account_journal_form"/>
+            <field name="arch" type="xml">
+                <field name="type" position="after">
+                    <field name="indent_type"/>
+                </field>
+            </field>
+        </record>
     </data>
 </odoo>

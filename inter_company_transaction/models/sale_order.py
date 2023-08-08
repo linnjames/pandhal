@@ -34,9 +34,6 @@ class SaleOrderInherit(models.Model):
             )
             print(purchase_order, 'purchase_order')
             for line in rec.order_line.sudo():
-                taxes = line.product_id.taxes_id.sudo().filtered(
-                    lambda tax: tax.type_tax_use == 'sale' and tax.company_id == to_company_id
-                )
                 purchase_order.sudo().write({
                     'order_line': [(0, 0, {
                         "order_id": purchase_order.id,
@@ -45,7 +42,7 @@ class SaleOrderInherit(models.Model):
                         "product_qty": line.product_uom_qty,
                         "available_qty": line.qty_invoiced,
                         "price_unit": line.price_unit,
-                        'taxes_id': [(6, 0, taxes.ids)]
+                        'taxes_id': False
                     })
                                    ]})
             purchase_order.button_confirm()

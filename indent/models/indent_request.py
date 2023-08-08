@@ -197,3 +197,15 @@ class PurchaseQuantity(models.Model):
                 line.available_qty = line.product_id.qty_available
             else:
                 line.available_qty = 0.0
+
+class SaleOrderInherit(models.Model):
+    _inherit = "sale.order"
+
+    @api.depends('company_id', 'warehouse_id','indent_type')
+    def _compute_l10n_in_journal_id(self):
+        super()._compute_l10n_in_journal_id()
+        for order in self:
+            if order.indent_type == 'bakery':
+                if order.warehouse_id.l10n_in_branch_journal_id:
+                    order.l10n_in_journal_id = order.warehouse_id.l10n_in_branch_journal_id.id
+

@@ -1,5 +1,8 @@
 from odoo import models, fields, api, _
 from odoo.exceptions import ValidationError, UserError
+import logging
+
+_logger = logging.getLogger(__name__)
 
 
 
@@ -163,7 +166,27 @@ class SalesOrder(models.Model):
     state = fields.Selection(selection_add=[('indent_created', 'Indent Created')])
     attachment = fields.Binary(string="Attachment")
     is_true = fields.Boolean(string='is_true')
-    validity_date = fields.Date(string='Validity Date', date_format='%d/%m/%Y')
+    validity_date = fields.Date(string='Expected Date', date_format='%d/%m/%Y', required=True)
+
+    @api.depends('company_id', 'indent_type')
+    def _compute_l10n_in_journal_id(self):
+        _logger.debug("Starting _compute_l10n_in_journal_id")
+        super()._compute_l10n_in_journal_id()
+
+        for order in self:
+            _logger.debug(f"Processing order: {order.name}")
+            if order.indent_type == 'indent':
+                journal_domain = [
+                    ('company_id', '=', order.company_id.id),
+                    ('indent_type', '=', order.indent_type)
+                ]
+                _logger.debug(f"Journal domain: {journal_domain}")
+                bakery_journal = self.env['account.journal'].sudo().search(journal_domain, limit=1)
+
+                if bakery_journal:
+                    order.l10n_in_journal_id = bakery_journal.id
+
+        _logger.debug("Finished _compute_l10n_in_journal_id")
 
     def action_create_purchase_indent(self):
         if not self.order_line.filtered(lambda l: l.select_item):
@@ -207,3 +230,18 @@ class SalesOrderLine(models.Model):
 
     message = fields.Char(string='Message')
     select_item = fields.Boolean(string='Select Items', default=True)
+
+
+class AccountJournal(models.Model):
+    _inherit = 'account.journal'
+
+    indent_type = fields.Selection([('customer order', 'Customer Order'),
+                                    ('indent', 'Indent'), ],
+                                   string="Order Type")
+
+
+class StockWarehouse(models.Model):
+    _inherit = 'stock.warehouse'
+
+    l10n_in_branch_journal_id = fields.Many2one('account.journal', string='Branch Journal')
+    l10n_in_branch_purchase_journal_id = fields.Many2one('account.journal', string='Branch Purchase Journal')

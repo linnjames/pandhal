@@ -5,14 +5,6 @@
         <field name="model">purchase.order</field>
         <field name="inherit_id" ref="purchase.purchase_order_form"/>
         <field name="arch" type="xml">
-<!--            <xpath expr="//button[@name='print_quotation']" position="after">-->
-<!--                <button name="button_purchase_approval" states="draft" type="object" string="Approve"-->
-<!--                        class="oe_highlight"/>-->
-<!--            </xpath>-->
-
-<!--            <xpath expr="//button[@name='button_purchase_approval']" position="attributes">-->
-<!--                <attribute name="groups">indent.purchase_multi_level_approval</attribute>-->
-<!--            </xpath>-->
 
              <xpath expr="//button[@name='button_confirm']" position="attributes">
                 <attribute name="groups">indent.purchase_multi_level_approval_confirm</attribute>
@@ -52,5 +44,15 @@
     </record>
 
 
+    <record id="view_purchase_order_form_inherit" model="ir.ui.view">
+        <field name="name">purchase.order.form.inherit</field>
+        <field name="model">purchase.order</field>
+        <field name="inherit_id" ref="purchase.purchase_order_form"/>
+        <field name="arch" type="xml">
+            <field name="currency_id" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </field>
+        </field>
+    </record>
 
 </odoo>
