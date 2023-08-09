@@ -29,7 +29,7 @@ class PurchaseOrder(models.Model):
                     self.env["sale.order"].with_user(self.env.user.id).sudo().create({
                         "company_id": to_company_id.id,
                         "client_order_ref": rec.name,
-                        "indent_type": 'indent',
+                        "indent_type": rec.indent_type,
                         "purchase_id": rec.id,
                         "partner_id": self.env.company.partner_id.id,
                         "validity_date": rec.date_planned,

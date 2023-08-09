@@ -160,7 +160,7 @@ class SalesOrder(models.Model):
     _inherit = 'sale.order'
 
     indent_type = fields.Selection([('customer order', 'Customer Order'),
-                                    ('indent', 'Indent'), ], required=True,
+                                    ('indent', 'Indent'), ], required=True, default='indent',
                                    string="Order Type")
 
     state = fields.Selection(selection_add=[('indent_created', 'Indent Created')])
