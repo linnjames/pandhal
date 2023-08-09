@@ -36,10 +36,13 @@ class PurchaseOrder(models.Model):
                     })
                 )
                 print(sale_order, 'sale_order')
+                sale_order.update({
+                    'indent_type':rec.indent_type
+                })
 
                 for line in rec.order_line.sudo():
                     # Create sale order line
-                    self.env["sale.order.line"].sudo().create({
+                   a = self.env["sale.order.line"].sudo().create({
                         "order_id": sale_order.id,
                         "message": line.message,
                         "product_id": line.product_id.id,
@@ -47,6 +50,9 @@ class PurchaseOrder(models.Model):
                         "product_uom_qty": line.product_qty,
                         'tax_id': False
                     })
+                   a.update({
+                       'tax_id' : False
+                   })
 
                 rec.partner_ref = sale_order.name
 
