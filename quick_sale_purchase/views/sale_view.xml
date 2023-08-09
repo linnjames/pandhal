@@ -8,7 +8,7 @@
         <field name="arch" type="xml">
             <xpath expr="//header/button[@name='action_cancel']" position="after">
                 <button name="sh_create_po" string="Create Purchase Order" type="object" class="btn-primary"
-                        attrs="{'invisible': ['|', ('state', '=', 'draft','cancel'), ('indent_type', '!=', 'customer order')]}"/>
+                        attrs="{'invisible': ['|', ('state', '=', 'draft','cancel'), ('indent_type', '=', 'indent')]}"/>
             </xpath>
             <xpath expr="//sheet/div[hasclass('oe_button_box')]" position="inside">
                 <button name="sh_action_view_purchase" type="object" class="oe_stat_button" icon="fa-credit-card"
