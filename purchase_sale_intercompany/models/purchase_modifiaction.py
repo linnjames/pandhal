@@ -56,7 +56,7 @@ class PurchaseOrder(models.Model):
                         "product_id": line.product_id.id,
                         "product_uom": line.product_uom.id,
                         "product_uom_qty": line.product_qty,
-                        'tax_id': False
+                        'tax_id': 'Nil Rated'
                     })
 
                 rec.partner_ref = sale_order.name
