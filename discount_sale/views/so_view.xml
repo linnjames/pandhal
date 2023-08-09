@@ -65,7 +65,7 @@
 
             <xpath expr="//notebook/page/field[@name='invoice_line_ids']/tree/field[@name='tax_ids']"
                    position="after">
-                <field name="subtotal"/>
+                <field name="subtotal" force_save="1"/>
             </xpath>
         </field>
     </record>
