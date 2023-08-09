@@ -29,7 +29,7 @@ class PurchaseOrder(models.Model):
                     self.env["sale.order"].with_user(self.env.user.id).sudo().create({
                         "company_id": to_company_id.id,
                         "client_order_ref": rec.name,
-                        "indent_type": 'indent',
+                        "indent_type": rec.indent_type,
                         "purchase_id": rec.id,
                         "partner_id": self.env.company.partner_id.id,
                         "validity_date": rec.date_planned,
@@ -38,17 +38,6 @@ class PurchaseOrder(models.Model):
                 print(sale_order, 'sale_order')
 
                 for line in rec.order_line.sudo():
-                    # tax_lst = []
-                    # for tax in line.product_id.taxes_id.sudo():
-                    #     tax_lst.append(tax.name)
-                    # tax_id = self.env['account.tax'].sudo().search([
-                    #     ('name', 'in', tuple(tax_lst)),
-                    #     ('type_tax_use', '=', 'sale'),
-                    #     ('company_id', '=', to_company_id.id)
-                    # ])
-                    #
-                    # a = line.product_id.taxes_id.filtered(lambda r: r.company_id == to_company_id)
-
                     # Create sale order line
                     self.env["sale.order.line"].sudo().create({
                         "order_id": sale_order.id,
