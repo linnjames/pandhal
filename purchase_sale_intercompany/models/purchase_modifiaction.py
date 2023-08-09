@@ -67,9 +67,9 @@ class PurchaseOrder(models.Model):
                         "product_uom_qty": line.product_qty,
                         'tax_id': False,
                     })
-                    new_sale_order_line.update({
-                        'tax_id':False
-                    })
+                    # new_sale_order_line.update({
+                    #     'tax_id':False
+                    # })
 
                 # Update partner_ref of the sale order
                 rec.partner_ref = sale_order.name
