@@ -36,23 +36,28 @@ class PurchaseOrder(models.Model):
                     })
                 )
                 print(sale_order, 'sale_order')
-                sale_order.update({
-                    'indent_type':rec.indent_type
-                })
 
                 for line in rec.order_line.sudo():
+                    tax_lst = []
+                    for tax in line.product_id.taxes_id.sudo():
+                        tax_lst.append(tax.name)
+                    tax_id = self.env['account.tax'].sudo().search([
+                        ('name', 'in', tuple(tax_lst)),
+                        ('type_tax_use', '=', 'purchase'),
+                        ('company_id', '=', to_company_id.id)
+                    ])
+
+                    a = line.product_id.taxes_id.filtered(lambda r: r.company_id == to_company_id)
+
                     # Create sale order line
-                   a = self.env["sale.order.line"].sudo().create({
+                    self.env["sale.order.line"].sudo().create({
                         "order_id": sale_order.id,
                         "message": line.message,
                         "product_id": line.product_id.id,
                         "product_uom": line.product_uom.id,
                         "product_uom_qty": line.product_qty,
-                        'tax_id': False
+                        'tax_id': tax_id
                     })
-                   a.update({
-                       'tax_id' : False
-                   })
 
                 rec.partner_ref = sale_order.name
 
