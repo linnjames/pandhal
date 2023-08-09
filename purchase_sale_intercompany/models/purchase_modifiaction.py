@@ -52,6 +52,7 @@ class PurchaseOrder(models.Model):
                     tax_id = rec.env['account.tax'].sudo().search([
                         ('name', 'in', tuple(tax_lst)),
                         ('type_tax_use', '=', 'sale'),
+                        ('display_name', '=', 'Nil Rated'),
                         ('company_id', '=', to_company_id.id)
                     ])
 
