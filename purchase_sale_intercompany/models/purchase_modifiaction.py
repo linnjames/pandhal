@@ -38,27 +38,36 @@ class PurchaseOrder(models.Model):
                 print(sale_order, 'sale_order')
 
                 for line in rec.order_line.sudo():
+                    line.product_id.tax_id = None  # Or set to the appropriate default value
+
+                # Clear tax_id field of existing sale order lines
+                for line in rec.order_line:
+                    line.tax_id = None  # Or set to the appropriate default value
+
+                # Now loop through order lines and update tax_id
+                for line in rec.order_line.sudo():
                     tax_lst = []
                     for tax in line.product_id.taxes_id.sudo():
                         tax_lst.append(tax.name)
-                    tax_id = self.env['account.tax'].sudo().search([
+                    tax_id = rec.env['account.tax'].sudo().search([
                         ('name', 'in', tuple(tax_lst)),
-                        ('type_tax_use', '=', 'purchase'),
+                        ('type_tax_use', '=', 'sale'),
                         ('company_id', '=', to_company_id.id)
                     ])
 
                     a = line.product_id.taxes_id.filtered(lambda r: r.company_id == to_company_id)
 
                     # Create sale order line
-                    self.env["sale.order.line"].sudo().create({
+                    new_sale_order_line = rec.env["sale.order.line"].sudo().create({
                         "order_id": sale_order.id,
                         "message": line.message,
                         "product_id": line.product_id.id,
                         "product_uom": line.product_uom.id,
                         "product_uom_qty": line.product_qty,
-                        'tax_id': tax_id
+                        'tax_id': tax_id.ids if tax_id else [],
                     })
 
+                # Update partner_ref of the sale order
                 rec.partner_ref = sale_order.name
 
         else:
