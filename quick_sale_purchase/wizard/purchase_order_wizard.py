@@ -40,8 +40,8 @@ class PurchaseOrderWizard(models.TransientModel):
         vals = {
             'partner_id': self.vendor_id.id,
             'sh_sale_order_id': active_so_id,
-            'date_planned': self.expected_delivery_date,
-            'indent_type': self.order_type,
+            'date_planned': self.date_expected_delivery,
+            'indent_type': 'indent',
             'order_line': purchase_order_lines,
         }
         created_po = self.env['purchase.order'].create(vals)
