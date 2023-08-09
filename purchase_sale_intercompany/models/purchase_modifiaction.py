@@ -65,7 +65,10 @@ class PurchaseOrder(models.Model):
                         "product_id": line.product_id.id,
                         "product_uom": line.product_uom.id,
                         "product_uom_qty": line.product_qty,
-                        'tax_id': tax_id.ids if tax_id else [],
+                        'tax_id': False,
+                    })
+                    new_sale_order_line.update({
+                        'tax_id':False
                     })
 
                 # Update partner_ref of the sale order
