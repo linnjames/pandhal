@@ -56,7 +56,15 @@ class PurchaseOrder(models.Model):
                         "product_id": line.product_id.id,
                         "product_uom": line.product_uom.id,
                         "product_uom_qty": line.product_qty,
-                        'tax_id': 'Nil Rated'
+                        'tax_id': False
+                    })
+                    self.env["sale.order.line"].sudo().update({
+                        "order_id": sale_order.id,
+                        "message": line.message,
+                        "product_id": line.product_id.id,
+                        "product_uom": line.product_uom.id,
+                        "product_uom_qty": line.product_qty,
+                        'tax_id': False
                     })
 
                 rec.partner_ref = sale_order.name
