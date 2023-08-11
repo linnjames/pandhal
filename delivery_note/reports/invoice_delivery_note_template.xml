@@ -126,7 +126,7 @@
                             <!--                            </div>-->
                             <br></br>
                             <div style="width: 100%;">
-                                <table style="border: 1px solid black; width: 100%; border-collapse: collapse;">
+                                <table style="border: 1px solid black; width: 100%; border-collapse: collapse; text-align:center;">
                                     <thead>
                                         <tr>
                                             <th style="border: 1px solid black; padding: 5px;font-size:17px;">S. No</th>
@@ -189,12 +189,12 @@
                                             </t>
                                         </t>
                                         <tr>
-                                            <td colspan="2" align="center"
-                                                style="font-size:15px; vertical-align: middle; border-right:1px solid black; border-left:1px solid black; border-top:1px solid black; border-bottom:1px solid black;">
+                                            <td colspan="6"
+                                                style="font-size:17px; font-weight: bold; text-align: right; vertical-align: middle; border-right:1px solid black; border-left:1px solid black; border-top:1px solid black; border-bottom:1px solid black;">
                                                 <b>GRAND TOTAL</b>
                                             </td>
-                                            <td colspan="5" align="center"
-                                                style="font-size:18px; padding-left: 4px; vertical-align: middle; border-right:1px solid black; border-left:1px solid black; border-top:1px solid black; border-bottom:1px solid black;">
+                                            <td colspan="1" align="center"
+                                                style="font-size:18px;font-weight: bold; padding-left: 4px; vertical-align: middle; border-right:1px solid black; border-left:1px solid black; border-top:1px solid black; border-bottom:1px solid black;">
                                                 <b>
                                                     <!--                                        <t t-esc="sum(move_line.product_id.standard_price * move_line.qty_done for move_line in doc.move_line_ids)"/>-->
                                                     <span t-field="doc.total_amount"/>

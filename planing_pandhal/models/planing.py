@@ -1,4 +1,3 @@
-
 from odoo import api, fields, models, _
 from odoo.exceptions import Warning, AccessError, UserError
 from datetime import datetime, date
@@ -11,23 +10,22 @@ class PlanPlaning(models.Model):
     _description = 'Plan'
     _rec_name = "reference"
 
-    planning_date = fields.Date(string="Planning Date", required=True,tracking=True)
+    planning_date = fields.Date(string="Planning Date", required=True, tracking=True)
     reference = fields.Char(string='Order Reference', required=True, copy=False, readonly=True,
                             default=lambda self: _('New'))
-    reason = fields.Text(String="Reason",tracking=True)
+    reason = fields.Text(String="Reason", tracking=True)
     item_category_id = fields.Many2one('product.category', string="Item Category")
     production_lines_ids = fields.One2many('production.plan.lines', 'ref_id')
     state = fields.Selection(
         [('draft', 'Draft'), ('approval', 'Waiting For Approval'), ('approve', 'Approved'), ('reject', 'Rejected'),
          ('done', 'Done')],
-        default='draft', string="Status",tracking=True)
+        default='draft', string="Status", tracking=True)
     company_id = fields.Many2one('res.company', string='company', readonly=True,
                                  default=lambda self: self.env.company.id)
     is_confirm = fields.Boolean(string='Is confirm')
     tick = fields.Boolean(string="Consider Closing Stock")
     user_id = fields.Many2one('res.users', string='User', readonly=True,
-                                 default=lambda self: self.env.user.id,tracking=True)
-
+                              default=lambda self: self.env.user.id, tracking=True)
 
     @api.model
     def create(self, vals):
@@ -37,8 +35,8 @@ class PlanPlaning(models.Model):
         return res
 
     def action_line_value(self):
-        #and so.is_true = false
-        #and si.is_true = false
+        # and so.is_true = false
+        # and si.is_true = false
         self.production_lines_ids = False
         cdtn = '''where so.state = 'sale' and so.planing_id is null  and so.validity_date BETWEEN '%s' AND '%s'
                 ''' % (
@@ -74,7 +72,7 @@ class PlanPlaning(models.Model):
         print(query)
         intent_ids = self._cr.dictfetchall()
         print('intent_ids', intent_ids)
-        #amal
+        # amal
         row = []
         for line in intent_ids:
             row.append({'data': {
@@ -110,7 +108,7 @@ class PlanPlaning(models.Model):
             })
 
         result = lst_final
-        #amal
+        # amal
 
         grouped_data = {}
         for item in intent_ids:
@@ -124,7 +122,6 @@ class PlanPlaning(models.Model):
         for i in result:
             sale = self.env['sale.order'].browse([value for value in i['sale']])
 
-
             self.write({
                 'production_lines_ids': [(0, 0, {
                     'item_list_id': i['product'],
@@ -134,6 +131,7 @@ class PlanPlaning(models.Model):
                     'sale_order_ids': [(6, 0, sale.ids)],
                 })]
             })
+
     def action_waiting_approval(self):
         # plan = self.production_lines_ids
         user = self.env.uid
@@ -148,7 +146,6 @@ class PlanPlaning(models.Model):
     def action_approve(self):
         user = self.env.uid
         self.state = 'approve'
-
 
     def action_confirm(self):
         self.state = 'done'
@@ -183,14 +180,12 @@ class PlanPlaning(models.Model):
             GROUP BY mbl.product_id, bom.id, ptb.categ_id, uom.id
         """ % (transfer_cdtn)
 
-
         self._cr.execute(transfer)
         transfer_ids = self._cr.dictfetchall()
         # ... Rest of your code ...
 
         # ... Rest of your code ...
-
-        transfer_list = []  # List to store transfer details
+        transfer_list = []
 
         for j in transfer_ids:
             product = j['product']
@@ -229,6 +224,31 @@ class PlanPlaning(models.Model):
                     'qty': uom_qty,
                     'uom': uom.id,
                 })
+            row = []
+            for li in transfer_list:
+                row.append({'data': {
+                    'product': li['product'],
+                    'uom': li['uom']
+                }})
+
+            no_dup = []
+            for i in row:
+                if i['data'] not in no_dup:
+                    no_dup.append(i['data'])
+            lst_final = []
+            for v in no_dup:
+                product = v['product']
+                uom = v['uom']
+                qty = 0
+                for i in transfer_list:
+                    if (i['product'] == product) and (i['uom'] == uom):
+                        qty += i['qty']
+                lst_final.append({
+                    'product': product,
+                    'uom_name': uom,
+                    'total_qty': qty
+                })
+
 
         # Create the transfer move with all items in the list
         transfer_move = self.env['stock.picking'].sudo().create({
@@ -241,17 +261,13 @@ class PlanPlaning(models.Model):
             'move_ids_without_package': [(0, 0, {
                 'product_id': item['product'],
                 'name': item['product'],
-                'product_uom_qty': item['qty'],
+                'product_uom_qty': item['total_qty'],
                 'location_id': self.company_id.production_picking_type_id.default_location_src_id.id,
                 'location_dest_id': self.company_id.production_picking_type_id.default_location_dest_id.id,
-                'product_uom': item['uom'],
+                'product_uom': item['uom_name'],
                 'company_id': self.company_id.id,
-            }) for item in transfer_list]
+            }) for item in lst_final]
         })
-
-        # ... Rest of your code ...
-
-        # ... Rest of your code ...
 
     def action_reject(self):
         if self.reason:
@@ -289,7 +305,7 @@ class ProductionPlanningLines(models.Model):
     indent_ids = fields.Many2many('indent.request', 'indent_request_production_plan_line_rel',
                                   'plan_line_id', 'indent_id', string='Indents')
     sale_indent_ids = fields.Many2many('sales.indent', 'sale_indent_request_production_plan_line_rel',
-                                  'plan_line_id', 'indent_id', string='Indents')
+                                       'plan_line_id', 'indent_id', string='Indents')
 
     @api.depends('order_quantity', 'on_quantity')
     def _compute_plan_qty(self):
@@ -344,10 +360,14 @@ class StockPicking(models.Model):
     _inherit = 'stock.picking'
 
     request_id = fields.Many2one('plan.planing', string='Material Request For Production')
+
+
 class SalesOrder(models.Model):
     _inherit = 'sale.order'
 
     planing_id = fields.Many2one('plan.planing', string='Planing')
+
+
 class SalesIndent(models.Model):
     _inherit = 'sales.indent'
 
