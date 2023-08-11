@@ -3,6 +3,32 @@
     <template id="invoice_delivery_out_print_template">
         <t t-call="web.basic_layout">
             <t t-call="web.html_container">
+                <style type="text/css">
+                    .table_main_head {
+                    vertical-align : middle;
+                    font-weight: bold;
+                    padding: 5px;
+                    padding-left:12px;
+                    }
+                    .table_head_border {
+                    border-top : 1px solid black;
+                    border-bottom : 1px solid black;
+                    border-left : 1px solid black;
+                    border-right : 1px solid black;
+                    vertical-align : middle;
+                    text-align : center;
+                    font-weight: bold;
+                    }
+                    .table_body_border {
+                    border-top : 1px solid black;
+                    border-bottom : 1px solid black;
+                    border-left : 1px solid black;
+                    border-right : 1px solid black;
+                    vertical-align : middle;
+                    }
+                </style>
+
+
                 <t t-foreach="docs" t-as="doc">
                     <t t-if="doc.state == 'posted'">
                         <div class="page">
@@ -49,55 +75,55 @@
                             </div>
                             <br></br>
                             <br></br>
-                            <div style="width: 100%; padding: 0px; margin: 0; font-size: 15px;text-align:left">
-                                <table width="100%" align="center"
-                                       style="border-bottom: 1px white;border-top: 1px white; border-left: 1px white; border-right: 1px white; border-collapse: collapse;">
-                                    <tr>
-                                        <td style="text-align:left;font-size:15px;border-left: 1px solid white;padding-left: 12px;">
-                                            Reference Number:
-                                        </td>
-                                        <td style="text-align:left;font-size:15px;border-left: 1px solid white;padding-left: 5px;">
-                                            <span t-field="doc.name"/>
-                                        </td>
-                                        <td style="text-align:left;font-size:15px;border-left: 1px solid white; padding-left: 8px;">
-                                            Receiver Name:
-                                        </td>
-                                        <td style="text-align:left;font-size:17px;border-left: 1px solid white; padding-left: 5px;">
-                                            <span t-field="doc.partner_id.name"/>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td style="text-align:left;font-size:15px;border-left: 1px solid white; padding-left: 12px;">
-                                            Date :
-                                        </td>
-                                        <td style="text-align:left;font-size:15px;border-left: 1px solid white; padding-left: 5px;">
-                                            <span t-field="doc.invoice_date"/>
-                                        </td>
-                                        <td style="text-align:left;font-size:15px;border-left: 1px solid white; padding-left: 8px;">
-                                            Receiver Address :
-                                        </td>
-                                        <td style="text-align:left;font-size:15px;border-left: 1px solid white; padding-left: 5px;">
-                                            <span t-esc="doc.partner_id.street"/>
-                                            <span t-esc="doc.partner_id.street2"/>
-                                            <span t-esc="doc.partner_id.city"/>
-                                            <br/>
-                                            <span t-esc="doc.partner_id.state_id.name"/>
-                                            <span t-esc="doc.partner_id.zip"/>
-                                            <br/>
-                                            <span t-esc="doc.partner_id.country_id.name"/>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td></td>
-                                        <td></td>
-                                        <td style="text-align:left;font-size:15px;border-left: 1px solid white; padding-left: 8px;">
-                                            Receiver GSTIN
-                                            :
-                                        </td>
-                                        <td></td>
-                                    </tr>
-                                </table>
-                            </div>
+                            <!--                            <div style="width: 100%; padding: 0px; margin: 0; font-size: 15px;text-align:left">-->
+                            <table width="100%" align="center"
+                                   style="border-bottom: 1px white;border-top: 1px white; border-left: 7px white; border-right: 1px white; border-collapse: collapse;">
+                                <tr>
+                                    <td class="table_main_head" width="20%">
+                                        Reference Number
+                                    </td>
+                                    <td class="table_main_head">:&#160;&#160;<span t-field="doc.name"/>
+                                    </td>
+                                    <td class="table_main_head" width="20%">
+                                        Receiver Name
+                                    </td>
+                                    <td class="table_main_head">:&#160;&#160;
+                                        <span t-field="doc.partner_id.name"/>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="table_main_head">
+                                        Date
+                                    </td>
+                                    <td class="table_main_head">:&#160;&#160;
+                                        <span t-field="doc.invoice_date"/>
+                                    </td>
+                                    <td class="table_main_head">
+                                        Receiver Address
+                                    </td>
+                                    <td class="table_main_head">:&#160;&#160;
+                                        <span t-esc="doc.partner_id.street"/>
+                                        &#160;&#160;
+                                        <span t-esc="doc.partner_id.street2"/>
+                                        &#160;&#160;
+                                        <span t-esc="doc.partner_id.city"/>
+                                        &#160;&#160;<span t-esc="doc.partner_id.state_id.name"/>
+                                        &#160;&#160;<span t-esc="doc.partner_id.zip"/>
+                                        &#160;&#160;<span t-esc="doc.partner_id.country_id.name"/>
+                                        <br/>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="table_main_head"></td>
+                                    <td class="table_main_head"></td>
+                                    <td class="table_main_head">
+                                        Receiver GSTIN
+                                        :
+                                    </td>
+                                    <td class="table_main_head">:&#160;&#160;</td>
+                                </tr>
+                            </table>
+                            <!--                            </div>-->
                             <br></br>
                             <div style="width: 100%;">
                                 <table style="border: 1px solid black; width: 100%; border-collapse: collapse;">
@@ -176,42 +202,42 @@
                                                 </b>
                                             </td>
                                         </tr>
-<!--                                        <tr>-->
-<!--                                            <td align="center" colspan="2"-->
-<!--                                                style="font-size:15px; padding-left: 4px; vertical-align: middle; border-right:1px solid black; border-left:1px solid black; border-top:1px solid black; border-bottom:1px solid black;">-->
-<!--                                                <b>-->
-<!--                                                    Challan Total value (In Words)-->
-<!--                                                </b>-->
-<!--                                            </td>-->
-<!--                                            <td align="center" colspan="7"-->
-<!--                                                style="font-size:15px; padding-left: 4px; vertical-align: middle; border-right:1px solid black; border-left:1px solid black; border-top:1px solid black; border-bottom:1px solid black;">-->
-<!--                                                <b>-->
-<!--                                                    <span t-field="doc.amount_in_words"/>-->
-<!--                                                </b>-->
-<!--                                            </td>-->
-<!--                                        </tr>-->
-<!--                                        <tr>-->
-<!--                                            <td align="left" rowspan="3" colspan="2"-->
-<!--                                                style="font-size:14px; padding-left: 4px; vertical-align: top; border-right:1px solid black; border-left:1px solid black; border-top:1px solid black; border-bottom:1px solid black;">-->
-<!--                                                <b>-->
-<!--                                                    Terms &amp; Conditions:-->
-<!--                                                </b>-->
-<!--                                            </td>-->
-<!--                                            <td align="center" colspan="7"-->
-<!--                                                style="font-size:16px; padding-left: 4px; vertical-align: middle; border-right:1px solid black; border-left:1px solid black; border-top:1px solid black; border-bottom:1px solid black;">-->
-<!--                                                For,-->
-<!--                                                <b>-->
-<!--                                                    <t t-esc="doc.company_id.partner_id.name"/>-->
-<!--                                                </b>-->
-<!--                                                <br/>-->
-<!--                                                <br/>-->
-<!--                                                <br/>-->
-<!--                                                <br/>-->
-<!--                                                <b>-->
-<!--                                                    Authorised Signatory-->
-<!--                                                </b>-->
-<!--                                            </td>-->
-<!--                                        </tr>-->
+                                        <!--                                        <tr>-->
+                                        <!--                                            <td align="center" colspan="2"-->
+                                        <!--                                                style="font-size:15px; padding-left: 4px; vertical-align: middle; border-right:1px solid black; border-left:1px solid black; border-top:1px solid black; border-bottom:1px solid black;">-->
+                                        <!--                                                <b>-->
+                                        <!--                                                    Challan Total value (In Words)-->
+                                        <!--                                                </b>-->
+                                        <!--                                            </td>-->
+                                        <!--                                            <td align="center" colspan="7"-->
+                                        <!--                                                style="font-size:15px; padding-left: 4px; vertical-align: middle; border-right:1px solid black; border-left:1px solid black; border-top:1px solid black; border-bottom:1px solid black;">-->
+                                        <!--                                                <b>-->
+                                        <!--                                                    <span t-field="doc.amount_in_words"/>-->
+                                        <!--                                                </b>-->
+                                        <!--                                            </td>-->
+                                        <!--                                        </tr>-->
+                                        <!--                                        <tr>-->
+                                        <!--                                            <td align="left" rowspan="3" colspan="2"-->
+                                        <!--                                                style="font-size:14px; padding-left: 4px; vertical-align: top; border-right:1px solid black; border-left:1px solid black; border-top:1px solid black; border-bottom:1px solid black;">-->
+                                        <!--                                                <b>-->
+                                        <!--                                                    Terms &amp; Conditions:-->
+                                        <!--                                                </b>-->
+                                        <!--                                            </td>-->
+                                        <!--                                            <td align="center" colspan="7"-->
+                                        <!--                                                style="font-size:16px; padding-left: 4px; vertical-align: middle; border-right:1px solid black; border-left:1px solid black; border-top:1px solid black; border-bottom:1px solid black;">-->
+                                        <!--                                                For,-->
+                                        <!--                                                <b>-->
+                                        <!--                                                    <t t-esc="doc.company_id.partner_id.name"/>-->
+                                        <!--                                                </b>-->
+                                        <!--                                                <br/>-->
+                                        <!--                                                <br/>-->
+                                        <!--                                                <br/>-->
+                                        <!--                                                <br/>-->
+                                        <!--                                                <b>-->
+                                        <!--                                                    Authorised Signatory-->
+                                        <!--                                                </b>-->
+                                        <!--                                            </td>-->
+                                        <!--                                        </tr>-->
                                     </tbody>
                                 </table>
                             </div>
@@ -247,6 +273,9 @@
                                 <!--                            </div>-->
                             </div>
                         </div>
+                    </t>
+                    <t t-else="">
+                        <p>Invoice is not posted for this document......</p>
                     </t>
                 </t>
             </t>

@@ -14,30 +14,30 @@
                         </table>
                     </div>
                     <br></br>
-                    <div width="100%" style="text-align: left;">
-                        <table width="80%" align="center"
-                               style="font-weight: bold; border-color:white; font-size:18px;">
-                            <tr>
-                                <td align="center">
-                                    <img src="/delivery_note/static/src/img/Screenshot from 2023-07-06 20-38-28.png"
-                                         style="max-height: 80px;"/>
-                                </td>
-                                <td align="left"
-                                    style="vertical-align: middle; font-size: 17px; padding-left: 12px;">
-                                    <span t-field="doc.company_id.partner_id"
-                                          t-options='{"widget": "contact", "fields": ["address", "phone", "email"], "no_marker": True}'/>
-                                    <br/>
-                                </td>
-                            </tr>
-                            <tr></tr>
-                            <tr align="center">
-                                <td align="center" colspan="2"
-                                    style="text-align: center; padding: 25px; vertical-align: middle; font-size: 20px; font-weight: bold;">
-                                    DELIVERY NOTE
-                                </td>
-                            </tr>
-                        </table>
-                    </div>
+                    <!--                    <div width="100%" style="text-align: left;">-->
+                    <table width="80%" align="center"
+                           style="font-weight: bold; border-color:white; font-size:18px;">
+                        <tr>
+                            <td align="center">
+                                <img src="/delivery_note/static/src/img/Screenshot from 2023-07-06 20-38-28.png"
+                                     style="max-height: 80px;"/>
+                            </td>
+                            <td align="left"
+                                style="vertical-align: middle; font-size: 17px; padding-left: 12px;">
+                                <span t-field="doc.company_id.partner_id"
+                                      t-options='{"widget": "contact", "fields": ["address", "phone", "email"], "no_marker": True}'/>
+                                <br/>
+                            </td>
+                        </tr>
+                        <tr></tr>
+                        <tr align="center">
+                            <td align="center" colspan="2"
+                                style="text-align: center; padding: 25px; vertical-align: middle; font-size: 20px; font-weight: bold;">
+                                DELIVERY NOTE
+                            </td>
+                        </tr>
+                    </table>
+                    <!--                    </div>-->
                 </t>
                 <table width="100%"
                        style="border-bottom: 1px solid black;border-top: 1px solid black;border-left: 1px solid black;border-right: 1px solid black;border-collapse: collapse;">

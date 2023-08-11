@@ -87,7 +87,8 @@ class AccountMoveInherit(models.Model):
 class AccountMoveLineInherit(models.Model):
     _inherit = 'account.move.line'
 
-    subtotal = fields.Float(string="Subtotal", compute="compute_amount_subtotal_accounts", store=True)
+    subtotal = fields.Float(string="Subtotal", store=True)
+    tot = fields.Float(string="Subtotal",compute="compute_amount_subtotal_accounts", store=True)
 
     @api.depends('quantity', 'price_unit')
     def compute_amount_subtotal_accounts(self):
