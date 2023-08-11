@@ -11,17 +11,17 @@
         </field>
     </record>
 
-    <record id="action_confirm_sale_purchase" model="ir.actions.server">
-        <field name="name">Confirmed</field>
-        <field name="model_id" ref="model_sale_order"/>
-        <field name="binding_model_id" ref="model_sale_order"/>
-        <field name="binding_view_types">list</field>
-        <field name="state">code</field>
-        <field name="code">
-            for order in records:
-                order.action_confirm()
-        </field>
-    </record>
+<!--    <record id="action_confirm_sale_purchase" model="ir.actions.server">-->
+<!--        <field name="name">Confirmed</field>-->
+<!--        <field name="model_id" ref="model_sale_order"/>-->
+<!--        <field name="binding_model_id" ref="model_sale_order"/>-->
+<!--        <field name="binding_view_types">list</field>-->
+<!--        <field name="state">code</field>-->
+<!--        <field name="code">-->
+<!--            for order in records:-->
+<!--                order.action_confirm()-->
+<!--        </field>-->
+<!--    </record>-->
 
 
     <record id="purchase_sale_line_msg" model="ir.ui.view">
