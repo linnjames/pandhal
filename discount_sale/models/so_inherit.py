@@ -13,21 +13,48 @@ class SaleOrderInherit(models.Model):
                                      ('20', '20'),
                                      ('30', '30')], string='Discount(%)')
 
-    @api.onchange('discount_per')
+    def action_confirm(self):
+        res = super(SaleOrderInherit, self).action_confirm()
+        user = self.env.user
+        company = self.env.company
+        total_discount = 0
+        if self.is_discount_sale:
+            print(self.discount_amt, 'discount_amount')
+            discount = (self.discount_amt / self.total_price) * 100
+            total_discount = discount
+            print(total_discount)
+            user_discount_ratio = float(company.user_discount_ratio)
+            print(user_discount_ratio, 'user')
+            manager_discount_ratio = float(company.manager_discount_ratio)
+            owner_discount_ratio = float(company.owner_discount_ratio)
+            if user.id in company.user.ids and total_discount <= user_discount_ratio:
+                return res
+            elif user.id in company.manager_ids.ids and total_discount <= manager_discount_ratio:
+                return res
+            elif user.id in company.owner.ids and total_discount <= owner_discount_ratio:
+                return res
+            else:
+                raise UserError(
+                    _("Your discount limit is exceeded! \n Kindly contact to your Administrator/Manager."))
+        else:
+            return res
+
+    @api.onchange('discount_per', 'is_discount_sale')
     def onchange_discount_per(self):
-        v = 0
-        dis = 0
-        if self.discount_per:
-            if self.order_line:
-                v = len(self.order_line)
-                discount_per_value = int(self.discount_per) if self.discount_per else 0
-                for i in self.order_line:
-                    print(discount_per_value)
-                    dis = discount_per_value / v
-                    i.discount = dis
+        if not self.is_discount_sale:
+            self.discount_per = False
+
+        if self.discount_per and self.order_line:
+            v = len(self.order_line)
+            discount_per_value = int(self.discount_per)
+            dis = discount_per_value / v
+            for i in self.order_line:
+                print(discount_per_value)
+                i.discount = dis
         elif not self.discount_per and self.order_line:
             for j in self.order_line:
                 j.discount = False
+
 
 
     @api.depends('order_line.discount', 'order_line.price_unit', 'order_line.product_uom_qty')
@@ -50,14 +77,17 @@ class SaleOrderInherit(models.Model):
 class SaleOrderLineInherit(models.Model):
     _inherit = 'sale.order.line'
 
-    subtotal = fields.Float(string="Subtotal", compute="compute_amount_subtotal", store=True)
 
-    @api.depends('product_uom_qty', 'price_unit')
-    def compute_amount_subtotal(self):
+    subtotal = fields.Float(string="Subtotal", store=True)
+
+
+    @api.onchange('product_uom_qty', 'price_unit')
+    def lines_amount_subtotal(self):
         for order in self:
             sub = 0
             for line in self:
-                sub += (line.product_uom_qty * line.price_unit)
+                print("lineeeeeeeeeeeeeeee")
+                sub = (line.product_uom_qty * line.price_unit)
             order.subtotal = sub
 
 
@@ -88,12 +118,24 @@ class AccountMoveLineInherit(models.Model):
     _inherit = 'account.move.line'
 
     subtotal = fields.Float(string="Subtotal", store=True)
-    tot = fields.Float(string="Subtotal",compute="compute_amount_subtotal_accounts", store=True)
 
-    @api.depends('quantity', 'price_unit')
-    def compute_amount_subtotal_accounts(self):
+    @api.onchange('quantity', 'price_unit')
+    def lines_amount_subtotal(self):
         for order in self:
             sub = 0
             for line in self:
-                sub += (line.quantity * line.price_unit)
+                print("lineeeeeeeeeeeeeeee")
+                sub = (line.quantity * line.price_unit)
             order.subtotal = sub
+
+
+class ResCompany(models.Model):
+    _inherit = 'res.company'
+    _description = 'Company'
+
+    manager_ids = fields.Many2many('res.users', string="Manager")
+    user = fields.Many2many('res.users', 'rel_company_user', 'u_id', 'user_id', string='User')
+    owner = fields.Many2many('res.users', 'rel_company_owner', 'o_id', 'owner_id', string='Owner')
+    user_discount_ratio = fields.Char(string='User Discount Ratio', default='10')
+    manager_discount_ratio = fields.Char(string='Manager Discount Ratio', default='20')
+    owner_discount_ratio = fields.Char(string='Owner/Administrator Discount Ratio', default='30')

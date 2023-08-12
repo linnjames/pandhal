@@ -9,8 +9,8 @@
  'website': 'https://www.catalisterp.com/',
  'depends': ['base', 'sale', 'sale_management'],
  'data': [
-          'views/new_company_view.xml',
-          'views/so_view.xml'
+          # 'views/new_company_view.xml',
+          'views/so_view.xml',
           ],
  'images': [],
  'license': 'AGPL-3',

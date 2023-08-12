@@ -69,6 +69,30 @@
             </xpath>
         </field>
     </record>
+    <record model="ir.ui.view" id="res_company_discount">
+        <field name="name">Res Company</field>
+        <field name="model">res.company</field>
+        <field name="inherit_id" ref="base.view_company_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//notebook" position="inside">
+                <page string="Discount Sale Details">
+                    <group>
+                        <group>
+                            <field name="user" widget="many2many_tags" required="1"/>
+                            <field name="manager_ids" widget="many2many_tags" required="1"/>
+                            <field name="owner" widget="many2many_tags" required="1"/>
+                        </group>
+                        <group>
+                            <field name="user_discount_ratio" />
+                            <field name="manager_discount_ratio" />
+                            <field name="owner_discount_ratio" />
+                        </group>
+                    </group>
+                </page>
+            </xpath>
+
+        </field>
+    </record>
 
 </odoo>
 
