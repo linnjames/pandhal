@@ -45,9 +45,8 @@ class SaleOrderInherit(models.Model):
             self.discount_per = False
 
         if self.discount_per and self.order_line:
-            v = len(self.order_line)
             discount_per_value = int(self.discount_per)
-            dis = discount_per_value / v
+            dis = discount_per_value
             for i in self.order_line:
                 print(discount_per_value)
                 i.discount = dis
