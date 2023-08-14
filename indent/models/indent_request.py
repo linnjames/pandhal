@@ -1,4 +1,8 @@
 from odoo import models, fields, api, _
+from odoo.tools.float_utils import float_compare, float_is_zero, float_round
+from odoo.tools import DEFAULT_SERVER_DATETIME_FORMAT, format_amount, format_date, formatLang, get_lang, groupby
+
+
 from odoo.exceptions import ValidationError, UserError
 
 
@@ -157,6 +161,7 @@ class PurchaseIndentLines(models.Model):
                 self.uom_id = self.product_id.uom_id
 
 
+
 class ResCompany(models.Model):
     _inherit = 'res.company'
 
@@ -184,6 +189,15 @@ class PurchaseState(models.Model):
     def button_purchase_approval(self):
         pass
 
+    @api.depends('order_line.date_planned')
+    def _compute_date_planned(self):
+        """ date_planned = the earliest date_planned across all order lines. """
+        for order in self:
+            dates_list = order.order_line.filtered(lambda x: not x.display_type and x.date_planned).mapped(
+                'date_planned')
+            if dates_list:
+                order.date_planned = False
+
 
 class PurchaseQuantity(models.Model):
     _inherit = 'purchase.order.line'
@@ -197,6 +211,7 @@ class PurchaseQuantity(models.Model):
                 line.available_qty = line.product_id.qty_available
             else:
                 line.available_qty = 0.0
+
 
 class SaleOrderInherit(models.Model):
     _inherit = "sale.order"
