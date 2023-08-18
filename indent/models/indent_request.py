@@ -195,7 +195,7 @@ class PurchaseState(models.Model):
         for order in self:
             dates_list = order.order_line.filtered(lambda x: not x.display_type and x.date_planned).mapped(
                 'date_planned')
-            if dates_list:
+            if not order.date_planned:
                 order.date_planned = False
 
 
