@@ -149,72 +149,37 @@ class PlanPlaning(models.Model):
 
     def action_confirm(self):
         self.state = 'done'
-        planing_cdtn = '''where so.state = 'sale' and so.validity_date BETWEEN '%s' AND '%s'
-
-                            ''' % (
-            self.planning_date.strftime("%Y-%m-%d 00:00:00"), self.planning_date.strftime("%Y-%m-%d 23:59:59"))
-        ind_cdtn = '''where si.state = 'confirmed' and si.expected_date BETWEEN '%s' AND '%s'
-
-            ''' % (self.planning_date.strftime("%Y-%m-%d 00:00:00"), self.planning_date.strftime("%Y-%m-%d 23:59:59"))
-        if self.company_id:
-            planing_cdtn += ''' and so.company_id = %s
-                ''' % (self.company_id.id)
-            ind_cdtn += ''' and si.company_id = %s
-                ''' % (self.company_id.id)
-
-        ind = """
-                            SELECT si.id as indent
-                            FROM sales_indent_lines sil
-                            LEFT JOIN sales_indent si ON sil.pur_id = si.id
-                            %s
-                            GROUP BY si.id
-                        """ % (ind_cdtn)
-        self._cr.execute(ind)
-        ind_ids = self._cr.dictfetchall()
-        for ind in ind_ids:
-            indent = self.env['sales.indent'].browse(ind['indent'])
-            indent.write({
-                'is_true': True
-            })
-        planing = """  
-                            SELECT so.id as sale
-                            FROM sale_order_line sol
-                            LEFT JOIN sale_order so ON sol.order_id = so.id
-                            %s
-                            GROUP BY so.id
-                        """ % (planing_cdtn)
-        self._cr.execute(planing)
-        planing_ids = self._cr.dictfetchall()
-        print(planing_ids, 'sucess achieved')
-
-        # Iterate over the selected order IDs and update the values
-        for inv in planing_ids:
-            order = self.env['sale.order'].browse(inv['sale'])
-            order.write({
-                'is_true': True
-            })
+        sale_ids = self.production_lines_ids.mapped('sale_order_ids')
+        for a in sale_ids:
+            query = """UPDATE sale_order
+                       SET planing_id = %s
+                        WHERE id = %s;"""
+            query = query % (self.id, a.id)
+            self._cr.execute(query)
 
         transfer_cdtn = '''where si.state ='approve' and si.planning_date BETWEEN '%s' AND '%s'
 
                                     ''' % (
             self.planning_date.strftime("%Y-%m-%d 00:00:00"), self.planning_date.strftime("%Y-%m-%d 23:59:59"))
         transfer = """
-                    SELECT ptb.categ_id AS categ,  
-                           mbl.product_id AS product,
-                           uom.id as uom_name,
-                           sum(sil.actual_plan_qty * mbl.product_qty) as total
-                    FROM production_plan_lines sil
-                    LEFT JOIN plan_planing si ON sil.ref_id = si.id
-                    LEFT JOIN product_product pp ON sil.item_list_id = pp.id
-                    LEFT JOIN product_template pt ON pp.product_tmpl_id = pt.id
-                    JOIN mrp_bom bom ON pt.id = bom.product_tmpl_id
-                    INNER JOIN mrp_bom_line mbl ON bom.id = mbl.bom_id
-                    LEFT JOIN product_product pn ON mbl.product_id = Pn.id
-                    LEFT JOIN product_template ptb ON mbl.product_tmpl_id = ptb.id
-                    LEFT JOIN uom_uom uom ON mbl.product_uom_id = uom.id
-                    %s
-                    GROUP BY mbl.product_id, ptb.categ_id,uom.id
-                """ % (transfer_cdtn)
+            SELECT ptb.categ_id AS categ,  
+                   mbl.product_id AS product,
+                   bom.id AS bom_id,
+                   uom.id as uom_name,
+                   sum(sil.actual_plan_qty * mbl.product_qty) as total
+            FROM production_plan_lines sil
+            LEFT JOIN plan_planing si ON sil.ref_id = si.id
+            LEFT JOIN product_product pp ON sil.item_list_id = pp.id
+            LEFT JOIN product_template pt ON pp.product_tmpl_id = pt.id
+            JOIN mrp_bom bom ON pt.id = bom.product_tmpl_id
+            INNER JOIN mrp_bom_line mbl ON bom.id = mbl.bom_id
+            LEFT JOIN product_product pn ON mbl.product_id = pn.id
+            LEFT JOIN product_template ptb ON mbl.product_tmpl_id = ptb.id
+            LEFT JOIN uom_uom uom ON mbl.product_uom_id = uom.id
+            %s
+            GROUP BY mbl.product_id, bom.id, ptb.categ_id, uom.id
+        """ % (transfer_cdtn)
+
         self._cr.execute(transfer)
         transfer_ids = self._cr.dictfetchall()
         print(transfer_ids, 'pandal')
