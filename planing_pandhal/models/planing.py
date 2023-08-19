@@ -1,5 +1,5 @@
 from odoo import api, fields, models, _
-from odoo.exceptions import Warning, AccessError, UserError
+from odoo.exceptions import Warning, AccessError,ValidationError, UserError
 from datetime import datetime, date
 import json
 
@@ -350,6 +350,14 @@ class SalesOrder(models.Model):
     _inherit = 'sale.order'
 
     planing_id = fields.Many2one('plan.planing', string='Planing')
+
+    def action_cancel(self):
+        for order in self:
+            if order.planing_id:
+                raise ValidationError("Cannot cancel order. Production planning already done.")
+            else:
+                rec = super(SalesOrder, order).action_cancel()
+        return rec
 
 
 class SalesIndent(models.Model):

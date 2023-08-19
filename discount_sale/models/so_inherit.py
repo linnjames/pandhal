@@ -116,16 +116,13 @@ class AccountMoveInherit(models.Model):
 class AccountMoveLineInherit(models.Model):
     _inherit = 'account.move.line'
 
-    subtotal = fields.Float(string="Subtotal", store=True)
+    subtotal = fields.Float(string="Subtotal", compute='_compute_subtotal_lines_accounts', store=True)
 
-    @api.onchange('quantity', 'price_unit')
-    def lines_amount_subtotal(self):
-        for order in self:
-            sub = 0
-            for line in self:
-                print("lineeeeeeeeeeeeeeee")
-                sub = (line.quantity * line.price_unit)
-            order.subtotal = sub
+    @api.depends('quantity', 'price_unit')
+    def _compute_subtotal_lines_accounts(self):
+        for line in self:
+            line.subtotal = (line.quantity * line.price_unit)
+
 
 
 class ResCompany(models.Model):

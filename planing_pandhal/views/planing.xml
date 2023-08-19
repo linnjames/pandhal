@@ -129,6 +129,17 @@
             </xpath>
         </field>
     </record>
+    <record id="action_confirm_manufacturing_confirm" model="ir.actions.server">
+        <field name="name">Confirmed</field>
+        <field name="model_id" ref="mrp.model_mrp_production"/>
+        <field name="binding_model_id" ref="mrp.model_mrp_production"/>
+        <field name="binding_view_types">list</field>
+        <field name="state">code</field>
+        <field name="code">
+            for order in records:
+            order.action_confirm()
+        </field>
+    </record>
     <record id="production_plan_action" model="ir.actions.act_window">
         <field name="name">Production Planning</field>
         <field name="res_model">plan.planing</field>
