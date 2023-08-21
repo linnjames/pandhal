@@ -71,7 +71,7 @@
                     <notebook>
                         <page string="Production Lines" name="production_planning_lines">
                             <group>
-                                <field name="tick" attrs="{'readonly' :[('state','in', ('approve','done', 'reject'))]}"/>
+                                <field name="tick" attrs="{'readonly' :[('state','in', ('approve','done', 'reject'))]}" invisible="1"/>
                             </group>
                             <field name="production_lines_ids" attrs="{'readonly' :[('state','in', ('done', 'reject'))]}">
                                 <tree editable="bottom">
@@ -83,7 +83,7 @@
                                     <field name="on_quantity" required="1" readonly="1" force_save="1"/>
                                     <field name="planed_quantity" force_save="1"/>
                                     <field name="varience"/>
-                                    <field name="actual_plan_qty"/>
+                                    <field name="actual_plan_qty" invisible="1"/>
                                     <field name="sale_order_ids" optional="hide"/>
                                     <field name="sale_indent_ids" optional="hide"/>
                                 </tree>
