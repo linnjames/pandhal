@@ -8,3 +8,12 @@ class PurchaseOrder(models.Model):
 
     sh_sale_order_id = fields.Many2one(
         "sale.order", string="Sale Order", readonly=True)
+
+    def button_confirm(self):
+        res = super(PurchaseOrder, self).button_confirm()
+
+        sale_orders = self.env['sale.order'].sudo().search([('purchase_id', '=', False)])
+        for record in sale_orders:
+            record.purchase_id = self.id
+
+        return res

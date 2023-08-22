@@ -13,6 +13,8 @@ class SaleOrder(models.Model):
         compute='_compute_purchase_tick', store=True)
     purchase_button_bool = fields.Boolean(string="Quick Purchase Bool", default=False, copy=False)
 
+    purchase_id = fields.Many2one('purchase.order', string="Purchase Reference")
+
     # def _prepare_invoice(self):
     #     res = super(SaleOrder, self)._prepare_invoice()
     #     print(res)
