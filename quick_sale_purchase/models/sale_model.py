@@ -15,6 +15,8 @@ class SaleOrder(models.Model):
 
     purchase_id = fields.Many2one('purchase.order', string="Purchase Reference")
 
+    boolean = fields.Boolean(string="Boolean", default=False)
+
     # def _prepare_invoice(self):
     #     res = super(SaleOrder, self)._prepare_invoice()
     #     print(res)
@@ -62,6 +64,7 @@ class SaleOrder(models.Model):
                     action['target'] = 'self'
                     return action
 
+
     def sh_create_po(self):
         if not self.company_id.vendor:
             raise ValidationError((" Vendor should be added to the Current Company!"))
@@ -71,6 +74,8 @@ class SaleOrder(models.Model):
         view = self.env.ref('quick_sale_purchase.sh_purchase_order_wizard')
         # context = self.env.context
         context = {'default_ship_sale_order': self.id}
+        self.boolean = True
+
         return {
             'name': 'Create Purchase Order',
             'type': 'ir.actions.act_window',
@@ -81,6 +86,26 @@ class SaleOrder(models.Model):
             'target': 'new',
             'context': context,
         }
+
+    # def sh_create_po(self):
+    #     if not self.company_id.vendor:
+    #         raise ValidationError((" Vendor should be added to the Current Company!"))
+    #     """
+    #         this method fire the action and open create purchase order wizard
+    #     """
+    #     view = self.env.ref('quick_sale_purchase.sh_purchase_order_wizard')
+    #     # context = self.env.context
+    #     context = {'default_ship_sale_order': self.id}
+    #     return {
+    #         'name': 'Create Purchase Order',
+    #         'type': 'ir.actions.act_window',
+    #         'view_mode': 'form',
+    #         'res_model': 'purchase.order.wizard',
+    #         'views': [(view.id, 'form')],
+    #         'view_id': view.id,
+    #         'target': 'new',
+    #         'context': context,
+    #     }
 
     def action_check(self):
         if self.order_line:
