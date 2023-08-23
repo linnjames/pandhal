@@ -192,78 +192,56 @@ class PlanPlaning(models.Model):
             bom = temp.bom_ids
             uom_qty = j['total']
             uom = self.env['uom.uom'].browse(j['uom_name'])
+            plan_id = self.id
             if bom:
-                for component in bom.bom_line_ids:
-                    move_uom = component.product_uom_id
-                    if move_uom.category_id == product_obj.uom_id.category_id:
-                        # Convert UoM to the product's UoM category manually
-                        uom_qty = self.env['uom.uom']._compute_quantity(
-                            uom_qty,
-                            uom,
-                            move_uom,
-                        )
-
-                    transfer_list.append({
-                        'product': component.product_id.id,
-                        'qty': uom_qty,
-                        'uom': move_uom
-                    })
-            else:
-                if uom.category_id == product_obj.uom_id.category_id:
-                    # Convert UoM to the product's UoM category manually
-                    uom_qty = self.env['uom.uom']._compute_quantity(
-                        uom_qty,
-                        uom
-                    )
-
                 transfer_list.append({
                     'product': product,
-                    'qty': uom_qty,
-                    'uom': uom.id,
+                    'uom_qty':uom_qty,
+                    'bom_id': bom[0].id if bom else False,
+                    'uom':uom,
+                    'plan_id': plan_id
                 })
-            row = []
-            for li in transfer_list:
-                row.append({'data': {
-                    'product': li['product'],
-                    'uom': li['uom']
-                }})
+        for i in transfer_list:
+            manufacture = {
+                'product_id': i['product'],
+                'product_qty': i['uom_qty'],
+                'product_uom_id': i['uom'].id,
+                'bom_id': i['bom_id'],
+                'state': 'draft',
+                'planing_id':i['plan_id']
+            }
+            print(manufacture,'manufacture')
 
-            no_dup = []
-            for i in row:
-                if i['data'] not in no_dup:
-                    no_dup.append(i['data'])
-            lst_final = []
-            final = []
-            for v in no_dup:
-                product = v['product']
-                uom = v['uom']
-                qty = 0
-                for i in transfer_list:
-                    if (i['product'] == product) and (i['uom'] == uom):
-                        qty += i['qty']
-                lst_final.append({
-                    'product': product,
-                    'uom_name': uom,
-                    'total_qty': qty
-                })
-        # Create the transfer move with all items in the list
-        transfer_move = self.env['stock.picking'].sudo().create({
-            'picking_type_id': self.company_id.production_picking_type_id.id,
-            'company_id': self.company_id.id,
-            'origin': "Material Request",
-            'location_id': self.company_id.production_picking_type_id.default_location_src_id.id,
-            'location_dest_id': self.company_id.production_picking_type_id.default_location_dest_id.id,
-            'request_id': self.id,
-            'move_ids_without_package': [(0, 0, {
-                'product_id': item['product'],
-                'name': item['product'],
-                'product_uom_qty': item['total_qty'],
-                'location_id': self.company_id.production_picking_type_id.default_location_src_id.id,
-                'location_dest_id': self.company_id.production_picking_type_id.default_location_dest_id.id,
-                'product_uom': item['uom_name'],
-                'company_id': self.company_id.id,
-            }) for item in lst_final]
-        })
+            self.env['mrp.production'].create(manufacture)
+
+
+        print(transfer_list,'transfer_list')
+        if self.company_id.production_picking_type_id:
+            if self.company_id.production_picking_type_id.default_location_dest_id:
+                if self.company_id.production_picking_type_id.default_location_src_id:
+                    picking_type = self.company_id.production_picking_type_id
+                    to_location_id = self.company_id.production_picking_type_id.default_location_dest_id
+                    from_location_id = self.company_id.production_picking_type_id.default_location_src_id
+                    transfer_move = self.env['stock.picking'].create({
+                        'picking_type_id': picking_type.id,
+                        'company_id': self.company_id.id,
+                        'origin': "Material Request",
+                        'location_id': from_location_id.id,
+                        'location_dest_id': to_location_id.id,
+                        'request_id': self.id,
+                    })
+                    for vals in transfer_ids:
+                        transfer_move.sudo().write({
+                            'move_ids_without_package': [(0, 0, {
+                                'product_id': vals['product'],
+                                'name': vals['product'],
+                                'product_uom_qty': vals['total'],
+                                'location_id': from_location_id.id,
+                                'location_dest_id': to_location_id.id,
+                                'product_uom': vals['uom_name'],
+                                'company_id': self.company_id.id,
+                            })]
+                        })
 
 
     def action_reject(self):
