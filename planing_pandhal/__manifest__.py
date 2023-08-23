@@ -16,6 +16,7 @@
              'data/sequence.xml',
              'report/production_planning_template.xml',
              'report/production_planning.xml',
+             'views/custom_mrp_submenu.xml',
              'views/planing.xml'],
     'qweb': [],
     'license': 'LGPL-3',

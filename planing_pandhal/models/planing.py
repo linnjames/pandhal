@@ -1,5 +1,5 @@
 from odoo import api, fields, models, _
-from odoo.exceptions import Warning, AccessError,ValidationError, UserError
+from odoo.exceptions import Warning, AccessError, UserError, ValidationError
 from datetime import datetime, date
 import json
 
@@ -10,22 +10,23 @@ class PlanPlaning(models.Model):
     _description = 'Plan'
     _rec_name = "reference"
 
-    planning_date = fields.Date(string="Planning Date", required=True, tracking=True)
+    planning_date = fields.Date(string="Planning Date", required=True,tracking=True)
     reference = fields.Char(string='Order Reference', required=True, copy=False, readonly=True,
                             default=lambda self: _('New'))
-    reason = fields.Text(String="Reason", tracking=True)
+    reason = fields.Text(String="Reason",tracking=True)
     item_category_id = fields.Many2one('product.category', string="Item Category")
     production_lines_ids = fields.One2many('production.plan.lines', 'ref_id')
     state = fields.Selection(
         [('draft', 'Draft'), ('approval', 'Waiting For Approval'), ('approve', 'Approved'), ('reject', 'Rejected'),
          ('done', 'Done')],
-        default='draft', string="Status", tracking=True)
+        default='draft', string="Status",tracking=True)
     company_id = fields.Many2one('res.company', string='company', readonly=True,
                                  default=lambda self: self.env.company.id)
     is_confirm = fields.Boolean(string='Is confirm')
     tick = fields.Boolean(string="Consider Closing Stock")
     user_id = fields.Many2one('res.users', string='User', readonly=True,
-                              default=lambda self: self.env.user.id, tracking=True)
+                                 default=lambda self: self.env.user.id,tracking=True)
+
 
     @api.model
     def create(self, vals):
@@ -35,23 +36,46 @@ class PlanPlaning(models.Model):
         return res
 
     def action_line_value(self):
-        # and so.is_true = false
-        # and si.is_true = false
+        #and so.is_true = false
+        #and si.is_true = false
         self.production_lines_ids = False
+        filter_cdtn = '''where si.state = 'confirmed' and si.planing_id is null  and si.expected_date BETWEEN '%s' AND '%s'
+
+        ''' % (self.planning_date.strftime("%Y-%m-%d 00:00:00"), self.planning_date.strftime("%Y-%m-%d 23:59:59"))
         cdtn = '''where so.state = 'sale' and so.planing_id is null  and so.validity_date BETWEEN '%s' AND '%s'
                 ''' % (
             self.planning_date.strftime("%Y-%m-%d 00:00:00"), self.planning_date.strftime("%Y-%m-%d 23:59:59"))
         if self.item_category_id:
+            filter_cdtn += ''' and pt.categ_id = %s 
+            ''' % (self.item_category_id.id)
             cdtn += ''' and pt.categ_id = %s 
                                         ''' % (self.item_category_id.id)
 
         if self.company_id:
+            filter_cdtn += ''' and si.company_id = %s
+            ''' % (self.company_id.id)
             cdtn += ''' and so.company_id = %s
                                         ''' % (self.company_id.id)
 
+        print(filter_cdtn)
         print(cdtn)
 
         query = """
+            SELECT pt.categ_id AS categ,
+                   sil.product_id AS product,
+                   uom.id as uom_name,
+                   bom.id as bom,
+                   SUM(sil.qty) AS total_qty,
+                   si.id as i_type, '0' as s_type
+            FROM sales_indent_lines sil
+            LEFT JOIN sales_indent si ON sil.pur_id = si.id
+            LEFT JOIN uom_uom uom ON sil.uom_id = uom.id
+            LEFT JOIN product_product pp ON sil.product_id = pp.id
+            LEFT JOIN product_template pt ON pp.product_tmpl_id = pt.id
+            JOIN mrp_bom bom ON pt.id = bom.product_tmpl_id
+            %s 
+            GROUP BY sil.product_id, pt.categ_id,uom.id,bom.id, si.id
+            union all
             SELECT pt.categ_id AS categ,
                            sol.product_id AS product,
                            uom.id as uom_name,
@@ -66,13 +90,13 @@ class PlanPlaning(models.Model):
                     JOIN mrp_bom bom ON pt.id = bom.product_tmpl_id
                     %s 
                     GROUP BY sol.product_id, pt.categ_id,uom.id,bom.id, so.id
-            """ % (cdtn)
+            """ % (filter_cdtn, cdtn)
         print(query)
         self._cr.execute(query)
         print(query)
         intent_ids = self._cr.dictfetchall()
         print('intent_ids', intent_ids)
-        # amal
+        #amal
         row = []
         for line in intent_ids:
             row.append({'data': {
@@ -93,22 +117,26 @@ class PlanPlaning(models.Model):
             bom = 0
             sale = []
             print('sale', sale)
+            indent = []
             for i in intent_ids:
                 if (i['product'] == product) and (i['uom_name'] == uom_name):
                     qty += i['total_qty']
                     bom = i['bom']
                     if i['s_type'] != 0:
                         sale.append(i['s_type'])
+                    if i['i_type'] != 0:
+                        indent.append(i['i_type'])
             lst_final.append({
                 'product': product,
                 'uom_name': uom_name,
                 'bom': bom,
                 'total_qty': qty,
                 'sale': list(set(sale)),
+                'indent': list(set(indent)),
             })
 
         result = lst_final
-        # amal
+        #amal
 
         grouped_data = {}
         for item in intent_ids:
@@ -121,6 +149,8 @@ class PlanPlaning(models.Model):
         # result = list(grouped_data.values())
         for i in result:
             sale = self.env['sale.order'].browse([value for value in i['sale']])
+            indent = self.env['sales.indent'].browse([value for value in i['indent']])
+
 
             self.write({
                 'production_lines_ids': [(0, 0, {
@@ -129,9 +159,9 @@ class PlanPlaning(models.Model):
                     'production_uom_id': i['uom_name'],
                     'order_quantity': i['total_qty'],
                     'sale_order_ids': [(6, 0, sale.ids)],
+                    'sale_indent_ids': [(6, 0, indent.ids)]
                 })]
             })
-
     def action_waiting_approval(self):
         # plan = self.production_lines_ids
         user = self.env.uid
@@ -150,72 +180,44 @@ class PlanPlaning(models.Model):
     def action_confirm(self):
         self.state = 'done'
         sale_ids = self.production_lines_ids.mapped('sale_order_ids')
+        indent_ids = self.production_lines_ids.mapped('sale_indent_ids')
         for a in sale_ids:
             query = """UPDATE sale_order
                        SET planing_id = %s
                         WHERE id = %s;"""
             query = query % (self.id, a.id)
             self._cr.execute(query)
+        for a in indent_ids:
+            query = """UPDATE sales_indent
+                        SET planing_id = %s
+                        WHERE id = %s;"""
+            query = query % (self.id, a.id)
+            self._cr.execute(query)
 
         transfer_cdtn = '''where si.state ='approve' and si.planning_date BETWEEN '%s' AND '%s'
-
+    
                                     ''' % (
             self.planning_date.strftime("%Y-%m-%d 00:00:00"), self.planning_date.strftime("%Y-%m-%d 23:59:59"))
         transfer = """
-            SELECT ptb.categ_id AS categ,  
-                   mbl.product_id AS product,
-                   bom.id AS bom_id,
-                   uom.id as uom_name,
-                   sum(sil.actual_plan_qty * mbl.product_qty) as total
-            FROM production_plan_lines sil
-            LEFT JOIN plan_planing si ON sil.ref_id = si.id
-            LEFT JOIN product_product pp ON sil.item_list_id = pp.id
-            LEFT JOIN product_template pt ON pp.product_tmpl_id = pt.id
-            JOIN mrp_bom bom ON pt.id = bom.product_tmpl_id
-            INNER JOIN mrp_bom_line mbl ON bom.id = mbl.bom_id
-            LEFT JOIN product_product pn ON mbl.product_id = pn.id
-            LEFT JOIN product_template ptb ON mbl.product_tmpl_id = ptb.id
-            LEFT JOIN uom_uom uom ON mbl.product_uom_id = uom.id
-            %s
-            GROUP BY mbl.product_id, bom.id, ptb.categ_id, uom.id
-        """ % (transfer_cdtn)
-
+                    SELECT ptb.categ_id AS categ,  
+                           mbl.product_id AS product,
+                           uom.id as uom_name,
+                           sum(sil.actual_plan_qty * mbl.product_qty) as total
+                    FROM production_plan_lines sil
+                    LEFT JOIN plan_planing si ON sil.ref_id = si.id
+                    LEFT JOIN product_product pp ON sil.item_list_id = pp.id
+                    LEFT JOIN product_template pt ON pp.product_tmpl_id = pt.id
+                    JOIN mrp_bom bom ON pt.id = bom.product_tmpl_id
+                    INNER JOIN mrp_bom_line mbl ON bom.id = mbl.bom_id
+                    LEFT JOIN product_product pn ON mbl.product_id = Pn.id
+                    LEFT JOIN product_template ptb ON mbl.product_tmpl_id = ptb.id
+                    LEFT JOIN uom_uom uom ON mbl.product_uom_id = uom.id
+                    %s
+                    GROUP BY mbl.product_id, ptb.categ_id,uom.id
+                """ % (transfer_cdtn)
         self._cr.execute(transfer)
         transfer_ids = self._cr.dictfetchall()
         print(transfer_ids, 'pandal')
-        transfer_list = []
-
-        for j in transfer_ids:
-            product = j['product']
-            product_obj = self.env['product.product'].browse(product)
-            temp = product_obj.product_tmpl_id
-            bom = temp.bom_ids
-            uom_qty = j['total']
-            uom = self.env['uom.uom'].browse(j['uom_name'])
-            plan_id = self.id
-            if bom:
-                transfer_list.append({
-                    'product': product,
-                    'uom_qty':uom_qty,
-                    'bom_id': bom[0].id if bom else False,
-                    'uom':uom,
-                    'plan_id': plan_id
-                })
-        for i in transfer_list:
-            manufacture = {
-                'product_id': i['product'],
-                'product_qty': i['uom_qty'],
-                'product_uom_id': i['uom'].id,
-                'bom_id': i['bom_id'],
-                'state': 'draft',
-                'planing_id':i['plan_id']
-            }
-            print(manufacture,'manufacture')
-
-            self.env['mrp.production'].create(manufacture)
-
-
-        print(transfer_list,'transfer_list')
         if self.company_id.production_picking_type_id:
             if self.company_id.production_picking_type_id.default_location_dest_id:
                 if self.company_id.production_picking_type_id.default_location_src_id:
@@ -243,7 +245,6 @@ class PlanPlaning(models.Model):
                             })]
                         })
 
-
     def action_reject(self):
         if self.reason:
             self.state = 'reject'
@@ -260,15 +261,6 @@ class PlanPlaning(models.Model):
             'view_mode': 'tree,form',
             'domain': [('request_id', '=', self.id)],
         }
-    def action_open_manufacture(self):
-        for j in self:
-            return {
-                'name': _('Manufacture'),
-                'type': 'ir.actions.act_window',
-                'res_model': 'mrp.production',
-                'view_mode': 'tree,form',
-                'domain': [('planing_id', '=', j.id)],
-            }
 
 
 class ProductionPlanningLines(models.Model):
@@ -289,7 +281,7 @@ class ProductionPlanningLines(models.Model):
     indent_ids = fields.Many2many('indent.request', 'indent_request_production_plan_line_rel',
                                   'plan_line_id', 'indent_id', string='Indents')
     sale_indent_ids = fields.Many2many('sales.indent', 'sale_indent_request_production_plan_line_rel',
-                                       'plan_line_id', 'indent_id', string='Indents')
+                                  'plan_line_id', 'indent_id', string='Indents')
 
     @api.depends('order_quantity', 'on_quantity')
     def _compute_plan_qty(self):
@@ -345,7 +337,6 @@ class StockPicking(models.Model):
 
     request_id = fields.Many2one('plan.planing', string='Material Request For Production')
 
-
 class SalesOrder(models.Model):
     _inherit = 'sale.order'
 
@@ -364,8 +355,3 @@ class SalesIndent(models.Model):
     _inherit = 'sales.indent'
 
     planing_id = fields.Many2one('plan.planing', string='Planing')
-class MrpProduction(models.Model):
-    _inherit = 'mrp.production'
-
-    planing_id = fields.Many2one('plan.planing', string='Planing')
-

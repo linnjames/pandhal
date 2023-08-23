@@ -39,12 +39,6 @@
                                 <span class="o_stat_text">Transfer</span>
                             </div>
                         </button>
-                        <button name="action_open_manufacture" type="object" class="oe_stat_button"
-                                icon="fa-truck" states="done">
-                            <div class="o_stat_info">
-                                <span class="o_stat_text">Component Manufacturing</span>
-                            </div>
-                        </button>
                     </div>
                     <div class="oe_title">
                         <h1>
@@ -71,7 +65,7 @@
                     <notebook>
                         <page string="Production Lines" name="production_planning_lines">
                             <group>
-                                <field name="tick" attrs="{'readonly' :[('state','in', ('approve','done', 'reject'))]}" invisible="1"/>
+                                <field name="tick" attrs="{'readonly' :[('state','in', ('approve','done', 'reject'))]}"/>
                             </group>
                             <field name="production_lines_ids" attrs="{'readonly' :[('state','in', ('done', 'reject'))]}">
                                 <tree editable="bottom">
@@ -83,7 +77,7 @@
                                     <field name="on_quantity" required="1" readonly="1" force_save="1"/>
                                     <field name="planed_quantity" force_save="1"/>
                                     <field name="varience"/>
-                                    <field name="actual_plan_qty" invisible="1"/>
+                                    <field name="actual_plan_qty"/>
                                     <field name="sale_order_ids" optional="hide"/>
                                     <field name="sale_indent_ids" optional="hide"/>
                                 </tree>
@@ -127,17 +121,6 @@
             <xpath expr="//field[@name='origin']" position="after">
                 <field name="request_id"/>
             </xpath>
-        </field>
-    </record>
-    <record id="action_confirm_manufacturing_confirm" model="ir.actions.server">
-        <field name="name">Confirmed</field>
-        <field name="model_id" ref="mrp.model_mrp_production"/>
-        <field name="binding_model_id" ref="mrp.model_mrp_production"/>
-        <field name="binding_view_types">list</field>
-        <field name="state">code</field>
-        <field name="code">
-            for order in records:
-            order.action_confirm()
         </field>
     </record>
     <record id="production_plan_action" model="ir.actions.act_window">
