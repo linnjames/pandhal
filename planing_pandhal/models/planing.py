@@ -238,6 +238,7 @@ class PlanPlaning(models.Model):
                 product = v['product']
                 uom = v['uom']
                 qty = 0
+
                 for i in transfer_list:
                     if (i['product'] == product) and (i['uom'] == uom):
                         qty += i['qty']
@@ -282,15 +283,16 @@ class PlanPlaning(models.Model):
             'view_mode': 'tree,form',
             'domain': [('request_id', '=', self.id)],
         }
-    def action_open_manufacture(self):
-        for j in self:
-            return {
-                'name': _('Manufacture'),
-                'type': 'ir.actions.act_window',
-                'res_model': 'mrp.production',
-                'view_mode': 'tree,form',
-                'domain': [('planing_id', '=', j.id)],
-            }
+
+    # def action_open_manufacture(self):
+    #     for j in self:
+    #         return {
+    #             'name': _('Manufacture'),
+    #             'type': 'ir.actions.act_window',
+    #             'res_model': 'mrp.production',
+    #             'view_mode': 'tree,form',
+    #             'domain': [('planing_id', '=', j.id)],
+    #         }
 
 
 class ProductionPlanningLines(models.Model):
