@@ -8,8 +8,6 @@ class ProductTemplate(models.Model):
 
 
 
-
-
 class SaleOrder(models.Model):
     _inherit = 'sale.order'
 

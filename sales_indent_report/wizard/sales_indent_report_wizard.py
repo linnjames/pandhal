@@ -8,9 +8,10 @@ class ActionSaleReportWizard(models.TransientModel):
 
     from_date = fields.Date(string="From Date", required=True)
     to_date = fields.Date(string="TO Date", required=True)
-    order_type = fields.Selection([('bakery', 'Bakery'),
-                                   ('store', 'Store'),
-                                   ('customer order', 'Customer Order')], required=True)
+
+    indent_type = fields.Selection([('customer order', 'Customer Order'),
+                                    ('indent', 'Indent'), ], required=True, default='customer order',
+                                   string="Order Type")
     company_id = fields.Many2one('res.company', string='Company', default=lambda self: self.env.company.id)
 
 
@@ -25,9 +26,11 @@ class ActionSaleReportWizard(models.TransientModel):
         cdtn = filter_cdtn
         cdtn_params = params
 
-        if self.order_type:
+        if self.indent_type:
+        # if self.order_type:
             cdtn += '''AND so.indent_type = %s '''
-            cdtn_params += (self.order_type,)
+            # cdtn_params += (self.order_type,)
+            cdtn_params += (self.indent_type,)
 
         if self.company_id:
             filter_cdtn += '''AND so.company_id = %s '''

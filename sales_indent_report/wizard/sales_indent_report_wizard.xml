@@ -13,7 +13,7 @@
                                 <field name="to_date"/>
                             </group>
                             <group>
-                                <field name="order_type"/>
+                                <field name="indent_type"/>
                                 <field name="company_id"/>
                             </group>
                         </group>
