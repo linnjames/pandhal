@@ -26,6 +26,7 @@ class PlanPlaning(models.Model):
     tick = fields.Boolean(string="Consider Closing Stock")
     user_id = fields.Many2one('res.users', string='User', readonly=True,
                               default=lambda self: self.env.user.id, tracking=True)
+    manufacture_ids = fields.Many2many('mrp.production', string='Manufacturing')
 
     @api.model
     def create(self, vals):
