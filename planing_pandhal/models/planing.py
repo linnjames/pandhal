@@ -182,72 +182,116 @@ class PlanPlaning(models.Model):
 
         self._cr.execute(transfer)
         transfer_ids = self._cr.dictfetchall()
-        print(transfer_ids, 'pandal')
         transfer_list = []
+        value = []
+        bom_dict = {}
+        qty_dict = {}
+        for entry in transfer_ids:
+            product = entry['product']
+            uom_name = entry['uom_name']
+            total_qty = entry['total']
+            bom = entry['bom_id']
 
-        for j in transfer_ids:
+            key = (product, uom_name)
+            if key in qty_dict:
+                qty_dict[key] += total_qty
+            else:
+                qty_dict[key] = total_qty
+            if key not in bom_dict or bom > bom_dict[key]:
+                bom_dict[key] = bom
+
+        lst_finalist = []
+        for (product, uom_name), total_qty in qty_dict.items():
+            bom = bom_dict.get((product, uom_name), 0)
+            lst_finalist.append({
+                'product': product,
+                'uom_name': uom_name,
+                'bom': bom,
+                'total_qty': total_qty,
+            })
+
+        # ... (rest of the code)
+
+        for j in lst_finalist:
             product = j['product']
             product_obj = self.env['product.product'].browse(product)
             temp = product_obj.product_tmpl_id
             bom = temp.bom_ids
-            uom_qty = j['total']
+            uom_qty = j['total_qty']
             uom = self.env['uom.uom'].browse(j['uom_name'])
+            plan_id = self.id
             if bom:
-                for component in bom.bom_line_ids:
-                    move_uom = component.product_uom_id
-                    if move_uom.category_id == product_obj.uom_id.category_id:
-                        # Convert UoM to the product's UoM category manually
-                        uom_qty = self.env['uom.uom']._compute_quantity(
-                            uom_qty,
-                            uom,
-                            move_uom,
-                        )
-
-                    transfer_list.append({
-                        'product': component.product_id.id,
-                        'qty': uom_qty,
-                        'uom': move_uom
-                    })
-            else:
-                if uom.category_id == product_obj.uom_id.category_id:
-                    # Convert UoM to the product's UoM category manually
-                    uom_qty = self.env['uom.uom']._compute_quantity(
-                        uom_qty,
-                        uom
-                    )
-
                 transfer_list.append({
                     'product': product,
-                    'qty': uom_qty,
-                    'uom': uom.id,
+                    'uom_qty': uom_qty,
+                    'bom_id': bom[0].id if bom else False,
+                    'uom': uom,
+                    'plan_id': plan_id
                 })
-            row = []
-            for li in transfer_list:
-                row.append({'data': {
-                    'product': li['product'],
-                    'uom': li['uom']
-                }})
-
-            no_dup = []
-            for i in row:
-                if i['data'] not in no_dup:
-                    no_dup.append(i['data'])
-            lst_final = []
-            final = []
-            for v in no_dup:
-                product = v['product']
-                uom = v['uom']
-                qty = 0
-
-                for i in transfer_list:
-                    if (i['product'] == product) and (i['uom'] == uom):
-                        qty += i['qty']
-                lst_final.append({
+            else:
+                value.append({
                     'product': product,
-                    'uom_name': uom,
-                    'total_qty': qty
+                    'uom_qty': uom_qty,
+                    'uom': uom,
                 })
-        # Create the transfer move with all items in the list
+
+        for i in transfer_list:
+            company = self.env.company
+            for com in company:
+                manufacture = {
+                    'product_id': i['product'],
+                    'product_qty': i['uom_qty'],
+                    'product_uom_id': i['uom'].id,
+                    'component': True,
+                    'bom_id': i['bom_id'],
+                    'state': 'draft',
+                    'picking_type_id': com.component_picking_type.id,
+                    'type_of_manufacture': 'semi',
+                    'planing_id': i['plan_id']  # Assuming i['plan_id'] is a record of planing.planning
+                }
+                print(manufacture, 'manufacture')
+
+                production = self.env['mrp.production'].create(manufacture)
+
+                self.write({
+                    'manufacture_ids': [(4, production.id)]  # 4 represents "add" action for many2many fields
+                })
+        for l in self.manufacture_ids:
+            for j in l.move_raw_ids:
+                value.append({
+                    'product': j.product_id.id,
+                    'uom_qty': j.product_uom_qty,
+                    'uom': j.product_uom,
+                })
+        row = []
+        for line in value:
+            row.append({
+                'product': line['product'],
+                'uom_name': line['uom']
+            })
+
+        no_dup = []
+        for i in row:
+            if i not in no_dup:
+                no_dup.append(i)
+
+        lst_final = []
+        for v in no_dup:
+            product = v['product']
+            uom_name = v['uom_name']
+            qty = 0
+            bom = 0
+            sale = []
+            print('sale', sale)
+            for i in value:
+                if (i['product'] == product) and (i['uom'] == uom_name):
+                    qty += i['uom_qty']
+            lst_final.append({
+                'product': product,
+                'uom_name': uom_name,
+                'total_qty': qty
+            })
+        print(transfer_list, 'transfer_list')
         transfer_move = self.env['stock.picking'].sudo().create({
             'picking_type_id': self.company_id.production_picking_type_id.id,
             'company_id': self.company_id.id,
@@ -266,7 +310,6 @@ class PlanPlaning(models.Model):
             }) for item in lst_final]
         })
 
-
     def action_reject(self):
         if self.reason:
             self.state = 'reject'
@@ -284,15 +327,15 @@ class PlanPlaning(models.Model):
             'domain': [('request_id', '=', self.id)],
         }
 
-    # def action_open_manufacture(self):
-    #     for j in self:
-    #         return {
-    #             'name': _('Manufacture'),
-    #             'type': 'ir.actions.act_window',
-    #             'res_model': 'mrp.production',
-    #             'view_mode': 'tree,form',
-    #             'domain': [('planing_id', '=', j.id)],
-    #         }
+    def action_open_manufacture(self):
+        for j in self:
+            return {
+                'name': _('Manufacture'),
+                'type': 'ir.actions.act_window',
+                'res_model': 'mrp.production',
+                'view_mode': 'tree,form',
+                'domain': [('planing_id', '=', j.id)],
+            }
 
 
 class ProductionPlanningLines(models.Model):
@@ -362,6 +405,8 @@ class ResCompany(models.Model):
 
     production_picking_type_id = fields.Many2one('stock.picking.type',
                                                  string='Picking Type For Material From Production')
+    component_picking_type = fields.Many2one('stock.picking.type',
+                                             string='Operation Type OF Component')
 
 
 class StockPicking(models.Model):
@@ -392,4 +437,10 @@ class MrpProduction(models.Model):
     _inherit = 'mrp.production'
 
     planing_id = fields.Many2one('plan.planing', string='Planing')
+    component = fields.Boolean(string='Is Component')
+
+    type_of_manufacture = fields.Selection([
+        ('finshed', 'Finished Good'),
+        ('semi', 'Semi Finshed Good'),
+    ], string='Product Tag')
 
