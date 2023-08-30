@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates id="template" xml:space="preserve">
+    <t t-name="OrderReceipt" t-inherit="point_of_sale.OrderReceipt"
+       t-inherit-mode="extension" owl="1">
+        <xpath expr="//div[hasclass('pos-receipt-contact')]" position="inside">
+            <div style="font-weight:bold;">
+                Customer Name:Kili Rijas<span t-esc="receipt.fssai_no"/>
+            </div>
+            <t t-if="receipt.fssai_no">
+                <div><strong>FSSAI No:</strong> <span t-esc="receipt.fssai_no"/></div>
+            </t>
+
+        </xpath>
+        <xpath expr="//div[hasclass('orderlines')]" position="replace">
+            <t t-call="CustomOrderLinesReceipt"/>
+        </xpath>
+
+    </t>
+
+    <t t-name="CustomOrderLinesReceipt" owl="1">
+        <table width="100%" class='receipt-orderlines'>
+            <tr style="font-weight: bold; font-size: 12px;">
+                <td align="left" width="40%">Item</td>
+                <td align="center">HSN</td>
+                <td align="center">Qty</td>
+                <td align="right">Rate</td>
+                <td align="right">Total</td>
+            </tr>
+            <t t-foreach="receipt.orderlines" t-as="line" t-key="line.id">
+                <tr>
+                    <td style="font-size: 10px; font-weight: bold;" align="left"><span t-esc="line.product_name_wrapped[0]"/></td>
+                    <td style="font-size: 10px; font-weight: bold;" align="center"><span t-esc="line.l10n_in_hsn_code"/></td>
+                    <td style="font-size: 10px; font-weight: bold;" align="center"><span t-esc="line.quantity"/></td>
+                    <td style="font-size: 10px; font-weight: bold;" align="center"><span t-esc="line.price_display_one"/></td>
+                    <td style="font-size: 10px; font-weight: bold;" align="center"><span t-esc="line.price_display"/></td>
+                </tr>
+            </t>
+        </table>
+    </t>
+
+</templates>
