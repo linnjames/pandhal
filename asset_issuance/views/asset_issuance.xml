@@ -2,23 +2,6 @@
 <odoo>
     <data>
 
-        <!--        <record model="ir.ui.view" id="asset_issuance_inherit_hr_employee">-->
-        <!--            <field name="name">asset.issuance.inherit.hr.employee</field>-->
-        <!--            <field name="model">hr.employee</field>-->
-        <!--            <field name="inherit_id" ref="hr.view_employee_form"/>-->
-        <!--            <field name="arch" type="xml">-->
-        <!--                <xpath expr="//button[@name='366']" position="after">-->
-        <!--                    <button name="%(action_employee_asset_issuance)d" type="action" string="Assets"-->
-        <!--                            class="oe_highlight"/>-->
-        <!--                </xpath>-->
-
-        <!--                <xpath expr="//button[@name='673']" position="after">-->
-        <!--                    <button name="button_view_transfer" type="object" string="Assets"-->
-        <!--                            class="oe_highlight" icon="fa-truck"/>-->
-        <!--                </xpath>-->
-        <!--            </field>-->
-        <!--        </record>-->
-
         <record model="ir.ui.view" id="asset_issuance_inherit_hr_employee_new">
             <field name="name">asset.issuance.inherit.hr.employee.new</field>
             <field name="model">hr.employee</field>
@@ -42,6 +25,29 @@
                             class="oe_highlight" icon="fa-truck"
                             attrs="{'invisible': [('asset_count', '=', 0)]}"/>
                 </xpath>
+
+                <xpath expr="//page[@name='personal_information']/group/group/field[@name='has_work_permit']"
+                       position="after">
+                    <field name="notice_period" string="Notice Period">Days
+                        <!--                <label for="Days" string="Days"/>-->
+                    </field>
+                </xpath>
+                <xpath expr="//page[@name='personal_information']/group/group/field[@name='notice_period']"
+                       position="after">
+                    <field name="esi_account" string="ESI Account No"/>
+                </xpath>
+                <xpath expr="//page[@name='personal_information']/group/group/field[@name='esi_account']"
+                       position="after">
+                    <field name="pf_account" string="PF Account No"/>
+                </xpath>
+                <xpath expr="//page[@name='personal_information']/group/group/field[@name='lang']"
+                       position="after">
+                    <field name="account_no" string="Account No"/>
+                </xpath>
+                <xpath expr="//page[@name='personal_information']/group/group/field[@name='study_school']"
+                       position="after">
+                    <field name="skills" string="Skills"/>
+                </xpath>
             </field>
         </record>
 
@@ -57,18 +63,6 @@
             </field>
         </record>
 
-
-        <!--        <record model="ir.ui.view" id="asset_issuance_wizard_inherit_stock_picking">-->
-        <!--            <field name="name">asset.issuance.wizard.inherit.stock.picking</field>-->
-        <!--            <field name="model">stock.picking</field>-->
-        <!--            <field name="inherit_id" ref="stock.view_picking_form"/>-->
-        <!--            <field name="arch" type="xml">-->
-        <!--                <xpath expr="//field[@name='origin']" position="after">-->
-        <!--                    <field name="asset_wizard_id"/>-->
-        <!--                </xpath>-->
-
-        <!--            </field>-->
-        <!--        </record>-->
 
     </data>
 </odoo>

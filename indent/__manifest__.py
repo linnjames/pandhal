@@ -13,6 +13,7 @@
         'security/ir.model.access.csv',
         'security/security.xml',
         'data/data.xml',
+        'wizard/RFQ_cancel_wizard',
         'views/indent_request.xml',
         'views/res_company.xml',
         'views/stock_picking.xml',

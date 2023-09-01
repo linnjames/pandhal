@@ -6,6 +6,11 @@ class HrEmployee(models.Model):
 
     asset_ids = fields.One2many('asset.transfer', 'default_employee_id', string='Assets')
     asset_count = fields.Integer(string='Asset Count', compute='_compute_asset_count')
+    notice_period = fields.Integer(string="Notice Period(days)")
+    pf_account = fields.Char(string="PF Account No")
+    esi_account = fields.Char(string="ESI Account No")
+    account_no = fields.Integer(string="Account No")
+    skills = fields.Text(string="Skills")
 
     @api.depends('asset_ids')
     def _compute_asset_count(self):

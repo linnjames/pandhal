@@ -1,0 +1,62 @@
+<odoo>
+    <data>
+        <record id="view_rfq_cancel_wizard_form" model="ir.ui.view">
+            <field name="name">rfq.cancel.wizard.form</field>
+            <field name="model">rfq.cancel.wizard</field>
+            <field name="arch" type="xml">
+                <form>
+                    <group>
+                        <field name="reason"/>
+                    </group>
+                    <footer>
+                        <button string="OK" class="btn-danger" type="object" name="cancel_rfqs"/>
+                        <button string="Cancel" class="btn-secondary" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+        <!--________wizard Action_______________-->
+        <record id="action_rfq_cancel_wizard" model="ir.actions.act_window">
+            <field name="name">Cancel RFQs Reason</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">rfq.cancel.wizard</field>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="view_rfq_cancel_wizard_form"/>
+            <field name="target">new</field>
+        </record>
+        <!--_________cancel RFQ_______________-->
+        <record id="action_cancel_rfq" model="ir.actions.server">
+            <field name="name">RFQ Cancelled</field>
+            <field name="model_id" ref="model_purchase_order"/>
+            <field name="binding_model_id" ref="model_purchase_order"/>
+            <field name="binding_view_types">list</field>
+            <field name="state">code</field>
+            <field name="code">action = model.action_rfq_cancel_wizard()</field>
+        </record>
+
+        <!--_________Tree_view_______________-->
+        <record id="view_purchase_order_tree" model="ir.ui.view">
+            <field name="name">purchase.order.tree</field>
+            <field name="model">purchase.order</field>
+            <field name="inherit_id" ref="purchase.purchase_order_kpis_tree"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='state']" position="after">
+                    <field name="reason"/>
+                </xpath>
+            </field>
+        </record>
+        <record id="view_purchase_order_form_extend" model="ir.ui.view">
+            <field name="name">purchase.order.tree.extend</field>
+            <field name="model">purchase.order</field>
+            <field name="inherit_id" ref="purchase.purchase_order_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='picking_type_id']" position="after">
+                    <field name="reason"/>
+<!--                    <attribute name="confirm">Please provide a cancellation reason.</attribute>-->
+<!--                    <attribute name="modifiers">{"required": [["state", "=", "cancel"]]}</attribute>-->
+                </xpath>
+            </field>
+        </record>
+    </data>
+
+</odoo>
