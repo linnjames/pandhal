@@ -8,6 +8,7 @@ class PurchaseOrder(models.Model):
     _inherit = "purchase.order"
 
     has_been_confirmed = fields.Boolean(default=False, copy=False)
+    attachment = fields.Binary(string="Attachment")
 
     # def button_confirm(self):
     #     res = super(PurchaseOrder, self).button_confirm()

@@ -11,12 +11,24 @@ class PurchaseOrderWizard(models.TransientModel):
 
     order_line = fields.One2many(
         'purchase.order.line.wizard', 'wizard_id', string='Order Lines')
+
     expected_delivery_date = fields.Datetime(string=" Expected Delivery")
-    # sale_attachment = fields.Binary(string="Attachment")
-    order_type = fields.Selection([('indent', 'Indent'),
-                                    ('store', 'Store'),
-                                    ('customer order', 'Customer Order')], required=True)
+
+    # order_type = fields.Selection(
+    #     [('indent', 'Indent'),
+    #                                 ('store', 'Store'),
+    #                                 ('customer order', 'Customer Order')], required=True, default='indent')
+
+    order_type = fields.Selection(
+        selection=[
+            ('indent', 'Indent'),
+            ('customer order', 'Customer Order')
+        ],
+        default='indent',
+        required=True,)
+
     date_expected_delivery = fields.Date(string=" Expected Delivery")
+
     vendor_id = fields.Many2one('res.partner',string='vendor')
 
     def sh_create_purchase_order(self):

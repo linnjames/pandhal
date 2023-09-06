@@ -40,6 +40,49 @@
                             padding: 0 !important;
                             }
                         </style>
+                        <div class="page">
+                        <div width="100%" style="font-size: 14px; text-align: right;">
+                            <span t-esc="context_timestamp(datetime.datetime.now()).strftime('%d/%m/%Y %H:%M')"/>
+                            <br/>
+                            <span t-esc="user.name"/>
+                        </div>
+
+                        <div width="100%">
+                            <table width="100%" align="center" style=" border-color:white; font-size:20px;">
+                                <tr>
+                                    <td align="center">
+                                        <div width="100%" style="text-align: center;">
+                                            <!--                                                  <img src='/web/binary/company_logo'  -->
+                                            <!--                                                       style="max-height: 25px;"  -->
+                                            <!--                                                       alt="Logo"/>  -->
+                                            <img src="/delivery_note/static/src/img/Screenshot from 2023-07-06 20-38-28.png"
+                                                 style="max-height: 100px;"/>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td align="center"
+                                        style="font-size: 17px; font-weight: bold; padding: 10px; text-align: center;">
+                                        <!--  Fetching the company name  -->
+                                        <span t-esc="doc.company_id.name"/>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td style="text-align: center; font-size: 15px;">
+                                        <span t-esc="doc.company_id.partner_id.street2"/>
+                                        <span t-esc="doc.company_id.partner_id.city"/>
+                                        <br/>
+                                        GSTIN:
+                                        <span t-field="doc.company_id.vat"/>
+                                        <br/>
+                                        <span t-esc="doc.company_id.state_id.name"/>
+                                        <br/>
+                                        <span t-esc="doc.company_id.zip"/>
+                                        <span t-esc="doc.company_id.country_id.name"/>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
                         <table width="100%">
                             <tr>
                                 <td style="border-bottom: 1px solid white;border-top:1px solid white;border-right: 1px solid white;border-left: 1px solid white;padding-top:1px;font-size: 20px;text-align:center"
@@ -111,24 +154,25 @@
 
                         </table>
 
-                        <div class="footer o_standard_footer">
-                            <div class="row text-center">
-                                <div class="col col-12 text-center">
-                                    <ul class="list-inline">
-                                        <li class="list-inline-item">
-                                            <span class="page"/>
-                                        </li>
-                                        <li class="list-inline-item">/</li>
-                                        <li class="list-inline-item">
-                                            <span class="topage"/>
-                                        </li>
-                                        <li>
-                                            <span t-esc="user.name"/>&#160;-&#160;
-                                                                                        <span t-esc="context_timestamp(datetime.datetime.now()).strftime('%d/%m/%Y %H:%M')"/>
-                                        </li>
-                                    </ul>
-                                </div>
-                            </div>
+<!--                        <div class="footer o_standard_footer">-->
+<!--                            <div class="row text-center">-->
+<!--                                <div class="col col-12 text-center">-->
+<!--                                    <ul class="list-inline">-->
+<!--                                        <li class="list-inline-item">-->
+<!--                                            <span class="page"/>-->
+<!--                                        </li>-->
+<!--                                        <li class="list-inline-item">/</li>-->
+<!--                                        <li class="list-inline-item">-->
+<!--                                            <span class="topage"/>-->
+<!--                                        </li>-->
+<!--                                        <li>-->
+<!--                                            <span t-esc="user.name"/>&#160;-&#160;-->
+<!--                                            <span t-esc="context_timestamp(datetime.datetime.now()).strftime('%d/%m/%Y %H:%M')"/>-->
+<!--                                        </li>-->
+<!--                                    </ul>-->
+<!--                                </div>-->
+<!--                            </div>-->
+<!--                        </div>-->
                         </div>
                     </t>
                 </t>
