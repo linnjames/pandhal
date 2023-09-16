@@ -1,6 +1,7 @@
 from odoo import api, fields, models, _
 from odoo.exceptions import ValidationError
 
+
 class AccountAccount(models.Model):
     _inherit = 'account.account'
 
@@ -14,8 +15,8 @@ class AccountAccount(models.Model):
                        ('liability_unsecured_loan', 'Unsecured Loan'),
                        ('asset_inventories', 'Inventories'),
                        ('expense_purchases', 'Purchases'),
-                       ('expense_inventory_adjustment_account', 'INVENTORY ADJUSTMENT ACCOUNT'),
-                       ('expense_sales_and_distribution_expenses', 'SALES AND DISTRIBUTION EXPENSES'),
+                       ('expense_inventory_adjustment_account', 'Inventory Adjustment Account'),
+                       ('expense_sales_and_distribution_expenses', 'Sales & Distribution Expenses'),
                        ('expense_house_keeping', 'House Keeping Charge'),
                        ('expense_insurance', 'Insurance'),
                        ('expense_legal_professional', 'Legal & Professional Charges'),
@@ -25,18 +26,29 @@ class AccountAccount(models.Model):
                        ('expense_postage_telegram', 'Postage, Telegram & Telephone'),
                        ('expense_Power_Fuel', 'Power & Fuel'),
                        ('expense_repairs_maintenance', 'Repairs & Maintenance'),
-                       ('rent_rates_taxes', 'Rent,Rates & Taxes'),
-                       ('printing_stationary', 'Printing & Stationary'),
+                       ('expense_rent_rates_taxes', 'Rent,Rates & Taxes'),
+                       ('expense_printing_stationary', 'Printing & Stationary'),
                        ('expense_salaries_allowances', 'Salaries & Allowances'),
                        ('expense_travelling_conveyance', 'Travelling & Conveyance'),
                        ('expense_water_charges', 'Water Charges'),
                        ('expense_administrative_expenses', 'General & Administrative expenses'),
                        ('expense_interest_bank_charges', 'Interest and Bank Charges'),
-                       ('expense_forgien_exchange', 'FOREIGN EXCHANGE FLUCTUATION'),
+                       ('expense_forgien_exchange', 'Foreign Exchange Fluctuation'),
                        ("off_balance", "Others"),
                        ],
         string='Account Type',
-        ondelete={'equity_capital': 'cascade', 'equity_current': 'cascade','equity_retained_earnings': 'cascade','equity_year_profit_loss':'cascade','liability_secured_loan':'cascade','liability_unsecured_loan':'cascade','asset_inventories':'cascade','off_balance':'cascade','expense_purchases':'cascade','expense_inventory_adjustment_account':'cascade','expense_sales_and_distribution_expenses':'cascade','expense_house_keeping':'cascade','expense_insurance':'cascade',
-                  'expense_legal_professional':'cascade','expense_marketing_expenses':'cascade','expense_miscellaneous_expenses':'cascade','expense_office_expenses':'cascade', 'expense_postage_telegram':'cascade','expense_Power_Fuel':'cascade','expense_repairs_maintenance':'cascade','expense_salaries_allowances':'cascade','expense_travelling_conveyance':'cascade','expense_water_charges':'cascade','expense_administrative_expenses':'cascade',
-                  'expense_interest_bank_charges':'cascade','expense_forgien_exchange':'cascade','rent_rates_taxes':'cascade','printing_stationary':'cascade','equity_share_capital': 'cascade',}
+        ondelete={'equity_capital': 'cascade', 'equity_current': 'cascade', 'equity_retained_earnings': 'cascade',
+                  'equity_year_profit_loss': 'cascade', 'liability_secured_loan': 'cascade',
+                  'liability_unsecured_loan': 'cascade', 'asset_inventories': 'cascade', 'off_balance': 'cascade',
+                  'expense_purchases': 'cascade', 'expense_inventory_adjustment_account': 'cascade',
+                  'expense_sales_and_distribution_expenses': 'cascade', 'expense_house_keeping': 'cascade',
+                  'expense_insurance': 'cascade',
+                  'expense_legal_professional': 'cascade', 'expense_marketing_expenses': 'cascade',
+                  'expense_miscellaneous_expenses': 'cascade', 'expense_office_expenses': 'cascade',
+                  'expense_postage_telegram': 'cascade', 'expense_Power_Fuel': 'cascade',
+                  'expense_repairs_maintenance': 'cascade', 'expense_salaries_allowances': 'cascade',
+                  'expense_travelling_conveyance': 'cascade', 'expense_water_charges': 'cascade',
+                  'expense_administrative_expenses': 'cascade',
+                  'expense_interest_bank_charges': 'cascade', 'expense_forgien_exchange': 'cascade',
+                  'expense_rent_rates_taxes': 'cascade', 'expense_printing_stationary': 'cascade', 'equity_share_capital': 'cascade', }
     )
