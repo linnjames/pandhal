@@ -7,6 +7,7 @@ class AccountAccount(models.Model):
     account_type = fields.Selection(
         selection_add=[('equity_capital', 'Partner Capital Account'),
                        ('equity_current', 'Partner Current Account'),
+                       ('equity_share_capital', 'Equity Share Capital'),
                        ('equity_retained_earnings', 'Retained Earnings - prior years'),
                        ('equity_year_profit_loss', 'Year Profit/Loss'),
                        ('liability_secured_loan', 'Secured Loan'),
@@ -23,6 +24,8 @@ class AccountAccount(models.Model):
                        ('expense_postage_telegram', 'Postage, Telegram & Telephone'),
                        ('expense_Power_Fuel', 'Power & Fuel'),
                        ('expense_repairs_maintenance', 'Repairs & Maintenance'),
+                       ('rent_rates_taxes', 'Rent,Rates & Taxes'),
+                       ('printing_stationary', 'Printing & Stationary'),
                        ('expense_salaries_allowances', 'Salaries & Allowances'),
                        ('expense_travelling_conveyance', 'Travelling & Conveyance'),
                        ('expense_water_charges', 'Water Charges'),
@@ -34,5 +37,5 @@ class AccountAccount(models.Model):
         string='Account Type',
         ondelete={'equity_capital': 'cascade', 'equity_current': 'cascade','equity_retained_earnings': 'cascade','equity_year_profit_loss':'cascade','liability_secured_loan':'cascade','asset_inventories':'cascade','off_balance':'cascade','expense_purchases':'cascade','expense_inventory_adjustment_account':'cascade','expense_sales_and_distribution_expenses':'cascade','expense_house_keeping':'cascade','expense_insurance':'cascade',
                   'expense_legal_professional':'cascade','expense_marketing_expenses':'cascade','expense_miscellaneous_expenses':'cascade','expense_office_expenses':'cascade', 'expense_postage_telegram':'cascade','expense_Power_Fuel':'cascade','expense_repairs_maintenance':'cascade','expense_salaries_allowances':'cascade','expense_travelling_conveyance':'cascade','expense_water_charges':'cascade','expense_administrative_expenses':'cascade',
-                  'expense_interest_bank_charges':'cascade','expense_forgien_exchange':'cascade'}
+                  'expense_interest_bank_charges':'cascade','expense_forgien_exchange':'cascade','rent_rates_taxes':'cascade','printing_stationary':'cascade','equity_share_capital': 'cascade',}
     )
