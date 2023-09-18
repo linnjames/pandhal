@@ -55,10 +55,10 @@
                         <group>
                             <field name="planning_date"
                                    attrs="{'readonly' :[('state','not in', ('draft', 'approval'))]}"/>
-                            <field name="item_category_id" invisible="1"/>
-<!--                                   attrs="{'readonly' :[('state','not in', ('draft', 'approval'))]}"/>-->
+                            <field name="item_category_id"
+                                   attrs="{'readonly' :[('state','not in', ('draft', 'approval'))]}"/>
                             <field name = 'manufacture_ids'
-                                   widget="many2many_tags" invisible="1"/>
+                                   widget="many2many_tags"/>
                         </group>
                         <group>
                             <field name="is_confirm" invisible="1"/>
