@@ -75,7 +75,7 @@
                             <field name="production_lines_ids" attrs="{'readonly' :[('state','in', ('done', 'reject'))]}">
                                 <tree editable="bottom">
                                     <field name="item_list_id" options="{'no_create': True, 'no_edit': True}" required="1"/>
-                                    <field name="bom_id" readonly="1"/>
+                                    <field name="bom_id" force_save="1"/>
                                     <field name="production_uom_id" options="{'no_create': True, 'no_edit': True}"
                                            force_save="1"/>
                                     <field name="order_quantity" required="1"/>

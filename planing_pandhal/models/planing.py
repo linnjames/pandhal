@@ -307,6 +307,18 @@ class ProductionPlanningLines(models.Model):
     sale_indent_ids = fields.Many2many('sales.indent', 'sale_indent_request_production_plan_line_rel',
                                        'plan_line_id', 'indent_id', string='Indents')
 
+    @api.onchange('item_list_id')
+    def _onchange_item_list_id(self):
+        if self.item_list_id:
+            # Retrieve the BOM ID and UOM for the selected product
+            bom = self.env["mrp.bom"].search([
+                ("product_tmpl_id", "=", self.item_list_id.product_tmpl_id.id)])
+            uom = self.item_list_id.uom_id
+            if bom:
+                self.bom_id = bom[0]
+            if uom:
+                self.production_uom_id = uom.id
+
     @api.depends('order_quantity', 'on_quantity')
     def _compute_plan_qty(self):
         self.planed_quantity = False
