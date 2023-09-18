@@ -26,7 +26,7 @@ class PlanPlaning(models.Model):
     tick = fields.Boolean(string="Consider Closing Stock")
     user_id = fields.Many2one('res.users', string='User', readonly=True,
                               default=lambda self: self.env.user.id, tracking=True)
-    manufacture_ids = fields.Many2many('mrp.production', string='Manufacturing')
+    manufacture_ids = fields.Many2many('mrp.production',string='Manufacturing')
 
     @api.model
     def create(self, vals):
@@ -158,97 +158,98 @@ class PlanPlaning(models.Model):
             query = query % (self.id, a.id)
             self._cr.execute(query)
 
-        transfer_cdtn = '''where si.state ='approve' and si.planning_date BETWEEN '%s' AND '%s'
-
-                                    ''' % (
-            self.planning_date.strftime("%Y-%m-%d 00:00:00"), self.planning_date.strftime("%Y-%m-%d 23:59:59"))
-        transfer = """
-            SELECT ptb.categ_id AS categ,  
-                   mbl.product_id AS product,
-                   bom.id AS bom_id,
-                   uom.id as uom_name,
-                   sum(sil.actual_plan_qty * mbl.product_qty) as total
-            FROM production_plan_lines sil
-            LEFT JOIN plan_planing si ON sil.ref_id = si.id
-            LEFT JOIN product_product pp ON sil.item_list_id = pp.id
-            LEFT JOIN product_template pt ON pp.product_tmpl_id = pt.id
-            JOIN mrp_bom bom ON pt.id = bom.product_tmpl_id
-            INNER JOIN mrp_bom_line mbl ON bom.id = mbl.bom_id
-            LEFT JOIN product_product pn ON mbl.product_id = pn.id
-            LEFT JOIN product_template ptb ON mbl.product_tmpl_id = ptb.id
-            LEFT JOIN uom_uom uom ON mbl.product_uom_id = uom.id
-            %s
-            GROUP BY mbl.product_id, bom.id, ptb.categ_id, uom.id
-        """ % (transfer_cdtn)
-
-        self._cr.execute(transfer)
-        transfer_ids = self._cr.dictfetchall()
+        # transfer_cdtn = '''where si.state ='approve' and si.planning_date BETWEEN '%s' AND '%s'
+        #
+        #                             ''' % (
+        #     self.planning_date.strftime("%Y-%m-%d 00:00:00"), self.planning_date.strftime("%Y-%m-%d 23:59:59"))
+        # transfer = """
+        #     SELECT ptb.categ_id AS categ,
+        #            mbl.product_id AS product,
+        #            bom.id AS bom_id,
+        #            uom.id as uom_name,
+        #            sum(sil.actual_plan_qty * mbl.product_qty) as total
+        #     FROM production_plan_lines sil
+        #     LEFT JOIN plan_planing si ON sil.ref_id = si.id
+        #     LEFT JOIN product_product pp ON sil.item_list_id = pp.id
+        #     LEFT JOIN product_template pt ON pp.product_tmpl_id = pt.id
+        #     JOIN mrp_bom bom ON pt.id = bom.product_tmpl_id
+        #     INNER JOIN mrp_bom_line mbl ON bom.id = mbl.bom_id
+        #     LEFT JOIN product_product pn ON mbl.product_id = pn.id
+        #     LEFT JOIN product_template ptb ON mbl.product_tmpl_id = ptb.id
+        #     LEFT JOIN uom_uom uom ON mbl.product_uom_id = uom.id
+        #     %s
+        #     GROUP BY mbl.product_id, bom.id, ptb.categ_id, uom.id
+        # """ % (transfer_cdtn)
+        #
+        # self._cr.execute(transfer)
+        # transfer_ids = self._cr.dictfetchall()
+        # print(transfer_ids, 'pandal')
         transfer_list = []
         value = []
-        bom_dict = {}
-        qty_dict = {}
-        for entry in transfer_ids:
-            product = entry['product']
-            uom_name = entry['uom_name']
-            total_qty = entry['total']
-            bom = entry['bom_id']
-
-            key = (product, uom_name)
-            if key in qty_dict:
-                qty_dict[key] += total_qty
-            else:
-                qty_dict[key] = total_qty
-            if key not in bom_dict or bom > bom_dict[key]:
-                bom_dict[key] = bom
-
-        lst_finalist = []
-        for (product, uom_name), total_qty in qty_dict.items():
-            bom = bom_dict.get((product, uom_name), 0)
-            lst_finalist.append({
-                'product': product,
-                'uom_name': uom_name,
-                'bom': bom,
-                'total_qty': total_qty,
-            })
-
-        # ... (rest of the code)
-
-        for j in lst_finalist:
-            product = j['product']
-            product_obj = self.env['product.product'].browse(product)
-            temp = product_obj.product_tmpl_id
-            bom = temp.bom_ids
-            uom_qty = j['total_qty']
-            uom = self.env['uom.uom'].browse(j['uom_name'])
-            plan_id = self.id
-            if bom:
-                transfer_list.append({
-                    'product': product,
-                    'uom_qty': uom_qty,
-                    'bom_id': bom[0].id if bom else False,
-                    'uom': uom,
-                    'plan_id': plan_id
-                })
-            else:
-                value.append({
-                    'product': product,
-                    'uom_qty': uom_qty,
-                    'uom': uom,
-                })
-
-        for i in transfer_list:
+        # bom_dict = {}
+        # qty_dict = {}
+        # for entry in transfer_ids:
+        #     product = entry['product']
+        #     uom_name = entry['uom_name']
+        #     total_qty = entry['total']
+        #     bom = entry['bom_id']
+        #
+        #     key = (product, uom_name)
+        #     if key in qty_dict:
+        #         qty_dict[key] += total_qty
+        #     else:
+        #         qty_dict[key] = total_qty
+        #     if key not in bom_dict or bom > bom_dict[key]:
+        #         bom_dict[key] = bom
+        #
+        # lst_finalist = []
+        # for (product, uom_name), total_qty in qty_dict.items():
+        #     bom = bom_dict.get((product, uom_name), 0)
+        #     lst_finalist.append({
+        #         'product': product,
+        #         'uom_name': uom_name,
+        #         'bom': bom,
+        #         'total_qty': total_qty,
+        #     })
+        #
+        # # ... (rest of the code)
+        #
+        # for j in lst_finalist:
+        #     product = j['product']
+        #     product_obj = self.env['product.product'].browse(product)
+        #     temp = product_obj.product_tmpl_id
+        #     bom = temp.bom_ids
+        #     uom_qty = j['total_qty']
+        #     uom = self.env['uom.uom'].browse(j['uom_name'])
+        #     plan_id = self.id
+        #     if bom:
+        #         transfer_list.append({
+        #             'product': product,
+        #             'uom_qty':uom_qty,
+        #             'bom_id': bom[0].id if bom else False,
+        #             'uom':uom,
+        #             'plan_id': plan_id
+        #         })
+        #     else:
+        #         value.append({
+        #             'product':product,
+        #             'uom_qty':uom_qty,
+        #             'uom': uom,
+        #         })
+        #
+        for i in self.production_lines_ids:
             company = self.env.company
             for com in company:
                 manufacture = {
-                    'product_id': i['product'],
-                    'product_qty': i['uom_qty'],
-                    'product_uom_id': i['uom'].id,
+                    'product_id': i.item_list_id.id,
+                    'product_qty': i.actual_plan_qty,
+                    'product_uom_id': i.production_uom_id.id,
                     'component': True,
-                    'bom_id': i['bom_id'],
+                    'bom_id': i.bom_id.id,
                     'state': 'draft',
-                    'picking_type_id': com.component_picking_type.id,
-                    'type_of_manufacture': 'semi',
-                    'planing_id': i['plan_id']  # Assuming i['plan_id'] is a record of planing.planning
+                    'picking_type_id':com.component_picking_type.id,
+                    'type_of_manufacture':'finshed',
+                    'planing_id': self.id  # Assuming i['plan_id'] is a record of planing.planning
                 }
                 print(manufacture, 'manufacture')
 
@@ -261,8 +262,8 @@ class PlanPlaning(models.Model):
             for j in l.move_raw_ids:
                 value.append({
                     'product': j.product_id.id,
-                    'uom_qty': j.product_uom_qty,
-                    'uom': j.product_uom,
+                    'uom_qty' : j.product_uom_qty,
+                    'uom' : j.product_uom,
                 })
         row = []
         for line in value:
@@ -270,6 +271,7 @@ class PlanPlaning(models.Model):
                 'product': line['product'],
                 'uom_name': line['uom']
             })
+
 
         no_dup = []
         for i in row:
@@ -292,7 +294,7 @@ class PlanPlaning(models.Model):
                 'uom_name': uom_name,
                 'total_qty': qty
             })
-        print(transfer_list, 'transfer_list')
+        print(transfer_list,'transfer_list')
         transfer_move = self.env['stock.picking'].sudo().create({
             'picking_type_id': self.company_id.production_picking_type_id.id,
             'company_id': self.company_id.id,
@@ -311,6 +313,7 @@ class PlanPlaning(models.Model):
             }) for item in lst_final]
         })
 
+
     def action_reject(self):
         if self.reason:
             self.state = 'reject'
@@ -327,7 +330,6 @@ class PlanPlaning(models.Model):
             'view_mode': 'tree,form',
             'domain': [('request_id', '=', self.id)],
         }
-
     def action_open_manufacture(self):
         for j in self:
             return {

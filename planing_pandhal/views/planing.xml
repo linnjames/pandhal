@@ -42,7 +42,7 @@
                         <button name="action_open_manufacture" type="object" class="oe_stat_button"
                                 icon="fa-truck" states="done">
                             <div class="o_stat_info">
-                                <span class="o_stat_text">Component Manufacturing</span>
+                                <span class="o_stat_text">Manufacturing</span>
                             </div>
                         </button>
                     </div>
@@ -55,10 +55,10 @@
                         <group>
                             <field name="planning_date"
                                    attrs="{'readonly' :[('state','not in', ('draft', 'approval'))]}"/>
-                            <field name="item_category_id"
-                                   attrs="{'readonly' :[('state','not in', ('draft', 'approval'))]}"/>
+                            <field name="item_category_id" invisible="1"/>
+<!--                                   attrs="{'readonly' :[('state','not in', ('draft', 'approval'))]}"/>-->
                             <field name = 'manufacture_ids'
-                                   widget="many2many_tags"/>
+                                   widget="many2many_tags" invisible="1"/>
                         </group>
                         <group>
                             <field name="is_confirm" invisible="1"/>
@@ -82,7 +82,7 @@
                                     <field name="on_quantity" required="1" readonly="1" force_save="1"/>
                                     <field name="planed_quantity" force_save="1"/>
                                     <field name="varience"/>
-                                    <field name="actual_plan_qty" invisible="1"/>
+                                    <field name="actual_plan_qty"/>
                                     <field name="sale_order_ids" optional="hide"/>
                                     <field name="sale_indent_ids" optional="hide"/>
                                 </tree>
