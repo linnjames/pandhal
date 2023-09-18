@@ -195,7 +195,6 @@ class PlanPlaning(models.Model):
                     'component': True,
                     'bom_id': i.bom_id.id,
                     'state': 'draft',
-                    'picking_type_id': com.component_picking_type.id,
                     'type_of_manufacture': 'finshed',
                     'planing_id': self.id  # Assuming i['plan_id'] is a record of planing.planning
                 }
