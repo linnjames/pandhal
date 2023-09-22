@@ -18,7 +18,30 @@ odoo.define('kitchen_order_print.DeleteOrderLinesAll', function(require) {
                 var lines    = order.get_orderlines();
                 var order_lines = [];
                 var changes = [];
-//                console.log("order",order.name);
+                console.log("Kitchen order",order);
+                if(order.tableId){
+                    var tableId = this.env.pos.tables_by_id[order.tableId];
+                    var tableName = tableId.name;
+                }else{
+                    var tableName = "Ground";
+                }
+
+                console.log("Order Name",order.name);
+                console.log("Table Name",tableId.name);
+                console.log("Floor",tableId.floor.name);
+                console.log("Session",order.pos_session_id);
+                console.log("Employee Name",order.cashier.name);
+                console.log("Employee Role",order.cashier.role);
+                var data = {
+                'receipt_number': order.name,
+                'table': tableName,
+                'session':order.pos_session_id,
+                'floor': tableId.floor ? tableId.floor.name : null,
+                'employee_name': order.cashier ? order.cashier.name : null,
+                'employee_role': order.cashier.role ? order.cashier.role : null,
+                'orderlines': [],
+              };
+//                console.log("Kitchen order",order.name);
 
 
                 if (typeof order.kot_bill_saved_resume !== 'undefined'){
@@ -65,12 +88,21 @@ odoo.define('kitchen_order_print.DeleteOrderLinesAll', function(require) {
                         }
                     return kot;
                     });
-                console.log(lines);
+
                 const { confirmed} = await this.showPopup("ConfirmPopup", {
                        title: this.env._t('KOT'),
                        body: formattedLines.join('\n'),
                    });
                 if(confirmed){
+                            console.log("changes",changes);
+                            changes.forEach(function(each_line){
+                                data.orderlines.push(each_line)
+                            });
+                            var result = this.rpc({
+                                model: 'pos.printer',
+                                method: 'current_kot_print',
+                                args: [data],
+                            });
                             order.kot_bill_saved_resume = order_lines
                    }
 
