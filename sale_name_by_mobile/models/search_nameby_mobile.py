@@ -1,24 +1,26 @@
-from odoo import models, fields, api, exceptions
+from odoo import models, fields, api
+from odoo.exceptions import ValidationError
 
 
-class SearchNameByMobile(models.Model):
-    _inherit = "res.partner"
+class ResPartner(models.Model):
+    _inherit = 'res.partner'
 
-    phone = fields.Char(required=True)
+    @api.onchange('phone')
+    def _onchange_name_phone(self):
+        if self.phone:
+            self.name = '%s - %s' % (self.name.split(' - ')[0], self.phone)
 
-    def name_get(self):
-        result = []
-        for rec in self:
-            if rec.phone:
-                result.append((rec.id, '%s - %s' % (rec.name, rec.phone)))
-            if not rec.phone:
-                result.append((rec.id, '%s' % rec.name,))
-        return result
+    _sql_constraints = [
+        ('unique_phone', 'UNIQUE(phone)', 'Phone number must be unique!'),
+    ]
 
     @api.constrains('phone')
     def _check_unique_phone(self):
         for partner in self:
             if partner.phone:
-                duplicate_partners = self.search([('phone', '=', partner.phone), ('id', '!=', partner.id)])
+                duplicate_partners = self.env['res.partner'].search([
+                    ('phone', '=', partner.phone),
+                    ('id', '!=', partner.id)
+                ])
                 if duplicate_partners:
-                    raise exceptions.ValidationError("Phone number must be unique!")
+                    raise ValidationError('Phone number must be unique!')
