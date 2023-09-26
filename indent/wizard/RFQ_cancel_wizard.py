@@ -21,7 +21,7 @@ class RFQCancelWizard(models.TransientModel):
 class PurchaseState(models.Model):
     _inherit = 'purchase.order'
 
-    reason = fields.Text(string='Cancellation Reason', required=True)
+    reason = fields.Text(string='Cancellation Reason')
 
     def action_rfq_cancel_wizard(self):
         active_ids = self._context.get('active_ids', [])
