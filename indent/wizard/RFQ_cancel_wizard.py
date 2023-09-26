@@ -5,7 +5,7 @@ class RFQCancelWizard(models.TransientModel):
     _name = 'rfq.cancel.wizard'
     _description = 'RFQ Cancel Wizard'
 
-    reason = fields.Text(string='Reason', required=True, widget='text')
+    reason = fields.Text(string='Reason', widget='text')
 
     def cancel_rfqs(self):
         active_ids = self.env.context.get('active_ids', [])
