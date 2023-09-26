@@ -64,7 +64,7 @@ class AccountAccount(models.Model):
                     'company_id': k,
                     'code': self.code,
                     'name': self.name,
-                    'user_type_id': self.user_type_id.id,
+                    'account_type': self.account_type,
                     'group_id': self.group_id.id,
                     'currency_id': self.currency_id.id,
                     'deprecated': self.deprecated,
