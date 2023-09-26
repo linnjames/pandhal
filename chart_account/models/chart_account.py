@@ -44,8 +44,8 @@ class AccountAccount(models.Model):
                     [('company_id', '!=', self.company_id.id), ('code', '=', self.code),
                      ('company_id', '!=', res.ids)])
                 record_delete.unlink()
-            else:
-                raise Warning(_("Please Select Your Own Company"))
+            # else:
+            #     raise Warning(_("Please Select Your Own Company"))
 
         elif not res:
             ch = self.env['account.account'].sudo().search(
