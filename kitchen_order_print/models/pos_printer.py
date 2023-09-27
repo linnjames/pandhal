@@ -97,8 +97,7 @@ class PrintOrder(models.Model):
             if (printer_name != 0):
                 for count in range(2):
                     # print("pdf details",receipt_number, floor, table, employee_name, employee_role,category_name, products)
-                    pdf_path = self.create_pdf(receipt_number, floor, table, employee_name, employee_role,
-                                               category_name, products)
+                    pdf_path = self.create_pdf(receipt_number, floor, table, employee_name, employee_role, category_name, products)
                     # pos_session = self.env['pos.session'].browse(session)
                     # url = "http://%s/print/from-pdf", % pos_config.ip_address
                     url = "http://{}/print/from-pdf".format(printerIP)

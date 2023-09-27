@@ -18,30 +18,24 @@ odoo.define('kitchen_order_print.DeleteOrderLinesAll', function(require) {
                 var lines    = order.get_orderlines();
                 var order_lines = [];
                 var changes = [];
-                console.log("Kitchen order",order);
                 if(order.tableId){
                     var tableId = this.env.pos.tables_by_id[order.tableId];
                     var tableName = tableId.name;
+                    var floorName = tableId.floor.name
                 }else{
-                    var tableName = "Ground";
+                    var tableName = " ";
+                    var floorName = "Ground";
                 }
 
-                console.log("Order Name",order.name);
-                console.log("Table Name",tableId.name);
-                console.log("Floor",tableId.floor.name);
-                console.log("Session",order.pos_session_id);
-                console.log("Employee Name",order.cashier.name);
-                console.log("Employee Role",order.cashier.role);
                 var data = {
                 'receipt_number': order.name,
                 'table': tableName,
                 'session':order.pos_session_id,
-                'floor': tableId.floor ? tableId.floor.name : null,
+                'floor': floorName,
                 'employee_name': order.cashier ? order.cashier.name : null,
                 'employee_role': order.cashier.role ? order.cashier.role : null,
                 'orderlines': [],
               };
-//                console.log("Kitchen order",order.name);
 
 
                 if (typeof order.kot_bill_saved_resume !== 'undefined'){
@@ -62,7 +56,6 @@ odoo.define('kitchen_order_print.DeleteOrderLinesAll', function(require) {
                             changes.push([ol.product.display_name, ol.quantity, ol.product.categ_id[1], ol.note || '', ol.product.categ_id[0]]);
                         }
                     });
-//                    console.log("saved_resume",saved_resume);
                 }else{
                     order.orderlines.forEach(function(ol) {
                                 changes.push([ol.product.display_name, ol.quantity, ol.product.categ_id[1], ol.note || '',ol.product.categ_id[0]]);
@@ -71,12 +64,10 @@ odoo.define('kitchen_order_print.DeleteOrderLinesAll', function(require) {
                 order.orderlines.forEach(function(ol) {
                                 order_lines.push([ol.product.display_name, ol.quantity, ol.product.categ_id[1], ol.note || '',ol.product.categ_id[0]]);
                             });
-//                console.log("saved_resume",changes);
 
                 var count = 0
                 const formattedLines = changes.map(line => {
                     count +=1
-//                    console.log("lineslineslines",lines);
                     const product = line[0];
                     const quantity = line[1];
                     const note = line[3];
