@@ -13,15 +13,15 @@ class ProductTemplate(models.Model):
     mrp_updated_date = fields.Datetime(string="MRP Updated Date",tracking=True)
     user_name = fields.Many2one('res.users', string="Updated by", default=lambda self: self.env.user.partner_id.id,
                                 tracking=True)
-    internal_references = fields.Char(string='Internal References', required=True, copy=False, readonly=True,
-                                      default=lambda self: _('New'))
-
-    @api.model
-    def create(self, vals):
-        if vals.get('internal_references', _('New')) == _('New'):
-            vals['internal_references'] = self.env['ir.sequence'].next_by_code('product.template') or _('New')
-        res = super(ProductTemplate, self).create(vals)
-        return res
+    # internal_references = fields.Char(string='Internal References', required=True, copy=False, readonly=True,
+    #                                   default=lambda self: _('New'))
+    #
+    # @api.model
+    # def create(self, vals):
+    #     if vals.get('internal_references', _('New')) == _('New'):
+    #         vals['internal_references'] = self.env['ir.sequence'].next_by_code('product.template') or _('New')
+    #     res = super(ProductTemplate, self).create(vals)
+    #     return res
 
     # -------------------mrp updation__________
     @api.onchange('mrp')
