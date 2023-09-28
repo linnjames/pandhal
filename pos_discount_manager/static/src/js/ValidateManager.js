@@ -60,7 +60,19 @@ odoo.define('pos_discount_manager.ValidateManager', function(require) {
             var orderlines = this.currentOrder.get_orderlines()
             var employee_dis = this.env.pos.get_cashier()['limited_discount'];
             var employee_name = this.env.pos.get_cashier()['name']
+            var manager_id = this.env.pos.employees.filter((obj) => obj.is_manager == true);
+            if(manager_id.length == 0){
+                            this.showPopup('ErrorPopup', {
+                                title: this.env._t(" No Manager"),
+                                body: this.env._t("Manager is not set, Please check."),
+
+                            });
+                            return false;
+                     }
+            var res = manager_id.filter((checkPin) => checkPin.pin != false)
+            var manager_limit = res[0].limited_discount
             var flag = 1;
+            var manager_flag = 1;
              orderlines.forEach((order) => {
                if(order.description){
                 var discription = order.description;
@@ -71,18 +83,30 @@ odoo.define('pos_discount_manager.ValidateManager', function(require) {
                var discount_amt = 0;
                }
                if(discount_amt > employee_dis){
-
-                flag = 0;
+                    if(discount_amt > manager_limit){
+                        manager_flag = 0;
+                    }else{
+                    flag = 0;
+                    }
                }
 
              });
+             if(manager_flag != 1){
+                this.showPopup('ErrorPopup', {
+                    title: this.env._t("Over the limit"),
+                    body: this.env._t("Manager's Discount Is Over The Limit,Discount Can't Be Given"),
+
+                });
+                return false;
+             }
              if (flag != 1) {
              const {confirmed,payload} = await this.showPopup('NumberPopup', {
                         title: this.env._t(employee_name + ', your discount is over the limit. \n Manager pin for Approval'),
                     });
                     if(confirmed){
-                     var output = this.env.pos.employees.filter((obj) => obj.role == 'manager');
+                     var output = this.env.pos.employees.filter((obj) => obj.is_manager == true);
                      var res = output.filter((checkPin) => checkPin.pin != false)
+//                     var manager_limit = res[0].limited_discount
                      var pin = res[0].pin
 
                      if (Sha1.hash(payload) == pin) {

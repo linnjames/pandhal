@@ -20,14 +20,11 @@ class PosSession(models.Model):
         """Load hr.employee model into pos session"""
         result = super()._pos_ui_models_to_load()
         result += ['hr.employee']
-        print("_pos_ui_models_to_load",result)
         return result
 
     def _loader_params_hr_employee(self):
         """load hr.employee parameters"""
-        print("Haiiiiiiiiiiii")
         result = super()._loader_params_hr_employee()
         result['search_params']['fields'].extend(
-            ['limited_discount'])
-        print("_loader_params_hr_employee", result)
+            ['limited_discount','is_manager'])
         return result
