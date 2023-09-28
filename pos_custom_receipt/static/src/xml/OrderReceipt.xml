@@ -28,8 +28,8 @@
                     <td style="font-size: 10px; font-weight: bold;" align="left"><span t-esc="line.product_name_wrapped[0]"/></td>
                     <td style="font-size: 10px; font-weight: bold;" align="center"><span t-esc="line.l10n_in_hsn_code"/></td>
                     <td style="font-size: 10px; font-weight: bold;" align="center"><span t-esc="line.quantity"/></td>
-                    <td style="font-size: 10px; font-weight: bold;" align="center"><span t-esc="line.price_display_one"/></td>
-                    <td style="font-size: 10px; font-weight: bold;" align="center"><span t-esc="line.price_display"/></td>
+                    <td style="font-size: 10px; font-weight: bold;" align="center"><span t-esc="Math.round(line.price_display_one)"/></td>
+                    <td style="font-size: 10px; font-weight: bold;" align="center"><span t-esc="Math.round(line.price_display)"/></td>
                 </tr>
             </t>
         </table>
