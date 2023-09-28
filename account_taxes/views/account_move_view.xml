@@ -9,17 +9,17 @@
             <field name="arch" type="xml">
                 <xpath expr="//field[@name='tax_totals']" position="before">
                     <field name="tcs_percentage"
-                           attrs="{'invisible': [('apply_tcs', '=', False)]}" force_save="1" readonly="1"/>
+                           attrs="{'invisible': [('apply_tcs', '=', False)]}" force_save="1" invisible="1"/>
                     <field name="tcs_amount" force_save="1"
                            attrs="{'invisible': [('apply_tcs', '=', False)]}" widget="monetary"
                            options="{'currency_field': 'currency_id'}"/>
-                    <field name="tds_percentage"
-                           attrs="{'invisible': ['|',('apply_tds', '=', False), ('move_type', 'not in', ('in_invoice', 'out_invoice'))]}"
-                           force_save="1" readonly="1"/>
-                    <field name="tds_amount" force_save="1"
-                           attrs="{'invisible': ['|', ('apply_tds', '=', False), ('move_type', 'not in', ('in_invoice', 'out_invoice'))]}"
-                           widget="monetary"
-                           options="{'currency_field': 'currency_id'}"/>
+                    <field name="tds_percentage" invisible="1"/>
+<!--                           attrs="{'invisible': ['|',('apply_tds', '=', False), ('move_type', 'not in', ('in_invoice', 'out_invoice'))]}"-->
+<!--                           force_save="1" readonly="1"/>-->
+                    <field name="tds_amount" invisible="1"/>
+<!--                           attrs="{'invisible': ['|', ('apply_tds', '=', False), ('move_type', 'not in', ('in_invoice', 'out_invoice'))]}"-->
+<!--                           widget="monetary"-->
+<!--                           options="{'currency_field': 'currency_id'}"/>-->
                 </xpath>
 
 <!--                <field name="amount_untaxed" position="after">-->
@@ -59,8 +59,8 @@
 <!--                    <field name="tds" invisible="1"/>-->
 <!--                </xpath>-->
                 <xpath expr="//field[@name='invoice_line_ids']/tree/field[@name='product_id']" position="before">
-                    <field name="tcs" force_save="1" />
-                    <field name="tds" force_save="1"/>
+                    <field name="tcs" force_save="1" invisible="1"/>
+                    <field name="tds" force_save="1" invisible="1"/>
                 </xpath>
                  <xpath expr="//notebook" position="inside">
                     <page string="TDS" name="tds_page" groups="account_taxes.group_order_taxes" attrs="{'invisible': [('tds_voucher', '=', False)]}">
