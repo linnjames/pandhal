@@ -63,9 +63,6 @@
                                             Call:
                                             <span t-field="res_company.partner_id.phone"/>
                                             <br/>
-                                            Email:
-                                            <span t-field="res_company.partner_id.email"/>
-                                            <br/>
 
                                         </td>
 

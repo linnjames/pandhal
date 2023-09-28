@@ -77,9 +77,9 @@
                                                 Call:
                                                 <span t-field="res_company.partner_id.phone"/>
                                                 <br/>
-                                                Email:
-                                                <span t-field="res_company.partner_id.email"/>
-                                                <br/>
+<!--                                                Email:-->
+<!--                                                <span t-field="res_company.partner_id.email"/>-->
+<!--                                                <br/>-->
                                             </td>
                                             <!--                                            <td style="vertical-align:top;" width="30%">-->
                                             <!--                                                <t t-if="to_text(doc.prnt_qr_code)">-->
