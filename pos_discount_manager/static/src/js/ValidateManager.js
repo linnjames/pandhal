@@ -22,7 +22,6 @@ odoo.define('pos_discount_manager.ValidateManager', function(require) {
 //                const val = Math.round(Math.max(0,Math.min(100,parseFloat(payload))));
 //                await self.apply_discount(val);
 //            }
-//            console.log("shega linn",payload);
              if ((this.currentOrder.is_paid_with_cash() || this.currentOrder.get_change()) && this.env.pos.config.iface_cashdrawer) {
                     this.env.pos.proxy.printer.open_cashbox();
              }
